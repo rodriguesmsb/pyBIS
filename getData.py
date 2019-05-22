@@ -104,8 +104,8 @@ def union_all(df_spark):
             results.update({year: unionAll(df_spark[year])})
         return(results)
 
-def write_csv(df, file_name, files = None):
-    if files is None:
+def write_csv(df, file_name, files = False):
+    if files is False:
         if len(df) == 1:
             df = df.toPandas()
             df.to_csv(file_name + ".csv", index = False)
@@ -117,4 +117,4 @@ def write_csv(df, file_name, files = None):
     else:
         for year, data in df.items():
             df = data.toPandas()
-            df.to_csv(str(year) + file_name + ".csv", index = False)     
+            df.to_csv(file_name + str(year) + ".csv", index = False)     
