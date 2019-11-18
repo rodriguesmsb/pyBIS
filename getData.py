@@ -25,19 +25,17 @@ class dataSus:
             self.data_sus.cwd(data + "/1996_/Dados/DNRES")
 
 
-    
+    #Show atributes
     def attributes(self):
         print(self.data_sus.dir())
+
+   #Atribbutes to pandas
         
 
 
      
         
-            
-
-
-
-#Example
+ #Example
 new_data = dataSus()
 new_data.select_data("SINASC")
 new_data.attributes()
