@@ -1,5 +1,5 @@
 import findspark
-findspark.init("/usr/spark-2.4.2-bin-hadoop2.7")
+findspark.init("/opt/spark-2.4.4-bin-hadoop2.7")
 
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SparkSession

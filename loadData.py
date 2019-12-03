@@ -7,13 +7,13 @@ from tqdm import tqdm
 def set_data(dataset):
     dataset = dataset.upper()
     if dataset == "SINASC":
-        path = "/home/rodriguesmsb/Documents/Data_lake/Raw/Bancos_SINASC/CSV_format/"
+        path = "/home/rodriguesms/Documents/Data_lake/Raw/Bancos_SINASC/CSV_format/"
         pattern = "DN*[A-Z][A-Z]"
     elif dataset == "SIM":
-        path = "/home/rodriguesmsb/Documents/Data_lake/Raw/Bancos_SIM/CSV_format/"
+        path = "/home/rodriguesms/Documents/Data_lake/Raw/Bancos_SIM/CSV_format/"
         pattern = "DO*[A-Z][A-Z]"
     elif dataset == "AIH":
-        path = "/home/rodriguesmsb/Documents/Data_lake/Raw/Bancos_AIH/CSV_format/"
+        path = "/home/rodriguesms/Documents/Data_lake/Raw/Bancos_AIH/CSV_format/"
         pattern = "RD*[A-Z][A-Z]"
     return([path, pattern])
 

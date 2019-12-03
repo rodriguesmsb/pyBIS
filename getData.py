@@ -19,10 +19,11 @@ class dataSus:
         #only the most update repo will be avaliable from dowload
         if data == "SINASC":
             self.data_sus.cwd(data + "/1996_/Dados/DNRES")
-        elif data == "SIHSUS":
-            self.data_sus.cwd(data + "/200801_/Dados/")
         elif data == "SIM":
             self.data_sus.cwd(data + "/1996_/Dados/DNRES")
+        elif data == "SIHSUS":
+            self.data_sus.cwd(data + "/200801_/Dados/")
+      
 
 
     #Show atributes

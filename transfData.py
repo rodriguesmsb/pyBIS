@@ -30,3 +30,6 @@ def merge_data(data, vars):
         for year in df_spark:
             results.update({year:map(lambda x: x.filter(condition), list(df_spark[year]))})
         return(results)
+
+
+##### Insert more functionality using spark
