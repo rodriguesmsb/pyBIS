@@ -7,10 +7,12 @@ entao resolvi refazer como um arquivo separado
 
 import ftplib as ftp
 
+
 SINASC = 'dissemin/publicos/SINASC'
 SIM = 'dissemin/publicos/SIM'
 SIHSUS = 'dissemin/publicos/SIHSUS'
 SINAN = 'dissemin/publicos/SINAN'
+PNI = "dissemin/publicos/PNI"
 
 class DataSus:
 
@@ -34,14 +36,23 @@ class DataSus:
                 self.log.append('{},{}{},{}\n'.format(self.page.size(i),self.page.host,self.page.pwd(),i))
 
             else:
-                print ('Se chegou aqui é pq deu muito errado.')
+               break
 
     ''' Aqui eu escolhi criar uma função pra cada banco que foi mencionado,
     porem a funcao "verify" é capaz de pegar todos os arquivos database
     dentro da raiz '/' desde que seja alterado o timeout, visto que o loop
     fecharia a conexao no momento em que copia pra self.log
     '''
-    def write_sinasc(self):
+
+    # write deve ser uma funcao generica para qualquer base
+    def write_sinasc(self, newArg):
+
+        ##Essa parte pode ser feita em outra funcao
+        dic_results = {"Nome": [],
+        "Ano": [],
+        "Tamanho": [],
+        "endereco": []
+        }
         self.sinasc = open('sinasc.csv','w+')
         self.page.cwd(SINASC)
         self.verify(self.page.nlst())
@@ -73,16 +84,3 @@ class DataSus:
             self.sinan.write(x)
         self.sinan.close()
 
-# os testes realizados foram bem sucedidos
-
-#a = DataSus()
-#a.write_sihsus()
-
-#b = DataSus()
-#b.write_sim()
-
-#t = DataSus()
-#t.write_sinasc()
-
-#c = DataSus()
-#c.write_sinan()
