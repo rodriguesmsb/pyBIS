@@ -1,4 +1,4 @@
-#CIDACS-pydbsus: A Python library to work with Brazilian Administrative data
+# CIDACS-pydbsus: A Python library to work with Brazilian Administrative data
 
 ## Introduction
 
