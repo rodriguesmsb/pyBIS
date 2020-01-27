@@ -3,15 +3,17 @@
 
 #Load necessary libraries for the Datasus class
 import ftplib as ftp
-import re
+import re, time, sys
 import pandas as pd
-
+from tqdm import tqdm
+from PyQt5 import QtCore, QtGui, QtWidgets
+import _thread, threading
 
 class Datasus:
     
     #Define the main structure of the class
 
-    def __init__(self, banco, PAGINA = 'ftp.datasus.gov.br', \
+    def __init__(self, banco=None, PAGINA = 'ftp.datasus.gov.br', \
             PUBLICO = '/dissemin/publicos'):
 
         """
@@ -25,24 +27,24 @@ class Datasus:
         self.log['Nome'], self.log['Ano'], \
         self.log['Endereco'] = [], [], [], [], [], []
         
-
-
         self.__log = []
-        self.__pagina = ftp.FTP(PAGINA)
-        self.__pagina.login()
-        self.__pagina.cwd(PUBLICO)
+        try:
+            self.__pagina = ftp.FTP(PAGINA)
+            self.__pagina.login()
+            self.__pagina.cwd(PUBLICO)
+        except:
+            print ('Verificar conexão')
         self.__banco = banco
+        print (self.__banco)
 
-    
-
-    def load_files(self):
+    def load_files(self, p_bar=False):
+        self.p_bar = p_bar
 
         """
         This function load files present in the current directory.
         Right now this took many time to run since it will 'read' all 
         files in a given repository
         """
-
         try:
             self.__pagina.cwd(self.__banco)
             self.__pagina.dir(self.__log.append)
@@ -57,30 +59,60 @@ class Datasus:
         """
         Structure the information avaliable in the repo.
         """
+        if self.p_bar == True:
+            for i in tqdm(lista):
+                if i.split()[3].endswith(('.dbc','.DBC','.DBF','.dbf')):
+                    self.log['Data'].append(i.split()[0]),
+                    self.log['Horario'].append(i.split()[1]),
+                    self.log['Tamanho'].append(i.split()[2]),
+                    self.log['Nome'].append(i.split()[3]),
+                    self.log['Endereco'].append(self.__pagina.pwd())
+                    if re.search(r"\d+",i.split()[3]):
+                        self.log['Ano'].append(re.findall(r"\d+",\
+                                i.split()[3])[0])
+                    else:
+                        self.log["Ano"].append(None)
 
-        for i in lista:
-            if i.split()[3].endswith(('.dbc','.DBC','.DBF','.dbf')):
-                self.log['Data'].append(i.split()[0]),
-                self.log['Horario'].append(i.split()[1]),
-                self.log['Tamanho'].append(i.split()[2]),
-                self.log['Nome'].append(i.split()[3]),
-                self.log['Endereco'].append(self.__pagina.pwd())
-                if re.search(r"\d+",i.split()[3]):
-                    self.log['Ano'].append(re.findall(r"\d+", i.split()[3])[0])
+                elif i.split()[3].endswith(('.dbc','.DBC','.DBF', \
+                        '.dbf')) == False:
+                    try:
+                        self.__log = []
+                        self.__pagina.cwd(i.split()[3])
+                        self.__pagina.dir(self.__log.append)
+                        self.__list_data(self.__log)
+                        self.__pagina.cwd('..')
+                    except:
+                        pass
                 else:
-                    self.log["Ano"].append(None)
+                    break
 
-            elif i.split()[3].endswith(('.dbc','.DBC','.DBF','.dbf')) == False:
-                try:
-                    self.__log = []
-                    self.__pagina.cwd(i.split()[3])
-                    self.__pagina.dir(self.__log.append)
-                    self.__list_data(self.__log)
-                    self.__pagina.cwd('..')
-                except:
-                    pass
-            else:
-                break
+        elif self.p_bar == False:
+            for i in lista:
+                if i.split()[3].endswith(('.dbc','.DBC','.DBF','.dbf')):
+                    self.log['Data'].append(i.split()[0]),
+                    self.log['Horario'].append(i.split()[1]),
+                    self.log['Tamanho'].append(i.split()[2]),
+                    self.log['Nome'].append(i.split()[3]),
+                    self.log['Endereco'].append(self.__pagina.pwd())
+                    if re.search(r"\d+",i.split()[3]):
+                        self.log['Ano'].append(re.findall(r"\d+", \
+                                i.split()[3])[0])
+                    else:
+                        self.log["Ano"].append(None)
+
+                elif i.split()[3].endswith(('.dbc','.DBC','.DBF', \
+                        '.dbf')) == False:
+
+                    try:
+                        self.__log = []
+                        self.__pagina.cwd(i.split()[3])
+                        self.__pagina.dir(self.__log.append)
+                        self.__list_data(self.__log)
+                        self.__pagina.cwd('..')
+                    except:
+                        pass
+                else:
+                    break
 
     def write_file(self, path):
 
@@ -93,4 +125,3 @@ class Datasus:
             file_csv.to_csv(path + ".csv", index = False)
         except:
             print("No file to write")
-        
