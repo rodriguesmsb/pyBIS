@@ -78,14 +78,14 @@ class DatasusUi(Datasus):
 
     def mygambiarra(self, data):
         self.data = data
-        self.thread_1 = threading.Thread(target=Datasus(self.data).load_files)
-        self.thread_1.start()
-        threading.Thread(target=self.statusProgressBar).start()
-        threading.Thread(target=self.textProgressBar).start()
+        self.threads = [Datasus(self.data).load_files, self.statusProgressBar, self.textProgressBar]
+
+        for i in self.threads:
+            threading.Thread(target=i).start()
 
     def statusProgressBar(self):
         n = 0
-        while self.thread_1.isAlive():
+        while threading.active_count() == 3:
             if n < 100:
                 self.progressbar.setValue(n)
                 n += 1
@@ -101,7 +101,7 @@ class DatasusUi(Datasus):
         label = ['Carregando...','Isso pode demorar vários minutos', \
                 'Tenha Paciência','Porcentagem referente aos diretórios']
         n = 0
-        while self.thread_1.isAlive():
+        while threading.enumerate() == 3:
             time.sleep(1)
             self.label.setText(random.choice(label))
 
