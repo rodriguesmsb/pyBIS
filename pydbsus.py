@@ -32,10 +32,9 @@ class Datasus:
             self.__pagina = ftp.FTP(PAGINA)
             self.__pagina.login()
             self.__pagina.cwd(PUBLICO)
+            self.__banco = banco
         except:
             print ('Verificar conexão')
-        self.__banco = banco
-        print (self.__banco)
 
     def load_files(self, p_bar=False):
         self.p_bar = p_bar
