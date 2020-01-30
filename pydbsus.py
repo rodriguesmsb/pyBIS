@@ -189,7 +189,7 @@ class Datasus:
 
     def __verify_and_download(self, diretorio):
         for i,j in zip(self.log['Nome'], self.log['Endereco']):
-            print (f'{i}\t\t{j}')
+           #print (f'{i}\t\t{j}')
             if os.path.isfile(diretorio + f'{i}'):
                 print (f'O arquivo {i} ja existe')
 
