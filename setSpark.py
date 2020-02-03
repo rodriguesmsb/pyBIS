@@ -1,5 +1,5 @@
 import findspark
-findspark.init("/opt/spark-2.4.4-bin-hadoop2.7")
+findspark.init("/opt/spark-2.4.4-bin-hadoop2.6")
 
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SparkSession
@@ -9,17 +9,18 @@ from pyspark.sql.functions import year, month, col, sum, udf, substring, split, 
 
 #create a function to connect to spark
 def spark_conf(app_name, n_cores = "*", executor_memory = 2, driver_memory = 20):
+    global conf_file
     n_cores = "local[cores]".replace("cores", str(n_cores))
     executor_memory = "numg".replace("num",str(executor_memory))
     driver_memory = "numg".replace("num",str(driver_memory))
-    conf_file = SparkConf().setAppName(app_name)
+    conf_file = SparkConf().setAppName('AggData')
     conf_file = (conf_file.setMaster(n_cores)
             .set("spark.executor.memory", executor_memory)
             .set("spark.driver.memory", driver_memory))
     return(conf_file)
 
 
-def start_spark(conf_file):
+def start_spark(conf):
     sc = SparkContext(conf = conf_file)
     spark = SparkSession(sc)
     return(spark)

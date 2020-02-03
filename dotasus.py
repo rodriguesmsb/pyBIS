@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys, time, threading, random
+import os, sys, time, platform, random, setSpark
 from PyQt5 import QtCore, QtWidgets, QtGui
 from pydbsus import Datasus
 
@@ -88,13 +88,12 @@ class SINAN_db(QtCore.QThread):
         self.texto.emit('Download concluido')
         self.val.emit(100)
 
-
 class Hc(QtWidgets.QWidget):
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self,parent) 
 
-        self.setGeometry(300,300,600,400)
-        self.setFixedSize(600,400)
+        self.setGeometry(300,300,820,400)
+        self.setFixedSize(820,400)
         self.setWindowTitle('Ancião III')
 
         self.font = QtGui.QFont()
@@ -103,29 +102,79 @@ class Hc(QtWidgets.QWidget):
         self.sim = QtWidgets.QRadioButton(self)
         self.sim.setText('SIM')
         self.sim.setFont(self.font)
-        self.sim.setGeometry(60,70,100,60)
+        self.sim.setGeometry(290,70,120,60)
 
         self.sinan = QtWidgets.QRadioButton(self)
         self.sinan.setText('SINAN')
         self.sinan.setFont(self.font)
-        self.sinan.setGeometry(60,120,100,60)
+        self.sinan.setGeometry(290,120,120,60)
 
         self.sinasc = QtWidgets.QRadioButton(self)
         self.sinasc.setText('SINASC')
         self.sinasc.setFont(self.font)
-        self.sinasc.setGeometry(60,170,100,60)
+        self.sinasc.setGeometry(290,170,120,60)
+
+        self.dblist = QtWidgets.QListView(self)
+        self.dblist.setGeometry(40,40,180,250)
+        self.dblist.setFont(self.font)
+
+        if platform.system().lower() == 'linux':
+            try:
+                self.directory = os.listdir(os.path.expanduser \
+                        ('~/Documentos/files_csv/'))
+            except:
+                os.mkdir(os.path.expanduser('~/Documentos/files_csv/'))
+
+            self.model = QtGui.QStandardItemModel()
+            self.dblist.setModel(self.model)
+
+            for i in self.directory:
+                if i.endswith('.csv'):
+                    item = QtGui.QStandardItem(i)
+                    self.model.appendRow(item)
+                else:
+                    pass
+
+        else:
+            try:
+                self.directory = os.listdir(os.path.expanduser \
+                        ('~\\Meus Documentos\\files_csv\\'))
+            except:
+                os.mkdir(os.path.expanduser('~\\Meus Documentos\\files_csv\\'))
+
+            self.model = QtGui.QStandardItemModel()
+            self.dblist.setModel(self.model)
+
+            for i in self.directory:
+                if i.endswith('.csv'):
+                    item = QtGui.QStandardItem(i)
+                    self.model.appendRow(item)
+                else:
+                    pass
 
         self.botao = QtWidgets.QPushButton(self)
         self.botao.setText('Gerar csv')
         self.botao.setFont(self.font)
         self.botao.clicked.connect(self.genCSV)
-        self.botao.setGeometry(QtCore.QRect(440,90,120,40))
+        self.botao.setGeometry(QtCore.QRect(650,40,140,40))
 
         self.botao1 = QtWidgets.QPushButton(self)
-        self.botao1.setText('Download db*')
+        self.botao1.setText('Baixar db*')
         self.botao1.setFont(self.font)
         self.botao1.clicked.connect(self.downDB)
-        self.botao1.setGeometry(QtCore.QRect(440,160,120,40))
+        self.botao1.setGeometry(QtCore.QRect(650,110,140,40))
+
+        self.botao2 = QtWidgets.QPushButton(self)
+        self.botao2.setText('Configurar Spark')
+        self.botao2.setFont(self.font)
+        self.botao2.clicked.connect(setSpark.spark_conf)
+        self.botao2.setGeometry(QtCore.QRect(650,180,140,40))
+
+        self.botao3 = QtWidgets.QPushButton(self)
+        self.botao3.setText('Start Spark')
+        self.botao3.setFont(self.font)
+        self.botao3.clicked.connect(setSpark.start_spark)
+        self.botao3.setGeometry(QtCore.QRect(650,250,140,40))
 
         self.label = QtWidgets.QLabel(self)
         self.label.setText('')
@@ -135,7 +184,7 @@ class Hc(QtWidgets.QWidget):
         self.barra = QtWidgets.QProgressBar(self)
         self.barra.setFont(self.font)
         self.barra.setProperty('value', 0)
-        self.barra.setGeometry(40,300,500,30)
+        self.barra.setGeometry(200,340,500,30)
 
 
     def genCSV(self):
@@ -227,9 +276,25 @@ class Hc(QtWidgets.QWidget):
     def setLabel(self, texto):
         self.label.setText(texto)
 
+# [+] Verifica o sistema operacional e diretorios [+]
+if platform.system().lower() == 'linux':
+    try:
+        os.listdir(os.path.expanduser('~/Documentos/files_csv/'))
+            
+    except:
+        os.mkdir(os.path.expanduser('~/Documentos/files_csv/'))
+        os.listdir(os.path.expanduser('~/Documentos/files_csv/'))
 
+else:
+    try:
+        os.listdir(os.path.expanduser('~\\Meus Documentos\\files_csv\\'))
+                
+    except:
+        os.mkdir(os.path.expanduser('~\\Meus Documentos\\files_csv\\'))
+        os.listdir(os.path.expanduser('~\\Meus Documentos\\files_csv\\'))
 
 partida = QtWidgets.QApplication(sys.argv)
+partida.setWindowIcon(QtGui.QIcon('uni.png'))
 carregador = Hc()
 carregador.show()
 partida.exec_()
