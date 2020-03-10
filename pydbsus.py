@@ -7,6 +7,7 @@ import re, os, platform
 import pandas as pd
 from tqdm import tqdm
 from PyQt5 import QtCore, QtGui, QtWidgets
+from functools import lru_cache
 
 class Datasus:
     
@@ -62,7 +63,6 @@ class Datasus:
 
         except ftp.error_perm:
             print ('diretorio invalido')
-
 
     def __list_data(self, lista):
 
