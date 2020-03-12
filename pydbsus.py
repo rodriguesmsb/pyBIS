@@ -26,18 +26,22 @@ class Datasus:
         self.log['Data'], self.log['Horario'], self.log['Tamanho'], \
         self.log['Nome'], self.log['Ano'], \
         self.log['Endereco'] = [], [], [], [], [], []
-        
+
         self.__log = []
         try:
+
             self.__pagina = ftp.FTP(PAGINA)
             self.__pagina.login()
             self.__pagina.cwd(PUBLICO)
             self.__banco = banco
+
+
             '''
             Aqui o modulo "os" foi utilizado para que o interpretador
             entenda o caminho como parte do diretorio ao invés de uma
             string com contra barra
             '''
+
             self.__dir = {
                     'win_data':
                     [os.path.expanduser('~\\Meus Documentos\\files_csv\\'),
@@ -46,7 +50,7 @@ class Datasus:
                     [os.path.expanduser('~/Documentos/files_csv/'),
                         os.path.expanduser('~/Documentos/files_db/')]}
         except:
-            print ('Verificar conexão')
+            pass
 
     def load_files(self, p_bar=False):
         self.__p_bar = p_bar
