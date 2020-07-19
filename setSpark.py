@@ -1,5 +1,8 @@
 import findspark
-findspark.init("/opt/spark-2.4.4-bin-hadoop2.6")
+import sys
+import os
+from os import system
+findspark.init("spark-3.0.0-bin-hadoop3.2")
 
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SparkSession
@@ -7,6 +10,9 @@ from pyspark.sql.types import DateType, StringType
 from pyspark.sql.functions import year, month, col, sum, udf,\
     substring, split, regexp_replace
 
+system('export SPARK_HOME=spark-3.0.0-bin-hadoop3.2')
+system('export PATH=$SPARK_HOME/bin')
+system('export PYSPARK_PYTHON=python3')
 
 #create a function to connect to spark
 def spark_conf(n_cores, executor_memory, \

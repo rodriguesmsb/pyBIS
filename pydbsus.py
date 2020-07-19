@@ -162,8 +162,8 @@ class Datasus:
         Função que cria o diretorio no sistema linux
         '''
         try:
-            os.mkdir(self.__dir['linux_data'][0])
-            os.mkdir(self.__dir['linux_data'][1])
+            for x in self.__dir['linux_data']:
+                os.mkdir(x)
         except:
             pass
 
@@ -172,8 +172,8 @@ class Datasus:
         Função que cria o diretorio no sistema windows
         '''
         try:
-            os.mkdir(self.__dir['win_data'][0])
-            os.mkdir(self.__dir['win_data'][1])
+            for x in self.__dir['wind_data']:
+                os.mkdir(x)
         except:
             pass
 
@@ -193,7 +193,6 @@ class Datasus:
 
     def __verify_and_download(self, diretorio):
         for i,j in zip(self.log['Nome'], self.log['Endereco']):
-           #print (f'{i}\t\t{j}')
             if os.path.isfile(diretorio + f'{i}'):
                 print (f'O arquivo {i} ja existe')
 

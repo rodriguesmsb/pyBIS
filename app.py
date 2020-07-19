@@ -98,6 +98,7 @@ class Ui_Dialog(object):
         self.set_memory.setProperty("value", 1)
         self.set_memory.setObjectName("set_memory")
         self.gridLayout.addWidget(self.set_memory, 1, 1, 1, 1)
+
         fsm = QtWidgets.QFileSystemModel()
         if platform.system().lower() == 'linux':
             try:
@@ -117,6 +118,7 @@ class Ui_Dialog(object):
         self.select_data.addItem("")
         self.select_data.setModel(fsm)
         self.select_data.setRootModelIndex(index)
+
         self.read_data = QtWidgets.QPushButton(self.tab_2)
         self.read_data.setGeometry(QtCore.QRect(370, 200, 141, 25))
         self.read_data.setObjectName("read_data")

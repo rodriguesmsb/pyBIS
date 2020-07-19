@@ -13,7 +13,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_pergunta(object):
     def setupUi(self, pergunta):
         pergunta.setObjectName("pergunta")
-        pergunta.resize(224, 130)
+        pergunta.setFixedSize(224, 130)
+       #pergunta.resize(224, 130)
         self.formLayoutWidget = QtWidgets.QWidget(pergunta)
         self.formLayoutWidget.setGeometry(QtCore.QRect(10, 90, 201, 33))
         self.formLayoutWidget.setObjectName("formLayoutWidget")
