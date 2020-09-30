@@ -1,13 +1,20 @@
 #!/usr/bin/env python3
 
-from os import system, getcwd
+from os import system, getcwd, path
 import platform
 import findspark
-findspark.init('{}/spark-3.0.0-bin-hadoop3.2/'.format(getcwd()))
-system('export SPARK_HOME="{}/spark-3.0.0-bin-hadoop3.2/"'.format(getcwd()))
-system('export PATH="$SPARK_HOME/bin"')
-system('export PYSPARK_PYTHON=python3')
-system('export PATH="$PATH:{}/spark-3.0.0-bin-hadoop3.2/"'.format(getcwd()))
+spark_home = path.join(path.dirname(__file__), 'spark-3.0.0-bin-hadoop3.2')
+findspark.init(spark_home)
+if platform.system().lower() == 'linux':
+    system(f'export SPARK_HOME="{spark_home}/spark-3.0.0-bin-hadoop3.2/"')
+    system('export PATH="$spark_home/bin"')
+    system('export PYSPARK_PYTHON=python3')
+    system('export PATH="$PATH:{spark_home}/spark-3.0.0-bin-hadoop3.2/"')
+elif platform.system().lower() == 'windows':
+    system(f'setx SPARK_HOME "{spark_home}/spark-3.0.0-bin-hadoop3.2/"')
+    system('setx PATH "$spark_home/bin"')
+    system('setx PYSPARK_PYTHON python3')
+    system('setx PATH "$PATH:{spark_home}/spark-3.0.0-bin-hadoop3.2/"')
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SparkSession
 from pyspark.sql.types import DateType, StringType
@@ -16,18 +23,22 @@ from pyspark.sql.functions import (year, month, col, sum, udf, substring,
 
 
 def memory():
-    with open('/proc/meminfo', 'r') as mem:
-        ret = {}
-        tmp = 0
-        for i in mem:
-            sline = i.split()
-            if str(sline[0]) == 'MemTotal:':
-                ret['total'] = int(sline[1])
-            elif str(sline[0]) in ('MemFree:', 'Buffers:', 'Cached:'):
-                tmp += int(sline[1])
-        ret['free'] = tmp
-        ret['used'] = int(ret['total']) - int(ret['free'])
-    return round(int(ret['total'] / 1024) / 1000)
+    if platform.system().lower() == 'linux':
+        with open('/proc/meminfo', 'r') as mem:
+            ret = {}
+            tmp = 0
+            for i in mem:
+                sline = i.split()
+                if str(sline[0]) == 'MemTotal:':
+                    ret['total'] = int(sline[1])
+                elif str(sline[0]) in ('MemFree:', 'Buffers:', 'Cached:'):
+                    tmp += int(sline[1])
+            ret['free'] = tmp
+            ret['used'] = int(ret['total']) - int(ret['free'])
+        return round(int(ret['total'] / 1024) / 1000)
+
+    elif platform.system().lower() == 'windows':
+        return 4
 
 
 def spark_conf(app_name, n_cores="*", executor_memory=2,
