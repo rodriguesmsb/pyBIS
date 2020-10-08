@@ -27,21 +27,6 @@ import pandas as pd
 from f_spark import memory, spark_conf, start_spark
 
 
-class Worker(QObject):
-
-    finished = pyqtSignal()
-    intReady = pyqtSignal(int)
-
-    def __init__(self, fn, *args):
-        super().__init__()
-        self.fn = fn
-        self.args = args
-
-    def execute(self):
-        self.fn(*self.args)
-        self.finished.emit()
-
-
 class Thread(QThread):
 
     intReady = pyqtSignal()
@@ -136,7 +121,7 @@ class MainWindow(QMainWindow):
         self.qcombo_select_system.setGeometry(40, 35, 210, 30)
 
         self.qcombo_select_database = QComboBox(self.tab_manipulate)
-        self.qcombo_select_database.currentTextChanged.connect(self.att_database)
+#       self.qcombo_select_database.currentTextChanged.connect(self.update_lines)
         self.qcombo_select_database.setEnabled(False)
         self.qcombo_select_database.setGeometry(40, 95, 210, 30)
 
@@ -150,7 +135,7 @@ class MainWindow(QMainWindow):
         self.qcombo_select_limit.setEnabled(False)
         self.qcombo_select_limit.setGeometry(330, 95, 210, 30)
 
-        self.push_button_gen_csv = QPushButton('CARREGAR CSV',
+        self.push_button_gen_csv = QPushButton('CARREGAR BANCO',
                                                self.tab_manipulate)
         self.push_button_gen_csv.clicked.connect(self.download_csv_dbc)
 
@@ -222,7 +207,8 @@ class MainWindow(QMainWindow):
 
         self.qcombo_columns = QComboBox(self.tab_profile)
         self.qcombo_columns.setEditable(True)
-        self.qcombo_columns.currentTextChanged.connect(self.get_lines)
+        self.qcombo_columns.setEnabled(False)
+        self.qcombo_columns.currentTextChanged.connect(self.altera_linhas)
         self.qcombo_columns.setGeometry(40, 35, 210, 30)
 
         self.table_dict = QTableWidget(1, 3, self.tab_profile)
@@ -237,65 +223,73 @@ class MainWindow(QMainWindow):
 
 ###############################################################################
 
-    def att_database(self):
-        animais = [
-            'Animais Peçonhentos', 'Botulismo', 'Chagas',
-            'Cólera', 'Coqueluche', 'Difteria', 'Esquistossomose',
-            'Febre Maculosa', 'Febre Tifóide', 'Hanseníase',
-            'Leptospirose', 'Meningite', 'Raiva', 'Tétano', 'Tuberculose'
-        ]
-        obito = ['Óbito', 'Óbito Fetal']
+    def load_columns(self):
+        if self.data.columns[0] == '_c0':
+            self.qcombo_columns.setEnabled(True)
+            columns = [column for column in self.data.columns[1:]]
+        else:
+            self.qcombo_columns.setEnabled(True)
+            columns = [column for column in self.data.columns]
 
-        if self.qcombo_select_database.currentText() == 'Animais Peçonhentos':
-            anim = pd.read_csv('dic_animal.csv')
-            try:
-                columns = self.data.columns[1:]
-                self.qcombo_columns.addItems(columns)
-            except AttributeError:
-                ...
+        return columns
 
-    def graphic(self):
-        variavel = self.qcombo_columns.currentText()
-        self.data.groupby(variavel).count().show()
+    def load_table(self):
+        self.qcombo_columns.clear()
+
+        choice = {
+            'Óbito': 'obito', 'Óbito Fetal': 'obito_fetal.csv',
+            'Animais Peçonhentos': 'sinan_animais.csv',
+            'Botulismo': 'sinan_botulismo.csv', 'Chagas': 'sinan_chagas.csv',
+            'Cólera': 'sinan_colera.csv', 'Coqueluche': 'sinan_coqueluche.csv',
+            'Difteria': 'sinan_difteria.csv',
+            'Esquistossomose': 'sinan_esquistossomose.csv',
+            'Febre Maculosa': 'sinan_maculosa',
+            'Febre Tifóide': 'sinan_tifoide.csv',
+            'Hanseníase': 'sinan_hanseniase.csv',
+            'Leptospirose': 'sinan_leptospirose.csv',
+            'Meningite': 'sinan_meningite', 'Raiva': 'sinan_raiva.csv',
+            'Tétano': 'sinan_tetano.csv',
+            'Tuberculose': 'sinan_tuberculose.csv',
+            'Nascidos Vivos': 'sinasc_nascidos.csv'
+        }
+        try:
+            if self.qcombo_select_database.currentText() in choice.keys():
+                self.df = pd.read_csv(
+                    choice.get(self.qcombo_select_database.currentText()))
+            self.qcombo_columns.addItems(self.load_columns())
+        except:
+            ...
 
     @pyqtSlot(str)
-    def get_lines(self, text):
-        animais = ['Animais Peçonhentos', 'Botulismo', 'Chagas',
-                   'Cólera', 'Coqueluche', 'Difteria', 'Esquistossomose',
-                   'Febre Maculosa', 'Febre Tifóide', 'Hanseníase',
-                   'Leptospirose', 'Meningite', 'Raiva', 'Tétano', 'Tuberculose']
-        obito = ['Óbito', 'Óbito Fetal']
+    def altera_linhas(self, text):
+        if text in [obj for obj in self.df['variavel']]:
+            val = self.df.loc[self.df['variavel'] == text].index[0]
+            variavel, descricao, classe = self.df.iloc[val, [0, 1, 2]]
+            self.table_dict.setItem(0, 0, QTableWidgetItem(variavel))
+            self.table_dict.setItem(0, 1, QTableWidgetItem(descricao))
 
-        if self.qcombo_select_database.currentText() == 'Animais Peçonhentos':
-            df = pd.read_csv('dic_animal.csv')
-            if text in [obj for obj in df['variavel']]:
-                val = df.loc[df['variavel'] == text].index[0]
-                variavel, descricao, classe = df.iloc[val, [0, 1, 2]]
-                self.table_dict.setItem(0, 0, QTableWidgetItem(variavel))
-                self.table_dict.setItem(0, 1, QTableWidgetItem(descricao))
+            try:
                 self.table_dict.setItem(0, 2,
                                         QTableWidgetItem(
                                             classe.strip('{').strip('}')))
-                # try:
-                data_groupby = self.data.groupby(text).count().take(10)
-                column_var = list(dict(data_groupby).keys())
-                column_value = list(dict(data_groupby).values())
+            except:
+                ...
 
-                fig = go.Figure(data=[{'type': 'bar', 'x': column_var,
-                                       'y': column_value}])
-                fig.update_layout(
-                    title=self.qcombo_select_system.currentText(),
-                    xaxis_title=text,
-                    yaxis_title='count')
+            self.exibe_dados(text)
 
-                self.fig_view = self.show_qt(fig)
-                # except:
-                #   print('um erro aqui')
-            else:
-                self.table_dict.clear()
+    def exibe_dados(self, text):
+        data_groupby = self.data.groupby(text).count().take(10)
+        column_var = list(dict(data_groupby).keys())
+        column_value = list(dict(data_groupby).values())
 
-        if self.qcombo_select_database.currentText() != 'Animais Peçonhentos':
-            self.qcombo_columns.clear()
+        fig = go.Figure(data=[{'type': 'bar', 'x': column_var,
+                               'y': column_value}])
+        fig.update_layout(
+            title=self.qcombo_select_system.currentText(),
+            xaxis_title=text,
+            yaxis_title='count')
+
+        self.fig_view = self.show_qt(fig)
 
     def change_base_system(self):
         self.qcombo_select_database.clear()
@@ -304,9 +298,6 @@ class MainWindow(QMainWindow):
         if self.qcombo_select_system.currentText() == 'SIM':
             obitos = ['Todos', 'Óbito', 'Óbito Fetal']
             self.qcombo_select_database.addItems(obitos)
-
-#           fig = go.Figure(data=[{'type': 'scattergl', 'y': [2, 1, 3, 1]}])
-#           self.fig_view = self.show_qt(fig)
 
         elif self.qcombo_select_system.currentText() == 'SINAN':
             animais = [
@@ -317,26 +308,11 @@ class MainWindow(QMainWindow):
             ]
             self.qcombo_select_database.addItems(animais)
 
-#           try:
-#               self.fig_view.destroy()
-#           except:
-#               ...
-
         elif self.qcombo_select_system.currentText() == 'SINASC':
             self.qcombo_select_database.addItem('Nascidos Vivos')
 
-            try:
-                self.fig_view.destroy()
-            except:
-                ...
-
         elif self.qcombo_select_system.currentText() == 'SELECIONAR SISTEMA':
             self.qcombo_select_database.setEnabled(False)
-
-            try:
-                self.fig_view.destroy()
-            except:
-                ...
 
     def insert_region_combobox(self):
         self.qcombo_select_limit.clear()
@@ -354,7 +330,6 @@ class MainWindow(QMainWindow):
             self.qcombo_select_limit.setEnabled(False)
 
     def range_date(self):
-
         if self.qslider_init_date.value() < self.qslider_final_date.value():
             return [date for date in range(self.qslider_init_date.value(),
                                            self.qslider_final_date.value()
@@ -403,19 +378,19 @@ class MainWindow(QMainWindow):
                     if value[2] == self.qcombo_select_limit.currentText()]
 
     def download_csv_dbc(self):
-
-        dict_disease = {'Óbito': 'DO', 'Óbito Fetal': 'DOFE',
-                        'Animais Pençonhentos': 'ANIM', 'Botulismo': 'BOTU',
-                        'Chagas': 'CHAG', 'Cólera': 'COLE',
-                        'Coqueluche': 'COQU', 'Difteria': 'DIFT',
-                        'Esquistossomose': 'ESQU', 'Febre Maculosa': 'FMAC',
-                        'Febre Tifóide': 'FTIF', 'Hanseníase': 'HANS',
-                        'Leptospirose': 'LEPT', 'Meningite': 'MENI',
-                        'Raiva': 'RAIV', 'Tétano': 'TETA',
-                        'Tuberculose': 'TUBE'}
+        dict_database = {
+            'Óbito': 'DO', 'Óbito Fetal': 'DOFE',
+            'Animais Pençonhentos': 'ANIM', 'Botulismo': 'BOTU',
+            'Chagas': 'CHAG', 'Cólera': 'COLE',
+            'Coqueluche': 'COQU', 'Difteria': 'DIFT',
+            'Esquistossomose': 'ESQU', 'Febre Maculosa': 'FMAC',
+            'Febre Tifóide': 'FTIF', 'Hanseníase': 'HANS',
+            'Leptospirose': 'LEPT', 'Meningite': 'MENI',
+            'Raiva': 'RAIV', 'Tétano': 'TETA',
+            'Tuberculose': 'TUBE'
+        }
 
         if 'SELECIONAR SISTEMA' != self.qcombo_select_system.currentText():
-
             date = self.range_date()
             states = self.get_qcombobox()
 
@@ -448,8 +423,6 @@ class MainWindow(QMainWindow):
 
     def clean_folder(self, system):
         [button.setEnabled(False) for button in self.all_buttons]
-        data_dbf = [x for x in glob(expanduser(
-            f'~/Documentos/files_db/{system}/*.dbf'))]
         data_DBC = [x for x in glob(expanduser(
             f'~/Documentos/files_db/{system}/*.DBC'))]
         data_dbc = [x for x in glob(expanduser(
@@ -460,11 +433,30 @@ class MainWindow(QMainWindow):
 
         list(map(remove, data_dbc))
         list(map(remove, data_DBC))
-        list(map(remove, data_dbf))
+        self.clean_dbf(system)
         [button.setEnabled(True) for button in self.all_buttons]
 
-    def start_spark_qt(self):
+    def clean_dbf(self, system):
+        data_dbf = [x for x in glob(expanduser(
+            f'~/Documentos/files_db/{system}/*.dbf'))]
 
+        list(map(remove, data_dbf))
+
+    def convert_or_no(self, system):
+        try:
+            check = ''
+            for db in listdir(expanduser(f'~/Documentos/files_db/{system}/')):
+                if (db.endswith('.dbc') or db.endswith('.DBC')
+                        or db.endswith('.dbf')):
+                    check = True
+                else:
+                    ...
+
+            return check
+        except:
+            ...
+
+    def start_spark_qt(self):
         if self.qcombo_select_system.currentText() != 'SELECIONAR SISTEMA':
             system = self.qcombo_select_system.currentText()
 
@@ -481,14 +473,7 @@ class MainWindow(QMainWindow):
             dbc_folder = glob(expanduser(
                 f'~/Documentos/files_db/{system}/*.csv'))
 
-            check = ''
-            for db in listdir(expanduser(f'~/Documentos/files_db/{system}/')):
-                if (db.endswith('.dbc') or db.endswith('.DBC') or
-                        db.endswith('.dbf')):
-                    check = True
-                else:
-                    ...
-            if check:
+            if self.convert_or_no(system):
                 try:
                     self.clean = Thread(self.clean_folder, system)
                     self.clean.start()
@@ -506,6 +491,8 @@ class MainWindow(QMainWindow):
                 self.insercao.start()
             except:
                 ...
+
+            self.load_table()
 
     def insert_data_table(self, data):
         self.table_preview.clear()

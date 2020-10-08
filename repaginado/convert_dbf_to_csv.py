@@ -11,13 +11,13 @@ class ReadDbf:
     fluxograma  [+] dbc -> dbf -> csv [+]
     """
 
-    def __init__(self, file_dbf, convert=True):
+    def __init__(self, file_dbf, convert='convert'):
         """A instancia recebe um parametro o nome do arquivo dbf
         e abre uma lista para os itens que serão iterados no dbf
         """
         self.file_dbf = file_dbf
 
-        if convert:
+        if convert == 'convert':
             if path.isfile(self.file_dbf):
                 self.read_dbf_to_csv(
                     self.__check_file_dbf(file_dbf))

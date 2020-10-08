@@ -29,7 +29,7 @@ class PyDatasus:
 
         self.__DICT_DISEASE = {
             'Óbito': 'DO', 'Óbito Fetal': 'DOFE',
-            'Animais Pençonhentos': 'ANIM', 'Botulismo': 'BOTU',
+            'Animais Peçonhentos': 'ANIM', 'Botulismo': 'BOTU',
             'Chagas': 'CHAG', 'Cólera': 'COLE',
             'Coqueluche': 'COQU', 'Difteria': 'DIFT',
             'Esquistossomose': 'ESQU', 'Febre Maculosa': 'FMAC',
