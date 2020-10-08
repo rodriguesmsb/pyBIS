@@ -5,6 +5,9 @@ from os import path, listdir, system
 from dbfread import DBF
 import pandas as pd
 
+folder = path.dirname(__file__)
+blast_dbf = path.join(folder, 'blast_dbf')
+
 
 class ReadDbf:
     """Converte o arquivo database inserido de acordo com o
@@ -36,7 +39,7 @@ class ReadDbf:
             return file_dbf
 
         elif bool(file_dbf.endswith(('.dbc', '.DBC'))):
-            system(f"blast-dbf {file_dbf} {file_dbf.split('.')[0]}.dbf")
+            system(f"./blast-dbf {file_dbf} {file_dbf.split('.')[0]}.dbf")
             return file_dbf.split('.')[0] + '.dbf'
 
         else:
