@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import pathlib
 from os import path, mkdir
 from os.path import expanduser
 import ftplib as ftp
@@ -217,7 +218,7 @@ class PyDatasus:
             regex_1 = self.create_regex_type_select(
                 database, states, dates, dict_states)
 
-        self.__platform(system)
+        self.__create_folders(system)
         self.f = open('{}{}.csv'.format(self.path_files_csv, system), 'w+')
         # self.f = open(f'{self.path_files_csv}{system}.csv', 'w+')
         # self.f = open('teste.csv', 'w+')
@@ -231,61 +232,33 @@ class PyDatasus:
         """
         for i in args:
             if i != 'SELECIONAR SISTEMA':
-                self.__platform(i)
+                self.__create_folders(i)
                 self.__sep_db_complete(i, i)
 
     def get_db_partial(self, system, base):
         """Baixa os arquivos db* a partir de um csv existente."""
 
-        self.__platform(system)
+        self.__create_folders(system)
         self.__sep_db_partial(system, base)
 
-    def __platform(self, banco):
-        """Confere a plataforma do sistema para criar os diretórios para
-        download dos arquivos csv e db*.
-        """
+    def __create_folders(self, banco):
 
-        if system().lower() == 'linux':
-            self.__if_linux(banco)
-
-        elif system().lower == 'windows':
-            self.__if_windows(banco)
-
-    def __if_linux(self, banco):
-        """Executa caso o sistema seja linux."""
         self.path_files_csv = path.expanduser('~/Documentos/files_csv/')
         self.path_files_db = path.expanduser('~/Documentos/files_db/')
         try:
-            mkdir(self.path_files_csv)
+            pathlib.Path(self.path_files_csv).mkdir(parents=True,
+                                                    exist_ok=True)
         except:
             pass
 
         try:
-            mkdir(self.path_files_db)
+            pathlib.Path(self.path_files_db).mkdir(parents=True,
+                                                   exist_ok=True)
         except:
             pass
 
         try:
             mkdir(self.path_files_db + banco + '/')
-        except:
-            pass
-
-    def __if_windows(self, banco):
-        """Executa caso o sistema seja windows."""
-        self.path_files_csv = path.expanduser('~/Documentos/files_csv/')
-        self.path_files_db = path.expanduser('~/Documentos/files_db/')
-        try:
-            mkdir(self.path_files_csv)
-        except:
-            pass
-
-        try:
-            mkdir(elf.path_files_db)
-        except:
-            pass
-
-        try:
-            mkdir(self.path_files_db + banco + '\\')
         except:
             pass
 
