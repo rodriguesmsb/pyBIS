@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 from sys import argv, exit
-from os.path import expanduser
-from os.path import isfile
+from os.path import expanduser, isfile, dirname, join
 from os import listdir, remove
 from multiprocessing import cpu_count
 from time import sleep
@@ -15,9 +14,9 @@ from PyQt5.QtWidgets import (QMainWindow, QApplication, QTabWidget, QWidget,
                              QRadioButton, QPushButton, QProgressBar,
                              QSlider, QSpinBox, QLabel, QComboBox, QMessageBox,
                              QTableWidget, QDialog, QTableWidgetItem,
-                             QHeaderView)
+                             QHeaderView, QSizePolicy)
 from PyQt5.QtCore import (QRect, pyqtSlot, QThread, pyqtSignal,
-                          QObject)
+                          QObject, QSize)
 from PyQt5 import QtCore
 from PyQt5.QtGui import QFont
 from pydatasus import PyDatasus
@@ -114,8 +113,8 @@ class MainWindow(QMainWindow):
     def buttons(self):
 
         self.qcombo_select_system = QComboBox(self.tab_manipulate)
-        self.qcombo_select_system.addItems(['SELECIONAR SISTEMA', 'SIM',
-                                            'SINAN', 'SINASC'])
+        self.qcombo_select_system.addItems(['SELECIONAR SISTEMA', 'SIHS',
+                                            'SIM', 'SINAN', 'SINASC'])
         self.qcombo_select_system.currentTextChanged.connect(
             self.change_base_system)
         self.qcombo_select_system.setGeometry(40, 35, 210, 30)
@@ -127,7 +126,8 @@ class MainWindow(QMainWindow):
 
         self.qcombo_select_state = QComboBox(self.tab_manipulate)
         self.qcombo_select_state.addItems(['TODOS', 'ESTADO', 'REGIÃO'])
-        self.qcombo_select_state.currentTextChanged.connect(self.insert_region_combobox)
+        self.qcombo_select_state.currentTextChanged.connect(
+            self.insert_region_combobox)
 
         self.qcombo_select_state.setGeometry(330, 35, 210, 30)
 
@@ -197,7 +197,8 @@ class MainWindow(QMainWindow):
             self.qcombo_select_system, self.qcombo_select_database,
             self.qcombo_select_state, self.qcombo_select_limit,
             self.push_button_gen_csv, self.push_button_stop,
-            self.push_button_apply]
+            self.push_button_apply
+        ]
 
         self.progress_bar = QProgressBar(self.tab_manipulate)
         self.progress_bar.setValue(0)
@@ -221,6 +222,11 @@ class MainWindow(QMainWindow):
         self.table_dict.setItem(0, 1, QTableWidgetItem('Descrição'))
         self.table_dict.setItem(0, 2, QTableWidgetItem('Classe'))
 
+        self.qpush_graphic = QPushButton('Gerar Gráfico', self.tab_profile)
+        self.qpush_graphic.clicked.connect(
+            self.exibe_dados)
+
+        self.qpush_graphic.setGeometry(40, 100, 210, 30)
 ###############################################################################
 
     def load_columns(self):
@@ -235,38 +241,49 @@ class MainWindow(QMainWindow):
 
     def load_table(self):
         self.qcombo_columns.clear()
+        pasta_raiz = dirname(__file__)
+        pasta_dicionario = join(pasta_raiz, 'dicionarios')
 
         choice = {
-            'Óbito': 'obito', 'Óbito Fetal': 'obito_fetal.csv',
+            'Óbito': 'sim_obito.csv',
+            'Óbito Fetal': 'sim_obito_fetal.csv',
             'Animais Peçonhentos': 'sinan_animais.csv',
-            'Botulismo': 'sinan_botulismo.csv', 'Chagas': 'sinan_chagas.csv',
-            'Cólera': 'sinan_colera.csv', 'Coqueluche': 'sinan_coqueluche.csv',
+            'Botulismo': 'sinan_botulismo.csv',
+            'Chagas': 'sinan_chagas.csv',
+            'Cólera': 'sinan_colera.csv',
+            'Coqueluche': 'sinan_coqueluche.csv',
             'Difteria': 'sinan_difteria.csv',
             'Esquistossomose': 'sinan_esquistossomose.csv',
             'Febre Maculosa': 'sinan_maculosa',
             'Febre Tifóide': 'sinan_tifoide.csv',
             'Hanseníase': 'sinan_hanseniase.csv',
             'Leptospirose': 'sinan_leptospirose.csv',
-            'Meningite': 'sinan_meningite', 'Raiva': 'sinan_raiva.csv',
+            'Meningite': 'sinan_meningite',
+            'Raiva': 'sinan_raiva.csv',
             'Tétano': 'sinan_tetano.csv',
             'Tuberculose': 'sinan_tuberculose.csv',
             'Nascidos Vivos': 'sinasc_nascidos.csv'
         }
         try:
             if self.qcombo_select_database.currentText() in choice.keys():
-                self.df = pd.read_csv(
-                    choice.get(self.qcombo_select_database.currentText()))
+                dicionario = choice.get(
+                    self.qcombo_select_database.currentText())
+                print(pasta_dicionario + '/' + dicionario)
+                self.df = pd.read_csv(pasta_dicionario + '/' + dicionario)
             self.qcombo_columns.addItems(self.load_columns())
         except:
             ...
 
     @pyqtSlot(str)
     def altera_linhas(self, text):
-        if text in [obj for obj in self.df['variavel']]:
-            val = self.df.loc[self.df['variavel'] == text].index[0]
-            variavel, descricao, classe = self.df.iloc[val, [0, 1, 2]]
-            self.table_dict.setItem(0, 0, QTableWidgetItem(variavel))
-            self.table_dict.setItem(0, 1, QTableWidgetItem(descricao))
+        try:
+            if text in [obj for obj in self.df['variavel']]:
+                val = self.df.loc[self.df['variavel'] == text].index[0]
+                variavel, descricao, classe = self.df.iloc[val, [0, 1, 2]]
+                self.table_dict.setItem(0, 0, QTableWidgetItem(variavel))
+                self.table_dict.setItem(0, 1, QTableWidgetItem(descricao))
+        except:
+            ...
 
             try:
                 self.table_dict.setItem(0, 2,
@@ -275,9 +292,8 @@ class MainWindow(QMainWindow):
             except:
                 ...
 
-            self.exibe_dados(text)
-
-    def exibe_dados(self, text):
+    def exibe_dados(self):
+        text = self.qcombo_columns.currentText()
         data_groupby = self.data.groupby(text).count().take(10)
         column_var = list(dict(data_groupby).keys())
         column_value = list(dict(data_groupby).values())
@@ -522,7 +538,9 @@ class MainWindow(QMainWindow):
 
     def show_qt(self, fig):
         raw_html = '<html><head><meta charset="utf-8" />'
-        raw_html += '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script></head>'
+        raw_html += '''
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script></head>
+        '''
         raw_html += '<body>'
         raw_html += po.plot(fig, include_plotlyjs=False, output_type='div')
         raw_html += '</body></html>'
