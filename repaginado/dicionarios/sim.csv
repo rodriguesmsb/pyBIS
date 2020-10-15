@@ -1,0 +1,89 @@
+variavel,descricao,classe
+ano_nasc,Ano do nascimento,
+ano_obito,Ano do óbito,
+ASSISTMED,Assistência médica,1 – sim; 2 – não; 9 – ignorado
+CAUSABAS,Causa básica do óbito,
+CIRURGIA,Indicação de realização de cirurgia,Cirurgia: 1 – sim; 2 – não; 9 – ignorado
+causabas_capitulo,Capítulo CID-10 da causa base do óbito,
+causabas_categoria,Categoria CID-10 da causa base do óbito,
+causabas_subcategoria,Subcategoria CID-10 da causa base do óbito,
+data_nasc,Data de nascimento,
+data_obito,Data de ocorrência do óbito,
+def_acid_trab,Indicação de ocorrência de acidente de trabalho,
+def_assist_med,Assistência médica,
+def_circ_obito,Indicação da provável circunstância de morte não natural (nominal),
+def_cirurgia,Indica se houve cirurgia,"Sim, Não ou Ignorado"
+def_escol,Escolaridade,"Nominal, com as seguintes classificaçoes: Nenhuma, de 1 a 3 anos; de 4 a 7 anos; de 8 a 11 anos; de 5 a 12 anos e mais e Ignorado"
+def_escol_mae,Escolaridade da mãe,"Nominal, com as seguintes classificaçoes: Nenhuma, de 1 a 3 anos; de 4 a 7 anos; de 8 a 11 anos; de 5 a 12 anos e mais e Ignorado"
+def_est_civil,Estado civil,"Nominal, com as seguintes classificações: Solteiro; Casado; Viúvo; Separado Judicialmente/divorciado; União Estável; Ignorado"
+def_exame,Indicação de realização de exame,"Nominal, com as seguintes classificações: Sim; Não; Ignorado"
+def_fonte,Fonte de informação,"Nominal, com as seguintes classificações: Boletim de Ocorrência; Hospital; Família; Outra; Ignorado"
+def_gestaco,Semana de gestação,"Nominal, com as seguintes classificações: Menos de 22 semanas; 22 a 27 semanas; 28 a 31 semanas; 32 a 36 semanas; 37 a 41 semanas; 42 semanas ou mais"
+def_gravidez,Tipo de gravidez,"Nominal, com as seguintes classificações: Única; Dupla; Tripla e mais e Ignorada"
+def_loc_ocor,Local de ocorrência do óbito,"Nominal, com as seguintes classificações: Hospital; Outros estabelecimentos de saúde; Domicílio; Via pública; Outros; Ignorado"
+def_necropsia,Confirmação do diagnóstico por necropsia,"Nominal, com as seguintes classificações: Sim; Não; Ignorado"
+def_obito_grav,Indicação de ocorrência do óbito durante a gravidez,
+def_obito_parto,Indicação de como foi a morte em relação ao parto,"Nominal, com as seguintes classificações: Antes; Durante; Depois e Ignorado"
+def_obito_puerp,Indicação de óbito no puerpério,"Nominal, com as seguintes classificações: Sim, até 42 dias após o parto; Sim, de 43 dias a 1 anos; Não e Ignorado"
+def_parto,Tipo de parto,"Nominal, com as seguintes classificações: Vaginal; Cesáreo; Ignorado"
+def_raca_cor,Raça/cor,"Nominal, com as seguintes classificações: Branca; Preta; Amarela; Parda; Indígena"
+def_sexo,Sexo,"Nominal, com as seguintes classificações: Masculino; Feminino; Ignorado"
+def_tipo_obito,"Tipo de óbito (Nominal, com as seguintes classificações: Feral e Não Fetal)",
+dia_semana_nasc,Dia da semana em que ocorreu o nascimento,
+dia_semana_obito,Dia da semana em que ocorreu o óbito,
+DTNASC,Data de nascimento,
+DTOBITO,Data do óbito,
+ESC,Grau de instrução,Escolaridade em anos. Valores: 1 – Nenhuma; 2 – de 1 a 3 anos; 3 –de 4 a 7 anos; 4 – de 8 a 11 anos; 5 – 12 anos e mais; 9 – Ignorado
+ESCMAE,Escolaridade da mãe,Escolaridade em anos. Valores: 1 – Nenhuma; 2 – de 1 a 3 anos; 3 –de 4 a 7 anos; 4 – de 8 a 11 anos; 5 – 12 anos e mais; 9 – Ignorado
+ESTCIVIL,Estado civil,Situação conjugal: 1 – Solteiro; 2 – Casado; 3 – Viúvo; 4 – Separado judicialmente/divorciado; 5 – União estável; 9 – Ignorado
+EXAME,Indicação de realização de exame complementar,Exame: 1 – sim; 2 – não; 9 – ignorado
+FONTE,Fonte de informação,1 – boletim de ocorrência; 2 – hospital; 3 – família; 4 – outra; 9 – ignorado
+GESTACAO,Semanas de gestação,1 – Menos 22 semanas; 2 – 22 a 27 semanas; 3 – 28 a 31 semanas; 4 – 32 a 36 semanas; 5 – 37 a 41 semanas; 6 – 42 e + semanas
+GRAVIDEZ,Informação sobre o tipo de gravidez,1 – única; 2 – dupla; 3 – tripla e Mais; 9 – ignorada
+IDADE,Idade,
+idade_obito,Idade do óbito informada na declaração de óbito,
+idade_obito_calculado,Idade do óbito calculado utilizando a data de óbito e a data de nascimento,
+IDADEMAE,Idade da mãe,
+LINHAA,CIDs informados na linha A da DO,
+LINHAB,CIDs informados na linha B da DO,
+LINHAC,CIDs informados na linha C da DO,
+LINHAD,CIDs informados na linha D da DO,
+LINHAII,CIDs informados na linha II da DO,
+LOCOCOR,Local de ocorrência do óbito,1 – hospital; 2 – outros estabelecimentos de saúde; 3 – domicílio; 4 – via pública; 5 – outros; 9 – ignorado
+NATURAL,Naturalidade,
+NECROPSIA,Confirmação do diagnóstico por necropsia,1 – sim; 2 – não; 9 – ignorado
+NUMERODO,Número da declaração de óbito,
+OBITOGRAV,Óbito na gravidez,1 – sim; 2 – não; 9 – ignorado
+OBITOPARTO,Informação sobre como foi a morte em relação ao parto,1 – antes; 2 – durante; 3 – depois; 9 – Ignorado
+OBITOPUERP,"Óbito no puerpério,""(Óbito no puerpério: 1 – Sim, até 42 dias após o parto; 2 – Sim, de 43 dias a 1 ano; 3 – Não; 9 – Ignorado)",
+ocor_amazonia,Indica (S/N) se faz parte da Amazônia Legal (conforme IBGE),
+ocor_capital,Indica (S/N) se é capital de UF,
+ocor_codmun_adotado,"Armazena o código atribuído ao município atualmente, tratando os casos em que múltiplos códigos tenham sido utilizados para um mesmo município ao longo do tempo.",
+ocor_fronteira,Indica (S/N) se o município de ocorrência do óbito faz parte da faixa de fronteira (conforme IBGE),
+ocor_lat,Latitude do município de ocorrência do óbito,
+ocor_localizacao.coords,Localização das coordenadas de ocorrência do óbito,
+ocor_long,Longitude do município de ocorrência do óbito,
+ocor_nome_municipio,Nome do município de ocorrência do óbito,
+ocor_nomex_municipio,Nome do município de ocorrência do óbito  em maiúsculas e sem acentos,
+ocor_nome_uf,Nome da unidade da federação de ocorrência do óbito,
+ocor_sigla_uf,Sigla da unidade da federação de ocorrência do óbito,
+OCUP,Ocupação da pessoa que foi à óbito,
+OCUPMAE,Ocupação da mãe,
+PARTO,Tipo de parto,1 – vaginal; 2 – cesáreo; 9 – ignorado
+PESO,Peso ao nascer em gramas,
+QTDFILMORT,Número de filhos mortos,
+QTDFILVIVO,Número de filhos vivos,
+RACACOR,Raça/cor,Raça: 1 – Branca; 2 – Preta; 3 – Amarela; 4 – Parda; 5 – Indígena
+res_amazonia,Indica (S/N) se  o município de residência da pessoa que foi à óbito faz parte da Amazônia Legal (conforme IBGE),
+res_capital,Indica (S/N) se  o município de residência da pessoa que foi à óbito é capital de UF,
+res_codmun_adotado,"Armazena o código atribuído ao município de atualmente, tratando os casos em que múltiplos códigos tenham sido utilizados para um mesmo município ao longo do tempo.",
+res_fronteira,Indica (S/N) se o município de residência faz parte da faixa de fronteira (conforme IBGE),
+res_lat,Latitude do município de residência da pessoa que foi à óbito,
+res_nome_municipio,Nome do município de residência da pessoa que foi à óbito,
+res_nome_uf,Nome da unidade da federação de residência do paciente,
+res_nomex_municipio,Nome do município de residência da pessoa que foi à óbito em maiúsculas e sem acentos,
+res_sigla_uf,Sigla da unidade da federação de residência da pessoa que foi à óbito,
+res_localizacao.coords,Coordenadas do município de residência da pessoa que foi à óbito,
+res_long,Longitude do município de residência da pessoa que foi à óbito,
+SEXO,Sexo,M – masculino; F – feminino; I – ignorado
+TIPOBITO,Tipo do óbito,1 – fetal; 2‐ não fetal

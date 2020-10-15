@@ -1,0 +1,5 @@
+variavel,descrição,classe
+SEXO,Genero do paciente,"{0:'Ignorado',1:'Masculino',2:'Feminino'}"
+GESTAO,Indica o tipo de gestão do hospital,"{0:'Gestão estadudal',1:'Gestão plena municipal',2:'Gestão plena estadual'}"
+COD_IDADE,Unidade de medida de idade,"{0:'Ignorada',2:'Dias',3:'Meses',4:'Anos'}"
+MORTE,Indica se o paciente teve saída com morte,"{0:'Não',1:'Sim'}"
