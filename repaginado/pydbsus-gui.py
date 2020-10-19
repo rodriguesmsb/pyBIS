@@ -5,13 +5,12 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QTabWidget, QWidget,
                              QProgressBar, QComboBox, QSlider, QSpinBox,
                              QGridLayout, QComboBox, QSizePolicy, QLineEdit,
                              QProgressBar, QGroupBox, QLabel, QTableWidget,
-                             QPushButton, QTableWidgetItem, QFileDialog)
+                             QPushButton, QTableWidgetItem, QFileDialog,
+                             QHeaderView)
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import (QObject, QThread, QSize, QRect, Qt, pyqtSignal,
                           pyqtSlot, QFile)
 import qdarkstyle
-
-
 
 
 class _Loop(QThread):
@@ -273,8 +272,10 @@ class Etl(QWidget):
         self.main_layout = QGridLayout()
 
         self.tabela_adicionar = QTableWidget(150, 1)
+        self.tabela_adicionar.setColumnWidth(0, 520)
+
         self.tabela_aplicar = QTableWidget(150, 1)
-        self.tabela_aplicar = QTableWidget(150, 1)
+        self.tabela_aplicar.setColumnWidth(0, 520)
         self.botao_adicionar = QPushButton('Adicionar')
         self.botao_remover = QPushButton('Remover')
         self.botao_aplicar = QPushButton('Aplicar')
@@ -338,12 +339,13 @@ class Etl(QWidget):
                                      Qt.AlignTop)
         self.grid_exportar.addWidget(self.botao_exportar, 1, 1)
 
-        self.botao_salvar_html = QPushButton('Salvar Imagem')
+        self.botao_salvar_html = QPushButton('Gerar Profile')
 
         self.grupo_profile = QGroupBox('Profile')
         self.grid_profile = QGridLayout()
 
-        self.grid_profile.addWidget(self.botao_salvar_html, 0, 0)
+        self.grid_profile.addWidget(self.botao_salvar_html, 0, 0,
+                                    Qt.AlignJustify)
 
         self.grupo_extracao.setLayout(self.grid_extracao)
         self.grupo_transformar.setLayout(self.grid_transformar)
@@ -561,44 +563,50 @@ def visualizar_banco():
 
 
 def insere_na_tabela():
-    df = visualizar_banco()
-    download.tabela.clear()
-    etl.tabela_adicionar.clear()
+    try:
+        df = visualizar_banco()
+        download.tabela.clear()
+        etl.tabela_adicionar.clear()
 
-    rows = {}
-    if df.columns[0] == '_c0':
-        for key in df.columns[1:]:
-            rows[key] = []
-    else:
-        for key in df.columns:
-            rows[key] = []
+        rows = {}
+        if df.columns[0] == '_c0':
+            for key in df.columns[1:]:
+                rows[key] = []
+        else:
+            for key in df.columns:
+                rows[key] = []
 
-    for i, key in enumerate(list(rows.keys())):
-        download.tabela.setItem(0, i, QTableWidgetItem(key))
-        etl.tabela_adicionar.setItem(i, 0, QTableWidgetItem(key))
-    column_n = 0
-    row = 1
-
-    for column in rows.keys():
-        for i in range(1, 11):
-            download.tabela.setItem(
-                row, column_n, QTableWidgetItem(
-                    str(df.select(df[column]).take(i)[i - 1][0])))
-            row += 1
+        for i, key in enumerate(list(rows.keys())):
+            download.tabela.setItem(0, i, QTableWidgetItem(key))
+            etl.tabela_adicionar.setItem(i, 0, QTableWidgetItem(key))
+        column_n = 0
         row = 1
-        column_n += 1
+
+        for column in rows.keys():
+            for i in range(1, 11):
+                download.tabela.setItem(
+                    row, column_n, QTableWidgetItem(
+                        str(df.select(df[column]).take(i)[i - 1][0])))
+                row += 1
+            row = 1
+            column_n += 1
+    except TypeError:
+        ...
 
 
 def funciona_tabela():
     if (download.sistema.currentText() != 'SELECIONAR SISTEMA' and
             download.locais.currentText() != 'SELECIONAR LOCAL'):
 
-        download.funcao_tabela = _Thread(insere_na_tabela)
-        download.funcao_tabela.start()
+        try:
+            download.funcao_tabela = _Thread(insere_na_tabela)
+            download.funcao_tabela.start()
 
-        download.loop = _Loop(download.funcao_tabela)
-        download.loop.sinal.connect(update_progressbar)
-        download.loop.start()
+            download.loop = _Loop(download.funcao_tabela)
+            download.loop.sinal.connect(update_progressbar)
+            download.loop.start()
+        except:
+            ...
 
 
 def adicionar_item():
@@ -685,6 +693,22 @@ def exportar_df_csv():
         ...
 
 
+def exportar_profile():
+    try:
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        filename, _ = QFileDialog.getSaveFileName(etl,
+                                                  'Save File', '',
+                                                  'html(*.txt)')
+        if filename:
+            try:
+                new_df.toPandas().to_csv(filename)
+            except:
+                df.toPandas().to_csv(filename)
+    except NameError:
+        ...
+
+
 if __name__ == '__main__':
     from sys import argv, exit
     from functools import reduce
@@ -701,9 +725,6 @@ if __name__ == '__main__':
     app = QApplication(argv)
 
     download = Download()
-
-    # download.main_thread = QThread()
-    # download.main_thread.start()
 
     download.sistema.addItems([
         'SELECIONAR SISTEMA', 'SIH', 'SIM', 'SINAN', 'SINASC'
@@ -732,6 +753,7 @@ if __name__ == '__main__':
     etl.botao_remover.clicked.connect(remover_item)
     etl.botao_aplicar.clicked.connect(thread_aplicar_itens)
     etl.botao_exportar.clicked.connect(exportar_df_csv)
+    etl.botao_salvar_html.clicked.connect(exportar_profile)
 
     ajuda = Ajuda()
 
