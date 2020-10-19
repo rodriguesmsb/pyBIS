@@ -12,6 +12,7 @@ from PyQt5.QtCore import (QObject, QThread, QSize, QRect, Qt, pyqtSignal,
                           pyqtSlot, QFile)
 import qdarkstyle
 from pandas_profiling import ProfileReport
+import pandas as pd
 
 
 class _Loop(QThread):
@@ -41,9 +42,6 @@ class _Thread(QThread):
         self.fn = fn
         self.arg = arg
         self.kw = kw
-
-#   def __del__(self):
-#       self.wait()
 
     @pyqtSlot()
     def run(self):
@@ -260,6 +258,78 @@ class Pydbsus_gui(QMainWindow):
         self.show()
 
 
+class Merge(QWidget):
+
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle('Mesclar')
+        screen = QApplication.primaryScreen()
+        screen = screen.size()
+        self.setGeometry(0, 0, screen.width() - 100, screen.height() - 100)
+
+        self.main_layout = QGridLayout()
+
+        self.grupo_esquerda = QGroupBox('Data 1')
+        self.grid_esquerda = QGridLayout()
+
+        self.escolher_csv_esquerda = QPushButton('Escolher arquivo')
+        self.tabela_esquerda = QTableWidget(10, 70)
+
+        self.grid_esquerda.addWidget(self.escolher_csv_esquerda, 0, 0,
+                                     Qt.AlignLeft)
+
+        self.grid_esquerda.addWidget(self.tabela_esquerda, 1, 0)
+
+        self.grupo_direita = QGroupBox('Data 2')
+        self.grid_direita = QGridLayout()
+
+        self.escolher_csv_direita = QPushButton('Escolher arquivo')
+        self.tabela_direita = QTableWidget(10, 70)
+
+        self.grid_direita.addWidget(self.escolher_csv_direita, 0, 0,
+                                    Qt.AlignLeft)
+
+        self.grid_direita.addWidget(self.tabela_direita, 1, 0)
+
+        self.grupo_esquerda.setLayout(self.grid_esquerda)
+        self.grupo_direita.setLayout(self.grid_direita)
+
+        self.grupo_juncao = QGroupBox('Exportar')
+        self.grid_juncao = QGridLayout()
+
+        self.grupo_planeta = QGroupBox('Agregar')
+        self.grid_planeta = QGridLayout()
+
+        self.tabela_juncao = QTableWidget(10, 70)
+
+        self.selecionar_coluna = QComboBox()
+        self.adicionar_coluna = QPushButton('Adicionar')
+        self.colunas_selecionadas = QTableWidget(10, 1)
+        self.colunas_selecionadas.setColumnWidth(0, 500)
+        self.botao_aplicar = QPushButton('Aplicar')
+        self.botao_exportar = QPushButton('Exportar')
+
+        self.grid_planeta.addWidget(self.selecionar_coluna, 0, 0)
+        self.grid_planeta.addWidget(self.adicionar_coluna, 0, 1)
+        self.grid_planeta.addWidget(self.colunas_selecionadas, 1, 0)
+
+        self.grupo_planeta.setLayout(self.grid_planeta)
+
+        self.grid_juncao.addWidget(self.botao_aplicar, 0, 0, Qt.AlignTop)
+        self.grid_juncao.addWidget(self.botao_exportar, 1, 0, Qt.AlignTop)
+        self.grid_juncao.addWidget(self.tabela_juncao, 0, 1, 2, 1)
+
+        self.grupo_juncao.setLayout(self.grid_juncao)
+
+        self.main_layout.addWidget(self.grupo_esquerda, 0, 0)
+        self.main_layout.addWidget(self.grupo_direita, 0, 1)
+        self.main_layout.addWidget(self.grupo_juncao, 1, 1)
+        self.main_layout.addWidget(self.grupo_planeta, 1, 0)
+
+        self.setLayout(self.main_layout)
+
+
 class Etl(QWidget):
 
     def __init__(self):
@@ -303,32 +373,52 @@ class Etl(QWidget):
         self.grid_transformar = QGridLayout()
 
         self.tabela_transformar = QTableWidget(50, 150)
-        self.botao_condicao_2 = QComboBox()
-        self.botao_condicao_2.addItems(['Condição 1', 'Condição 2'])
-        self.botao_condicao_3 = QComboBox()
-        self.botao_condicao_3.addItems(['Condição 1', 'Condição 2'])
-        self.botao_condicao_4 = QComboBox()
-        self.botao_condicao_4.addItems(['Condição 1', 'Condição 2'])
-        self.botao_aleatorio_3 = QPushButton('Filtrar')
+        self.condicao_coluna = QComboBox()
+        self.condicao_maior = QPushButton('>')
+        self.condicao_menor = QPushButton('<')
+        self.condicao_maior_igual = QPushButton('>=')
+        self.condicao_menor_igual = QPushButton('<=')
+        self.condicao_diferente = QPushButton('!=')
+        self.condicao_and = QPushButton('and')
+        self.condicao_or = QPushButton('or')
+        self.condicao_in = QPushButton('in')
+        self.condicao_not = QPushButton('not')
         self.linha_editar = QLineEdit()
+        self.botao_aplicar = QPushButton('Aplicar')
 
         self.grupo_botoes_transformar = QGroupBox()
         self.grid_botoes_transformar = QGridLayout()
-        self.grid_botoes_transformar.addWidget(self.botao_condicao_2,
-                                               0, 0)
-        self.grid_botoes_transformar.addWidget(self.botao_condicao_3,
-                                               1, 0)
-        self.grid_botoes_transformar.addWidget(self.botao_condicao_4,
-                                               2, 0)
-        self.grid_botoes_transformar.addWidget(self.botao_aleatorio_3,
-                                               3, 0)
+
+        self.grid_transformar.addWidget(self.tabela_transformar, 0, 1, 0, 2)
+
+        self.grid_botoes_transformar.addWidget(self.condicao_coluna, 0, 0)
+
+        self.grid_botoes_transformar.addWidget(self.condicao_maior, 1, 0)
+
+        self.grid_botoes_transformar.addWidget(self.condicao_menor, 2, 0)
+
+        self.grid_botoes_transformar.addWidget(self.condicao_maior_igual, 3, 0)
+
+        self.grid_botoes_transformar.addWidget(self.condicao_menor_igual, 4, 0)
+
+        self.grid_botoes_transformar.addWidget(self.condicao_diferente, 5, 0)
+
+        self.grid_botoes_transformar.addWidget(self.condicao_and, 6, 0)
+
+        self.grid_botoes_transformar.addWidget(self.condicao_or, 7, 0)
+
+        self.grid_botoes_transformar.addWidget(self.condicao_in, 8, 0)
+
+        self.grid_botoes_transformar.addWidget(self.condicao_not, 9, 0)
+
         self.grupo_botoes_transformar.setLayout(self.grid_botoes_transformar)
 
-        self.grid_transformar.addWidget(self.tabela_transformar, 0, 1)
         self.grid_transformar.addWidget(self.grupo_botoes_transformar, 0, 0,
                                         Qt.AlignTop)
+
         self.grid_transformar.addWidget(self.linha_editar, 1, 1,
                                         Qt.AlignBottom)
+        self.grid_transformar.addWidget(self.botao_aplicar, 1, 2)
 
         self.grupo_exportar = QGroupBox('Exportação')
         self.grid_exportar = QGridLayout()
@@ -366,6 +456,144 @@ class Etl(QWidget):
         self.setLayout(self.main_layout)
 
         self.show()
+
+
+def exportar_reduzido():
+    try:
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        filename, _ = QFileDialog.getSaveFileName(etl,
+                                                  'Save File', '',
+                                                  'Arquivo csv(*.csv)')
+        if filename:
+            df_reduzido.to_csv(filename, index = False)
+    except NameError:
+        ...
+
+
+def get_merge_data():
+    merge_data(b1, b2, [x.text() for x in mesclar.colunas_selecionadas.selectedItems()])
+
+
+def merge_data(b1, b2, columns):
+    global df_reduzido
+    b1 = b1[columns].groupby(columns).size().reset_index(name="b1_count")
+    b2 = b2[columns].groupby(columns).size().reset_index(name="b2_count")
+    df_reduzido = b1.merge(b2, on=columns)
+
+    i = 0
+    lista = df_reduzido.columns
+    for column in lista:
+        mesclar.tabela_juncao.setItem(0, i, QTableWidgetItem(column))
+        i += 1
+
+    column_n = 0
+    row = 1
+    for column in lista:
+        for i in range(1, 11):
+            mesclar.tabela_juncao.setItem(row, column_n,
+                                          QTableWidgetItem(
+                                              str(df_reduzido[column][i])))
+            row += 1
+        row = 1
+        column_n += 1
+    # return df_reduzido
+
+
+def get_same_columns(df1, df2):
+    result_index = []
+    for column in df1.columns:
+        if column in df2.columns:
+            result_index.append(column)
+    mesclar.selecionar_coluna.addItems(result_index)
+
+    return result_index
+
+
+def year_month(date):
+    def correct_date(x):
+        x = str(x)
+        if len(x) < 8:
+            x = "0" + x
+        return x
+    date = date.apply(lambda x: correct_date(x))
+    date = pd.to_datetime(date.astype(str), format="%d%m%Y")
+    year, month = date.dt.year, date.dt.month
+    return (year, month)
+
+
+def b1_():
+    global b1
+    filename, _ = QFileDialog.getOpenFileName(mesclar,
+                                              'Open File',
+                                              'Arquivo csv (*.csv)')
+    b1 = pd.read_csv(filename, low_memory=False)
+    if 'TIPOBITO' in b1.columns:
+        year, month = year_month(b1['DTOBITO'])
+        b1["YEAR"] = year
+        b1["MONTH"] = month
+    elif 'DTNASC' in b1.columns and 'TPOBITO' not in b1.columns:
+        year, month = year_month(b1['DTNASC'])
+        b1["YEAR"] = year
+        b1["MONTH"] = month
+
+    i = 0
+    lista = b1.columns[1:]
+    for column in lista:
+        mesclar.tabela_esquerda.setItem(0, i, QTableWidgetItem(column))
+        i += 1
+
+    column_n = 0
+    row = 1
+    for column in lista:
+        for i in range(1, 11):
+            mesclar.tabela_esquerda.setItem(row, column_n,
+                                            QTableWidgetItem(
+                                                str(b1[column][i])))
+            row += 1
+        row = 1
+        column_n += 1
+
+
+def b2_():
+    global b2
+    filename, _ = QFileDialog.getOpenFileName(mesclar,
+                                              'Open File',
+                                              'Arquivo csv (*.csv)')
+    b2 = pd.read_csv(filename, low_memory=False)
+    if 'TIPOBITO' in b2.columns:
+        year, month = year_month(b2['DTOBITO'])
+        b2["YEAR"] = year
+        b2["MONTH"] = month
+    elif 'DTNASC' in b2.columns and 'TPOBITO' not in b2.columns:
+        year, month = year_month(b2['DTNASC'])
+        b2["YEAR"] = year
+        b2["MONTH"] = month
+
+    i = 0
+    lista = b2.columns[1:]
+    for column in lista:
+        mesclar.tabela_direita.setItem(0, i, QTableWidgetItem(column))
+        i += 1
+
+    column_n = 0
+    row = 1
+    for column in lista:
+        for i in range(1, 11):
+            mesclar.tabela_direita.setItem(row, column_n,
+                                           QTableWidgetItem(
+                                               str(b2[column][i])))
+            row += 1
+        row = 1
+        column_n += 1
+
+    get_same_columns(b1, b2)
+
+
+def add_column_same():
+    text = mesclar.selecionar_coluna.currentText()
+    mesclar.colunas_selecionadas.setItem(
+        mesclar.colunas_selecionadas.currentRow(), 0,  QTableWidgetItem(text))
 
 
 def sistema_bases(text):
@@ -428,10 +656,10 @@ def pega_datas():
 
     elif download.ano_inicial.value() < download.ano_final.value():
         return [data for data in range(download.ano_inicial.value(),
-                                       download.ano_final.value())]
+                                       download.ano_final.value() + 1)]
     elif download.ano_inicial.value() > download.ano_final.value():
         return [data for data in range(download.ano_final.value(),
-                                       download.ano_inicial.value())]
+                                       download.ano_inicial.value() + 1)]
 
 
 def confere_regiao():
@@ -582,13 +810,17 @@ def insere_na_tabela():
             for key in df.columns:
                 rows[key] = []
 
-        for i, key in enumerate(list(rows.keys())):
+        coluna_ordenada = list(rows.keys())
+        coluna_ordenada.sort()
+
+        for i, key in enumerate(coluna_ordenada):
             download.tabela.setItem(0, i, QTableWidgetItem(key))
             etl.tabela_adicionar.setItem(i, 0, QTableWidgetItem(key))
+            etl.condicao_coluna.addItem(key)
         column_n = 0
         row = 1
 
-        for column in rows.keys():
+        for column in coluna_ordenada:
             for i in range(1, 11):
                 download.tabela.setItem(
                     row, column_n, QTableWidgetItem(
@@ -702,7 +934,7 @@ def exportar_df_csv():
 
 def exportar_profile():
     try:
-        etl.label_grafico.setText('Trabalhando no Gráfico')
+        etl.label_grafico.setText('Trabalhando na Analise')
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         filename, _ = QFileDialog.getSaveFileName(etl,
@@ -715,14 +947,14 @@ def exportar_profile():
                                         title='Profile',
                                         explorative=True)
                 profile.to_file(f'{filename}')
-                etl.label_grafico.setText('Gráfico gerado com sucesso')
+                etl.label_grafico.setText('Analise gerado com sucesso')
             except:
                 tmp_df = df.toPandas()
                 profile = ProfileReport(tmp_df,
                                         title='Profile',
                                         explorative=True)
                 profile.to_file(f'{filename}')
-                etl.label_grafico.setText('Gráfico gerado com sucesso')
+                etl.label_grafico.setText('Analise gerado com sucesso')
     except NameError:
         ...
 
@@ -785,8 +1017,18 @@ if __name__ == '__main__':
     etl.botao_aplicar.clicked.connect(thread_aplicar_itens)
     etl.botao_exportar.clicked.connect(exportar_df_csv)
     etl.botao_salvar_html.clicked.connect(exportar_profile)
+    etl.condicao_coluna.addItem('Selecionar Coluna')
+    etl.condicao_coluna.setEditable(True)
 
     ajuda = Ajuda()
+    mesclar = Merge()
 
-    pydb = Pydbsus_gui(download, etl, ajuda)
+    mesclar.escolher_csv_esquerda.clicked.connect(b1_)
+    mesclar.escolher_csv_direita.clicked.connect(b2_)
+    mesclar.selecionar_coluna.setEditable(True)
+    mesclar.adicionar_coluna.clicked.connect(add_column_same)
+    mesclar.botao_aplicar.clicked.connect(get_merge_data)
+    mesclar.botao_exportar.clicked.connect(exportar_reduzido)
+
+    pydb = Pydbsus_gui(download, etl, mesclar, ajuda)
     exit(app.exec_())
