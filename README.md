@@ -1,7 +1,4 @@
-# CIDACS-pydbsus: A Python library to work with Brazilian Administrative data
+# CIDACS-pyDBSI: Uma interface gráfica para trabalhar com dados Administrativos Brasileiros
 
-## Introduction
+## Introdução
 
-## How to install
-
-## How to use
