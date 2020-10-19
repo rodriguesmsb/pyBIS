@@ -11,6 +11,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtCore import (QObject, QThread, QSize, QRect, Qt, pyqtSignal,
                           pyqtSlot, QFile)
 import qdarkstyle
+from pandas_profiling import ProfileReport
 
 
 class _Loop(QThread):
@@ -339,13 +340,18 @@ class Etl(QWidget):
                                      Qt.AlignTop)
         self.grid_exportar.addWidget(self.botao_exportar, 1, 1)
 
+        self.label_grafico = QLabel('')
         self.botao_salvar_html = QPushButton('Gerar Profile')
+        # self.barra_salvar_html = QProgressBar()
+        # self.barra_salvar_html.setValue(0)
 
         self.grupo_profile = QGroupBox('Profile')
         self.grid_profile = QGridLayout()
 
-        self.grid_profile.addWidget(self.botao_salvar_html, 0, 0,
+        self.grid_profile.addWidget(self.botao_salvar_html, 0, 1,
                                     Qt.AlignJustify)
+        self.grid_profile.addWidget(self.label_grafico, 0, 0)
+        # self.grid_profile.addWidget(self.barra_salvar_html, 0, 0)
 
         self.grupo_extracao.setLayout(self.grid_extracao)
         self.grupo_transformar.setLayout(self.grid_transformar)
@@ -665,7 +671,8 @@ def aplicar_itens():
                 for i in range(1, 11):
                     etl.tabela_exportar.setItem(
                         row, column_n, QTableWidgetItem(
-                            str(new_df.select(new_df[columns]).take(i)[i - 1][0])))
+                            str(new_df.select(
+                                new_df[columns]).take(i)[i - 1][0])))
                     row += 1
                 row = 1
                 column_n += 1
@@ -695,6 +702,7 @@ def exportar_df_csv():
 
 def exportar_profile():
     try:
+        etl.label_grafico.setText('Trabalhando no Gráfico')
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         filename, _ = QFileDialog.getSaveFileName(etl,
@@ -702,16 +710,39 @@ def exportar_profile():
                                                   'html(*.txt)')
         if filename:
             try:
-                new_df.toPandas().to_csv(filename)
+                tmp_new_df = new_df.toPandas()
+                profile = ProfileReport(tmp_new_df,
+                                        title='Profile',
+                                        explorative=True)
+                profile.to_file(f'{filename}')
+                etl.label_grafico.setText('Gráfico gerado com sucesso')
             except:
-                df.toPandas().to_csv(filename)
+                tmp_df = df.toPandas()
+                profile = ProfileReport(tmp_df,
+                                        title='Profile',
+                                        explorative=True)
+                profile.to_file(f'{filename}')
+                etl.label_grafico.setText('Gráfico gerado com sucesso')
     except NameError:
         ...
 
 
+@pyqtSlot(int)
+def update_barra_html(val):
+    etl.barra_salvar_html.setValue(val)
+
+
+def thread_exportar_html():
+    etl.thread_exportar = _Thread(exportar_profile)
+    etl.thread_exportar.start()
+
+    etl.thread_barra = _Loop(etl.thread_exportar)
+    etl.thread_barra.sinal.connect(update_barra_html)
+    etl.thread_barra.start()
+
+
 if __name__ == '__main__':
     from sys import argv, exit
-    from functools import reduce
     from os import path, listdir
     from multiprocessing import cpu_count
     from time import sleep
