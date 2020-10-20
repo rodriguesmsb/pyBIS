@@ -730,7 +730,8 @@ def seleciona_banco():
         'Esquistossomose': 'ESQU', 'Febre Maculosa': 'FMAC',
         'Febre Tifóide': 'FTIF', 'Hanseníase': 'HANS',
         'Leptospirose': 'LEPT', 'Meningite': 'MENI',
-        'Raiva': 'RAIV', 'Tétano': 'TETA',
+        'Raiva': 'RAIV', 'Tétano': 'TETA', 'Zika-V': 'ZIKA',
+        'Dengue': 'DENG', 'Chickungunya': 'CHIK',
         'Tuberculose': 'TUBE', 'Nascidos Vivos': 'DN'
     }
     if download.bases.currentText() in dicionario_doencas:
@@ -765,6 +766,7 @@ def visualizar_banco():
 
         elif isinstance(datas, int) and isinstance(locais, str):
             banco = [base + str(locais) + str(datas) + '.csv']
+
     elif sistema == 'SINAN':
         if isinstance(datas, list) and isinstance(locais, list):
             banco = [base + local + str(data)[2:4] + '.csv'
@@ -782,6 +784,7 @@ def visualizar_banco():
         elif isinstance(datas, int) and isinstance(locais, str):
             banco = [base + str(locais) + str(datas)[2:4] + '.csv']
 
+    print(banco)
     bases = re.compile('|'.join(banco), re.IGNORECASE)
     caminho_sistema = path.expanduser(f'~/Documentos/files_db/{sistema}/')
 
