@@ -860,33 +860,36 @@ def aplicar_itens():
     etl.tabela_exportar.clear()
     colunas_selecionadas = []
 
-    for coluna in etl.tabela_aplicar.selectedItems():
-        colunas_selecionadas.append(coluna.text())
+    try:
+        for coluna in etl.tabela_aplicar.selectedItems():
+            colunas_selecionadas.append(coluna.text())
 
-    new_df = ''
+        new_df = ''
 
-    remocao = []
-    for coluna in df.columns:
-        if coluna not in colunas_selecionadas:
-            remocao.append(coluna)
+        remocao = []
+        for coluna in df.columns:
+            if coluna not in colunas_selecionadas:
+                remocao.append(coluna)
 
-    new_df = df.drop(*remocao)
+        new_df = df.drop(*remocao)
 
-    for i, coluna in enumerate(new_df.columns):
-        etl.tabela_exportar.setItem(0, i, QTableWidgetItem(coluna))
-    numero_column = new_df.select(new_df.columns[0]).count()
+        for i, coluna in enumerate(new_df.columns):
+            etl.tabela_exportar.setItem(0, i, QTableWidgetItem(coluna))
+        numero_column = new_df.select(new_df.columns[0]).count()
 
-    column_n = 0
-    row = 1
-    for columns in new_df.columns:
-        for i in range(1, 11):
-            etl.tabela_exportar.setItem(
-                row, column_n, QTableWidgetItem(
-                    str(new_df.select(
-                        new_df[columns]).take(i)[i - 1][0])))
-            row += 1
+        column_n = 0
         row = 1
-        column_n += 1
+        for columns in new_df.columns:
+            for i in range(1, 11):
+                etl.tabela_exportar.setItem(
+                    row, column_n, QTableWidgetItem(
+                        str(new_df.select(
+                            new_df[columns]).take(i)[i - 1][0])))
+                row += 1
+            row = 1
+            column_n += 1
+    except:
+        ...
 
 
 def thread_aplicar_itens():
