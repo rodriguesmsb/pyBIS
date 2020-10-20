@@ -490,8 +490,8 @@ def merge_data(b1, b2, columns):
     for column in lista:
         for i in range(1, 11):
             Integrar.tabela_juncao.setItem(row, column_n,
-                                          QTableWidgetItem(
-                                              str(df_reduzido[column][i])))
+                                           QTableWidgetItem(
+                                               str(df_reduzido[column][i])))
             row += 1
         row = 1
         column_n += 1
@@ -546,8 +546,8 @@ def b1_():
     for column in lista:
         for i in range(1, 11):
             Integrar.tabela_esquerda.setItem(row, column_n,
-                                            QTableWidgetItem(
-                                                str(b1[column][i])))
+                                             QTableWidgetItem(
+                                                 str(b1[column][i])))
             row += 1
         row = 1
         column_n += 1
@@ -579,8 +579,8 @@ def b2_():
     for column in lista:
         for i in range(1, 11):
             Integrar.tabela_direita.setItem(row, column_n,
-                                           QTableWidgetItem(
-                                               str(b2[column][i])))
+                                            QTableWidgetItem(
+                                                str(b2[column][i])))
             row += 1
         row = 1
         column_n += 1
@@ -607,7 +607,8 @@ def sistema_bases(text):
             'Animais Peçonhentos', 'Botulismo', 'Chagas', 'Cólera',
             'Coqueluche', 'Difteria', 'Esquistossomose', 'Febre Maculosa',
             'Febre Tifóide', 'Hanseníase', 'Leptospirose', 'Meningite',
-            'Raiva', 'Tétano', 'Tuberculose'
+            'Raiva', 'Tétano', 'Tuberculose', 'Zika-V', 'Chickungunya',
+            'Dengue'
         ])
     elif text == 'SINASC':
         download.bases.addItem('Nascidos Vivos')
