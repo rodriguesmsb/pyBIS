@@ -34,8 +34,8 @@ class PyDatasus:
             'Esquistossomose': 'ESQU', 'Febre Maculosa': 'FMAC',
             'Febre Tifóide': 'FTIF', 'Hanseníase': 'HANS',
             'Leptospirose': 'LEPT', 'Meningite': 'MENI',
-            'Raiva': 'RAIV', 'Tétano': 'TETA',
-            'Tuberculose': 'TUBE'
+            'Raiva': 'RAIV', 'Tétano': 'TETA', 'Chickungunya': 'CHIK',
+            'Tuberculose': 'TUBE', 'Zika-V': 'ZIKA', 'Dengue': 'DENG'
         }
 
         self.__page = ftp.FTP(PAGE)
