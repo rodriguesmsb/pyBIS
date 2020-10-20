@@ -349,7 +349,7 @@ class Etl(QWidget):
         self.tabela_aplicar.setColumnWidth(0, 520)
         self.botao_adicionar = QPushButton('Adicionar')
         self.botao_remover = QPushButton('Remover')
-        self.botao_aplicar = QPushButton('Aplicar')
+        self.botao_aplicar_aplicar = QPushButton('Aplicar')
 
         self.grupo_tabelas = QGroupBox()
         self.grid_tabelas = QGridLayout()
@@ -367,7 +367,7 @@ class Etl(QWidget):
 
         self.grid_extracao.addWidget(self.botao_adicionar, 1, 1, Qt.AlignRight)
         self.grid_extracao.addWidget(self.botao_remover, 2, 1, Qt.AlignRight)
-        self.grid_extracao.addWidget(self.botao_aplicar, 3, 1, Qt.AlignRight)
+        self.grid_extracao.addWidget(self.botao_aplicar_aplicar, 3, 1, Qt.AlignRight)
 
         self.grupo_transformar = QGroupBox('Transformação')
         self.grid_transformar = QGridLayout()
@@ -432,8 +432,6 @@ class Etl(QWidget):
 
         self.label_grafico = QLabel('')
         self.botao_salvar_html = QPushButton('Gerar Profile')
-        # self.barra_salvar_html = QProgressBar()
-        # self.barra_salvar_html.setValue(0)
 
         self.grupo_profile = QGroupBox('Profile')
         self.grid_profile = QGridLayout()
@@ -466,7 +464,7 @@ def exportar_reduzido():
                                                   'Save File', '',
                                                   'Arquivo csv(*.csv)')
         if filename:
-            df_reduzido.to_csv(filename, index = False)
+            df_reduzido.to_csv(filename, index=False)
     except NameError:
         ...
 
@@ -797,39 +795,36 @@ def visualizar_banco():
 
 
 def insere_na_tabela():
-    try:
-        df = visualizar_banco()
-        download.tabela.clear()
-        etl.tabela_adicionar.clear()
+    df = visualizar_banco()
+    download.tabela.clear()
+    etl.tabela_adicionar.clear()
 
-        rows = {}
-        if df.columns[0] == '_c0':
-            for key in df.columns[1:]:
-                rows[key] = []
-        else:
-            for key in df.columns:
-                rows[key] = []
+    rows = {}
+    if df.columns[0] == '_c0':
+        for key in df.columns[1:]:
+            rows[key] = []
+    else:
+        for key in df.columns:
+            rows[key] = []
 
-        coluna_ordenada = list(rows.keys())
-        coluna_ordenada.sort()
+    coluna_ordenada = list(rows.keys())
+    coluna_ordenada.sort()
 
-        for i, key in enumerate(coluna_ordenada):
-            download.tabela.setItem(0, i, QTableWidgetItem(key))
-            etl.tabela_adicionar.setItem(i, 0, QTableWidgetItem(key))
-            etl.condicao_coluna.addItem(key)
-        column_n = 0
+    for i, key in enumerate(coluna_ordenada):
+        download.tabela.setItem(0, i, QTableWidgetItem(key))
+        etl.tabela_adicionar.setItem(i, 0, QTableWidgetItem(key))
+        etl.condicao_coluna.addItem(key)
+    column_n = 0
+    row = 1
+
+    for column in coluna_ordenada:
+        for i in range(1, 11):
+            download.tabela.setItem(
+                row, column_n, QTableWidgetItem(
+                    str(df.select(df[column]).take(i)[i - 1][0])))
+            row += 1
         row = 1
-
-        for column in coluna_ordenada:
-            for i in range(1, 11):
-                download.tabela.setItem(
-                    row, column_n, QTableWidgetItem(
-                        str(df.select(df[column]).take(i)[i - 1][0])))
-                row += 1
-            row = 1
-            column_n += 1
-    except TypeError:
-        ...
+        column_n += 1
 
 
 def funciona_tabela():
@@ -850,14 +845,9 @@ def funciona_tabela():
 def adicionar_item():
     selecionado = etl.tabela_adicionar.currentRow()
     local_aplicar = etl.tabela_aplicar.currentRow()
-    try:
-        coluna = etl.tabela_adicionar.item(selecionado, 0).text()
-    except AttributeError:
-        ...
-    try:
-        etl.tabela_aplicar.setItem(local_aplicar, 0, QTableWidgetItem(coluna))
-    except UnboundLocalError:
-        ...
+    coluna = etl.tabela_adicionar.item(selecionado, 0).text()
+    etl.tabela_aplicar.setItem(local_aplicar, 0,
+                               QTableWidgetItem(coluna))
 
 
 def remover_item():
@@ -870,48 +860,33 @@ def aplicar_itens():
     etl.tabela_exportar.clear()
     colunas_selecionadas = []
 
-    try:
-        for coluna in etl.tabela_aplicar.selectedItems():
-            colunas_selecionadas.append(coluna.text())
+    for coluna in etl.tabela_aplicar.selectedItems():
+        colunas_selecionadas.append(coluna.text())
 
-        new_df = ''
+    new_df = ''
 
-        remocao = []
-        try:
-            for coluna in df.columns:
-                if coluna not in colunas_selecionadas:
-                    remocao.append(coluna)
-        except NameError:
-            ...
+    remocao = []
+    for coluna in df.columns:
+        if coluna not in colunas_selecionadas:
+            remocao.append(coluna)
 
-        try:
-            new_df = df.drop(*remocao)
-        except NameError:
-            ...
+    new_df = df.drop(*remocao)
 
-        try:
-            for i, coluna in enumerate(new_df.columns):
-                etl.tabela_exportar.setItem(0, i, QTableWidgetItem(coluna))
-            numero_column = new_df.select(new_df.columns[0]).count()
-        except AttributeError:
-            ...
+    for i, coluna in enumerate(new_df.columns):
+        etl.tabela_exportar.setItem(0, i, QTableWidgetItem(coluna))
+    numero_column = new_df.select(new_df.columns[0]).count()
 
-        column_n = 0
+    column_n = 0
+    row = 1
+    for columns in new_df.columns:
+        for i in range(1, 11):
+            etl.tabela_exportar.setItem(
+                row, column_n, QTableWidgetItem(
+                    str(new_df.select(
+                        new_df[columns]).take(i)[i - 1][0])))
+            row += 1
         row = 1
-        try:
-            for columns in new_df.columns:
-                for i in range(1, 11):
-                    etl.tabela_exportar.setItem(
-                        row, column_n, QTableWidgetItem(
-                            str(new_df.select(
-                                new_df[columns]).take(i)[i - 1][0])))
-                    row += 1
-                row = 1
-                column_n += 1
-        except AttributeError:
-            ...
-    except IndexError:
-        ...
+        column_n += 1
 
 
 def thread_aplicar_itens():
@@ -1014,7 +989,7 @@ if __name__ == '__main__':
     etl = Etl()
     etl.botao_adicionar.clicked.connect(adicionar_item)
     etl.botao_remover.clicked.connect(remover_item)
-    etl.botao_aplicar.clicked.connect(thread_aplicar_itens)
+    etl.botao_aplicar_aplicar.clicked.connect(thread_aplicar_itens)
     etl.botao_exportar.clicked.connect(exportar_df_csv)
     etl.botao_salvar_html.clicked.connect(exportar_profile)
     etl.condicao_coluna.addItem('Selecionar Coluna')
