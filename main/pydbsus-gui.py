@@ -789,7 +789,7 @@ def visualizar_banco():
         if re.search(bases, arquivo_csv):
             arquivos.append(caminho_sistema + arquivo_csv)
 
-    df = spark.read.csv(arquivos, header=True)
+    df = spark.read.csv(arquivos, header=True, inferSchema=True)
 
     return df
 

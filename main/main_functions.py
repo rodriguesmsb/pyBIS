@@ -154,7 +154,7 @@ class Funcoes:
 
 
 def read_system_csv(spark, dir_system, table_preview):
-    df = spark.read.csv(dir_system, header=True)
+    df = spark.read.csv(dir_system, header=True, inferSchema=True)
 
     rows = {}
 
