@@ -1,11 +1,47 @@
-"""Interface gráfica para aplicação pydatasus.py"""
-
-
-from sys import argv, exit
+import sys
+from time import sleep
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QPushButton,
                              QProgressBar, QComboBox, QGroupBox, QGridLayout,
                              QLabel, QSpinBox, QTableWidget, QTableWidgetItem)
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
+from PyQt5.QtCore import (Qt, pyqtSlot, pyqtSignal, QThread, QTimer,
+                          QCoreApplication)
+
+from pydatasus import PyDatasus
+
+
+class _Loop(QThread):
+    sinal = pyqtSignal(int)
+
+    def __init__(self, thread):
+        super().__init__()
+        self.thread = thread
+
+    def run(self):
+        n = 0
+        [botao.setEnabled(False) for botao in download.lista_botoes]
+        while self.thread.isRunning():
+            n += 1
+            if n == 100:
+                n = 0
+
+            sleep(0.3)
+            QCoreApplication.processEvents()
+            self.sinal.emit(n)
+        self.sinal.emit(100)
+        [botao.setEnabled(True) for botao in download.lista_botoes]
+
+
+class _Thread(QThread):
+
+    def __init__(self, fn, *arg, **kw):
+        super().__init__()
+        self.fn = fn
+        self.arg = arg
+        self.kw = kw
+
+    @pyqtSlot()
+    def run(self):
+        self.fn(*self.arg, **self.kw)
 
 
 class Download(QWidget):
@@ -17,36 +53,55 @@ class Download(QWidget):
         screen = screen.size()
         self.setGeometry(0, 0, screen.width() - 100, screen.height() - 100)
         self.estados = {
-            'Acre': ['Rio Branco', 'AC', 'Norte'],
-            'Alagoas': ['Maceió', 'AL', 'Nordeste'],
-            'Amapá': ['Macapá', 'AP', 'Norte'],
-            'Amazonas': ['Manaus', 'AM', 'Norte'],
-            'Bahia': ['Salvador', 'BA', 'Nordeste'],
-            'Ceará': ['Fortaleza', 'CE', 'Nordeste'],
-            'Distrito Federal': ['Brasília', 'DF',
-                                 'Centro-Oeste'],
-            'Espírito Santo': ['Vitória', 'ES', 'Sudeste'],
-            'Goiás': ['Goiânia', 'GO', 'Centro-Oeste'],
-            'Maranhão': ['São Luís', 'MA', 'Nordeste'],
-            'Mato Grosso': ['Cuiabá', 'MT', 'Centro-Oeste'],
-            'Mato Grosso do Sul': ['Campo Grande', 'MS',
-                                   'Centro-Oeste'],
-            'Minas Gerais': ['Belo Horizonte', 'MG', 'Sudeste'],
-            'Pará': ['Belém', 'PA', 'Norte'],
-            'Paraíba': ['João Pessoa', 'PB', 'Nordeste'],
-            'Paraná': ['Curitiba', 'PR', 'Sul'],
-            'Pernambuco': ['Recife', 'PE', 'Nordeste'],
-            'Piauí': ['Teresina', 'PI', 'Nordeste'],
-            'Rio de Janeiro': ['Rio de Janeiro', 'RJ',
-                               'Sudeste'],
-            'Rio Grande do Norte': ['Natal', 'RN', 'Nordeste'],
-            'Rio Grande do Sul': ['Porto Alegre', 'RS', 'Sul'],
-            'Rondônia': ['Porto Velho', 'RO', 'Norte'],
-            'Roraima': ['Boa Vista', 'RR', 'Norte'],
-            'Santa Catarina': ['Florianópolis', 'SC', 'Sul'],
-            'São Paulo': ['São Paulo', 'SP', 'Sudeste'],
-            'Sergipe': ['Aracaju', 'SE', 'Nordeste'],
-            'Tocantins': ['Palmas', 'TO', 'Norte']
+            'Acre': {'AC': 'Norte'}, 'Amapá': {'AP': 'Norte'},
+            'Amazonas': {'AM': 'Norte'}, 'Pará': {'PA': 'Norte'},
+            'Rondônia': {'RO': 'Norte'}, 'Roraima': {'RR': 'Norte'},
+            'Tocantins': {'TO': 'Norte'},
+
+            'Alagoas': {'AL': 'Nordeste'}, 'Bahia': {'BA': 'Nordeste'},
+            'Ceará': {'CE': 'Nordeste'}, 'Maranhão': {'MA': 'Nordeste'},
+            'Paraíba': {'PB': 'Nordeste'}, 'Pernambuco': {'PE': 'Nordeste'},
+            'Piauí': {'PI': 'Nordeste'},
+            'Rio Grande do Norte': {'RN': 'Nordeste'},
+            'Sergipe': {'SE': 'Nordeste'},
+
+            'Distrito Federal': {'DF': 'Centro-Oeste'},
+            'Goiás': {'GO': 'Centro-Oeste'},
+            'Mato Grosso': {'MT': 'Centro-Oeste'},
+            'Mato Grosso do Sul': {'MS': 'Centro-Oeste'},
+
+            'Espírito Santo': {'ES': 'Sudeste'},
+            'Minas Gerais': {'MG': 'Sudeste'},
+            'Rio de Janeiro': {'RJ': 'Sudeste'},
+            'São Paulo': {'SP': 'Sudeste'},
+
+            'Paraná': {'PR': 'Sul'}, 'Rio Grande do Sul': {'RS': 'Sul'},
+            'Santa Catarina': {'SC': 'Sul'},
+        }
+        self.regioes = {
+            'Norte': ['AC', 'AP', 'AM', 'PA', 'RO', 'RR', 'TO'],
+            'Nordeste': ['AL', 'BA', 'CE', 'MA', 'PB', 'PE', 'PI', 'RN',
+                         'SE'],
+            'Centro-Oeste': ['DF', 'GO', 'MT', 'MS'],
+            'Sudeste': ['ES', 'MG', 'RJ', 'SP'],
+            'Sul': ['PR', 'RS', 'SC']
+        }
+        self.bases_de_dados = {
+            'SIM': {
+                'Óbito': 'DO', 'Óbito Fetal': 'DOFE'
+            },
+            'SINAN': {
+                'Animais Peçonhentos': 'ANIM', 'Botulismo': 'BOTU',
+                'Chagas': 'CHAG',  'Cólera': 'COLE', 'Coqueluche': 'COQU',
+                'Difteria': 'DIFT', 'Esquistossomose': 'ESQU',
+                'Febre Maculosa': 'FMAC', 'Febre Tifóide': 'FTIF',
+                'Hanseníase': 'HANS', 'Leptospirose': 'LEPT',
+                'Meningite': 'MENI', 'Raiva': 'RAIV', 'Tétano': 'TETA',
+                'Tuberculose': 'TUBE'
+            },
+            'SINASC': {
+                'Nascidos Vivos': 'DN'
+            }
         }
 
         self.group_system = QGroupBox('Sistemas')
@@ -54,14 +109,21 @@ class Download(QWidget):
         self.grid_sys.setSpacing(50)
 
         self.sistema = QComboBox()
-        self.sistema.addItems(['SIH', 'SIM', 'SINAN', 'SINASC'])
+        self.sistema.addItems(['SELECIONAR SISTEMA',
+                               'SIH', 'SIM', 'SINAN', 'SINASC'])
+        self.sistema.currentTextChanged.connect(self.escolhe_sistema)
         self.bases = QComboBox()
+        self.bases.setEditable(True)
+        self.bases.setEnabled(False)
         self.progress_bar = QProgressBar()
         self.progress_bar.setValue(0)
         self.locais = QComboBox()
-        self.locais.addItems(['TODOS', 'ESTADO', 'REGIÃO'])
-        self.locais.currentTextChanged.connect(self.estado_ou_regiao)
+        self.locais.addItems(['SELECIONAR TODOS/ESTADO/REGIÃO',
+                              'TODOS', 'ESTADO', 'REGIÃO'])
+        self.locais.currentTextChanged.connect(self.escolhe_estado_ou_regiao)
         self.estados_regioes = QComboBox()
+        self.estados_regioes.setEditable(True)
+        self.estados_regioes.setEnabled(False)
 
         self.ano_inicial_label = QLabel('ANO INICIAL:')
         self.ano_final_label = QLabel('ANO FINAL:')
@@ -74,7 +136,9 @@ class Download(QWidget):
         self.spin_memoria_label = QLabel('SETAR MEMORIA:')
         self.spin_memoria = QSpinBox()
         self.carregar_banco = QPushButton('CARREGAR BANCO')
+        self.carregar_banco.clicked.connect(self.carregar_dados)
         self.visualizar_banco = QPushButton('VISUALIZAR BANCO')
+        self.visualizar_banco.clicked.connect(self.visualizar_dados)
 
         self.lista_botoes = [
             self.sistema, self.bases, self.locais, self.estados_regioes,
@@ -133,27 +197,112 @@ class Download(QWidget):
         self.show()
 
     @pyqtSlot(str)
-    def estado_ou_regiao(self, text):
+    def escolhe_estado_ou_regiao(self, text):
         self.estados_regioes.clear()
+        self.estados_regioes.setEnabled(True)
 
         if text == 'ESTADO':
-            self.estados_regioes.addItems(list(self.estados.keys()))
+            estados = list(self.estados.keys())
+            estados.sort()
 
-            return list(self.estados.keys())
+            self.estados_regioes.addItems(estados)
 
         elif text == 'REGIÃO':
-            regioes = ['Norte', 'Nordeste', 'Centro-Oeste', 'Sul', 'Sudeste']
+            regioes = list(self.regioes.keys())
+            regioes.sort()
+
             self.estados_regioes.addItems(regioes)
 
-            return regioes
-
         elif text == 'TODOS':
-            self.estados_regioes.addItem('TODOS OS ESTADOS FORAM SELECIONADOS')
+            self.estados_regioes.addItem('TODOS')
 
-            return list(self.estados.keys())
+        else:
+            self.estados_regioes.setEnabled(False)
+
+    @pyqtSlot(str)
+    def escolhe_sistema(self, text):
+        self.bases.clear()
+        self.bases.setEnabled(True)
+
+        if text == 'SIH':
+            ...
+
+        elif text == 'SELECIONAR SISTEMA':
+            self.bases.setEnabled(False)
+
+        else:
+            index = list(self.bases_de_dados.keys()).index(text)
+            sistema = list(self.bases_de_dados.keys())[index]
+            bases = list(self.bases_de_dados.get(sistema).keys())
+            bases.sort()
+            self.bases.addItems(bases)
+
+    def carregar_dados(self):
+        self.sistema_chave = self.sistema.currentText()
+        condicao = ''
+        try:
+            self.base_chave = self.bases_de_dados.get(
+                self.sistema_chave).get(self.bases.currentText())
+            self.data = self.carrega_datas()
+            self.local_selecionado = ''
+            if self.locais.currentText() == 'ESTADO':
+                self.local_selecionado = list(
+                    self.estados.get(
+                        self.estados_regioes.currentText()).keys())
+
+            elif self.locais.currentText() == 'REGIÃO':
+                self.local_selecionado = self.regioes.get(
+                    self.estados_regioes.currentText())
+
+            elif self.locais.currentText() == 'TODOS':
+                self.local_selecionado = [
+                    val for key in self.regioes.keys()
+                    for val in self.regioes.get(key)
+                ]
+
+            cond = [self.sistema_chave, self.base_chave,
+                    self.local_selecionado, self.data]
+
+            condicao = [
+                self.sistem_chave != 'SELECIONAR SISTEMA',
+                self.local_selecionado != 'SELECIONAR TODOS/ESTADO/REGiÃO'
+            ]
+        except AttributeError:
+            ...
+
+        if all(condicao):
+            self.thread_csv = _Thread(PyDatasus().get_csv_db_complete,
+                                      *cond)
+            self.thread_csv.start()
+
+            self.loop = _Loop(self.thread_csv)
+            self.loop.sinal.connect(self.atualiza_barra)
+            self.loop.start()
+
+    @pyqtSlot(int)
+    def atualiza_barra(self, val):
+        self.progress_bar.setValue(val)
+
+    def carrega_datas(self):
+        if self.ano_inicial.value() < self.ano_final.value():
+            return [str(data) for data in range(self.ano_inicial.value(),
+                                                self.ano_final.value() + 1)]
+
+        elif self.ano_inicial.value() > self.ano_final.value():
+            return [
+                str(data) for data in range(self.ano_final.value(),
+                                            self.ano_inicial.value() + 1)
+            ]
+
+        else:
+            return str(self.ano_inicial.value())
+
+    def visualizar_dados(self):
+        print(self.sistema_chave, self.base_chave, self.local_selecionado,
+              self.data)
 
 
 if __name__ == '__main__':
-    app = QApplication(argv)
+    app = QApplication(sys.argv)
     download = Download()
-    exit(app.exec_())
+    sys.exit(app.exec_())
