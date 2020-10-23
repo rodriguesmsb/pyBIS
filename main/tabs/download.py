@@ -12,13 +12,14 @@ from pydatasus import PyDatasus
 class _Loop(QThread):
     sinal = pyqtSignal(int)
 
-    def __init__(self, thread):
+    def __init__(self, thread, cls):
         super().__init__()
         self.thread = thread
+        self.cls = cls
 
     def run(self):
         n = 0
-        [botao.setEnabled(False) for botao in download.lista_botoes]
+        [self.cls.setEnabled(False) for botao in self.cls.lista_botoes]
         while self.thread.isRunning():
             n += 1
             if n == 100:
@@ -28,7 +29,7 @@ class _Loop(QThread):
             QCoreApplication.processEvents()
             self.sinal.emit(n)
         self.sinal.emit(100)
-        [botao.setEnabled(True) for botao in download.lista_botoes]
+        [self.cls.setEnabled(True) for botao in self.cls.lista_botoes]
 
 
 class _Thread(QThread):
@@ -275,7 +276,7 @@ class Download(QWidget):
                                       *cond)
             self.thread_csv.start()
 
-            self.loop = _Loop(self.thread_csv)
+            self.loop = _Loop(self.thread_csv, self)
             self.loop.sinal.connect(self.atualiza_barra)
             self.loop.start()
 
