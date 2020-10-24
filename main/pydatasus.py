@@ -1,3 +1,4 @@
+from sys import argv
 import pathlib
 from os import path, mkdir, listdir
 from os.path import expanduser
@@ -17,211 +18,54 @@ class PyDatasus:
         """
         self.path_files_csv = ''
         self.path_files_db = ''
-        self.__SIM = ['DO', 'DOFE']
-        self.__SINAN = ['ANIM', 'BOTU', 'CHAG', 'COLE', 'COQU', 'DIFT', 'ESQU',
-                        'FMAC', 'FTIF', 'HANS', 'LEPT', 'MENI', 'RAIV', 'TETA',
-                        'TUBE']
-        # self.__SINAN.extend['PFAN','MALA','IEXO','HANT','PEST', 'TETN']
-        self.__SINASC = ['DN', 'DNP', 'DNV']
-        self.__DATE_1 = [str(i) for i in range(2010, 2019 + 1)]
-        self.__DATE_2 = [str(i) for i in range(10, 19 + 1)]
-
-        self.__DICT_DISEASE = {
-            'Óbito': 'DO', 'Óbito Fetal': 'DOFE',
-            'Animais Peçonhentos': 'ANIM', 'Botulismo': 'BOTU',
-            'Chagas': 'CHAG', 'Cólera': 'COLE',
-            'Coqueluche': 'COQU', 'Difteria': 'DIFT',
-            'Esquistossomose': 'ESQU', 'Febre Maculosa': 'FMAC',
-            'Febre Tifóide': 'FTIF', 'Hanseníase': 'HANS',
-            'Leptospirose': 'LEPT', 'Meningite': 'MENI',
-            'Raiva': 'RAIV', 'Tétano': 'TETA',
-            'Tuberculose': 'TUBE'
-        }
 
         self.__page = ftp.FTP(PAGE)
         self.__page.login()
         self.__page.cwd('/dissemin/publicos/')
 
-    def create_regex_type_select(self, prefix, states, dates, dict_states):
-        if states is not None:
-            if isinstance(dates, list) and isinstance(states, list):
-                regex_1 = [self.__DICT_DISEASE.get(prefix) + state
-                           + str(date) + r'\.[dD[bB][cC]'
-                           for state in states
-                           for date in dates]
-
-                regex_1.extend([self.__DICT_DISEASE.get(prefix) + state
-                                + str(date)[2:4] + r'\.[dD[bB][cC]'
-                                for state in states
-                                for date in dates])
-                return regex_1
-
-            elif isinstance(dates, list) and isinstance(states, str):
-                regex_1 = [self.__DICT_DISEASE.get(prefix) + states
-                           + str(date) + r'\.[dD][bB][cC]'
-                           for date in dates]
-
-                regex_1.extend([self.__DICT_DISEASE.get(prefix) + states
-                                + str(date)[2:4] + r'\.[dD][bB][cC]'
-                                for date in dates])
-
-                return regex_1
-
-            elif isinstance(dates, int) and isinstance(states, list):
-                regex_1 = [self.__DICT_DISEASE.get(prefix) + state
-                           + str(dates) + r'\.[dD][bB][cC]'
-                           for state in states]
-
-                regex_1.extend([self.__DICT_DISEASE.get(prefix) + state
-                                + str(dates)[2:4] + r'\.[dD][bB][cC]'
-
-                                for state in states])
-                return regex_1
-
-            elif isinstance(dates, int) and isinstance(states, str):
-                regex_1 = [self.__DICT_DISEASE.get(prefix) + states
-                           + str(dates) + r'\.[dD][bB][cC]']
-
-                regex_1.extend([self.__DICT_DISEASE.get(prefix) + states
-                                + str(dates)[2:4] + r'\.[dD][bB][cC]'])
-
-                return regex_1
-
-        elif states is None:
-            if isinstance(dates, list):
-
-                regex_1 = [self.__DICT_DISEASE.get(prefix) + state[1]
-                           + str(date) + r'\.[dD][bB][cC]'
-                           for state in list(dict_states.values())
-                           for date in dates]
-
-                regex_1.extend([self.__DICT_DISEASE.get(prefix) + state[1]
-                                + str(date)[2:4] + r'\.[dD][bB][cC]'
-                                for state in list(dict_states.values())
-                                for date in dates])
-
-                return regex_1
-
-#           elif isinstance(dates, int):
-            else:
-                regex_1 = [self.__DICT_DISEASE.get(prefix) + state[1]
-                           + str(dates) + r'\.[dD][bB][cC]'
-                           for state in list(dict_states.values())]
-
-                regex_1.extend([self.__DICT_DISEASE.get(prefix) + state[1]
-                                + str(dates)[2:4] + r'\.[dD][bB][cC]'
-                                for state in list(dict_states.values())])
-
-                return regex_1
-
-    def create_regex_all(self, prefix, states, dates, dict_states):
-        if states is not None:
-            if isinstance(dates, list) and isinstance(states, list):
-                regex_1 = [pre + state + str(date) + r'\.[dD][bB][cC]'
-                           for pre in prefix
-                           for state in states
-                           for date in dates]
-
-                regex_1.extend([pre + state + str(date)[2:4]
-                                + r'\.[dD][bB][cC]'
-                                for pre in prefix
-                                for state in states
-                                for date in dates])
-
-                return regex_1
-
-            elif isinstance(dates, list) and isinstance(states, str):
-                regex_1 = [pre + states + str(date) + r'\.[dD][bB][cC]'
-                           for pre in prefix
-                           for date in dates]
-
-                regex_1.extend([pre + states + str(date)[2:4]
-                                + r'\.[dD][bB][cC]'
-                                for pre in prefix
-                                for date in dates])
-
-                return regex_1
-
-            elif isinstance(dates, int) and isinstance(states, list):
-                regex_1 = [pre + state + str(dates) + r'\.[dD][bB][cC]'
-                           for pre in prefix
-                           for state in states]
-
-                regex_1.extend([pre + state + str(dates)[2:4]
-                                + r'\.[dD][bB][cC]'
-                                for pre in prefix
-                                for state in states])
-
-                return regex_1
-
-            elif isinstance(dates, int) and isinstance(states, str):
-                regex_1 = [pre + states + str(dates) + r'\.[dD][bB][cC]'
-                           for pre in prefix]
-
-                regex_1.extend([pre + states + str(dates)[2:4]
-                                + r'\.[dD][bB][cC]'
-                                for pre in prefix])
-
-                return regex_1
-
-        elif states is None:
-            if isinstance(dates, list):
-                regex_1 = [pre + state[1] + str(date) + r'\.[dD][bB][cC]'
-                           for pre in prefix
-                           for state in list(dict_states.values())
-                           for date in dates]
-
-                regex_1.extend([pre + state[1] + str(date)[2:4]
-                                + r'\.[dD][bB][cC]'
-                                for pre in prefix
-                                for state in list(dict_states.values())
-                                for date in dates])
-
-                return regex_1
-
-            else:
-                regex_1 = [pre + state[1] + str(dates) + r'\.[dD][bB][cC]'
-                           for pre in prefix
-                           for state in list(dict_states.values())]
-
-                regex_1.extend([pre + state[1] + str(dates)[2:4]
-                                + r'\.[dD][bB][cC]'
-                                for pre in prefix
-                                for state in list(dict_states.values())])
-
-                return regex_1
-
-    def get_csv(self, system, database, states, dates, dict_states):
+    def get_csv(self, system, database, states, dates):
         """Gera um arquivo no formato csv contendo link, nome, tamanho e
         data do datadatabase.
         """
 
-        regex_1 = ''
-        prefix = ''
+        regex = ''
 
-        if database == 'Todos':
-            if system == 'SIM':
-                prefix = self.__SIM
-            elif system == 'SINAN':
-                prefix = self.__SINAN
-            elif system == 'SINASC':
-                prefix = self.__SINASC
+        if system == 'SINAN':
+            if isinstance(dates, str):
+                dates = dates[2:4]
 
-            regex_1 = self.create_regex_all(prefix, states, dates, dict_states)
-
-        elif database == 'Nascidos Vivos':
-            prefix = self.__SINASC
-
-            regex_1 = self.create_regex_all(prefix, states, dates, dict_states)
+            elif isinstance(dates, list):
+                dates = [date[2:4] for date in dates]
 
         else:
-            regex_1 = self.create_regex_type_select(
-                database, states, dates, dict_states)
+            ...
+
+        if isinstance(states, list) and isinstance(dates, list):
+            regex = [
+                database + state + date + r'\.[dD][bB][cC]'
+                for state in states for date in dates
+            ]
+        elif isinstance(states, list) and isinstance(dates, str):
+            regex = [
+                database + state + dates + r'\.[dD][bB][cC]'
+                for state in states
+            ]
+
+        elif isinstance(states, str) and isinstance(dates, str):
+            regex = [
+                database + states + dates + r'\.[dD][bB][cC]'
+            ]
+
+        elif isinstance(states, str) and isinstance(dates, list):
+            regex = [
+                database + state + dates + r'\.[dD][bB][cC]'
+                for state in states
+            ]
 
         self.__create_folders(system)
         self.f = open('{}{}.csv'.format(self.path_files_csv, system), 'w+')
         self.f.write(f'Endereco,Nome,Tamanho,Data\n')
-        self.__sep_csv(system, regex_1)
+        self.__sep_csv(system, regex)
         self.f.close()
 
     def convert_dbc(self, db):
@@ -229,20 +73,19 @@ class PyDatasus:
         blast = path.join(path.dirname(__file__), 'blast-dbf')
         if db.endswith('.csv'):
             ...
+
         elif db.endswith('.dbf'):
             ...
+
         else:
             convertido = db[:-3] + 'dbf'
             sys_exec(f'{blast} {db} {convertido}')
 
-    def get_csv_db_complete(self, system, database, states, dates,
-                            dict_states):
+    def get_csv_db_complete(self, system, database, states, dates):
 
-        self.get_csv(system, database, states, dates, dict_states)
+        self.get_csv(system, database, states, dates)
 
         self.get_db_complete(system)
-        # for db in listdir(self.path_files_db):
-        #     self.convert_dbc(db)
 
     def get_db_complete(self, *args):
         """Baixa os arquivos db* a partir da memória.
@@ -384,5 +227,9 @@ class PyDatasus:
 
 
 if __name__ == '__main__':
-    PyDatasus().get_csv('SINASC')
+    sistema = argv[1]
+    banco = argv[2]
+    local = argv[3]
+    data = argv[4]
+    PyDatasus().get_csv_db_complete(sistema, banco, local, data)
     # PyDatasus().get_db_complete('SIM')
