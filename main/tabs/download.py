@@ -1,25 +1,32 @@
 import sys
+import re
+from os import path, listdir
 from time import sleep
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QPushButton,
+from multiprocessing import cpu_count
+from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton,
                              QProgressBar, QComboBox, QGroupBox, QGridLayout,
                              QLabel, QSpinBox, QTableWidget, QTableWidgetItem)
-from PyQt5.QtCore import (Qt, pyqtSlot, pyqtSignal, QThread, QTimer,
-                          QCoreApplication)
+from PyQt5.QtCore import (Qt, pyqtSlot, pyqtSignal, QThread, QCoreApplication)
 
 from pydatasus import PyDatasus
+from f_spark import start_spark, spark_conf
 
 
 class _Loop(QThread):
     sinal = pyqtSignal(int)
 
-    def __init__(self, thread, cls):
+    def __init__(self, thread, cls=None):
         super().__init__()
         self.thread = thread
         self.cls = cls
 
     def run(self):
         n = 0
-        [self.cls.setEnabled(False) for botao in self.cls.lista_botoes]
+        if self.cls is None:
+            ...
+        else:
+            [self.cls.setEnabled(False) for botao in self.cls.lista_botoes]
+
         while self.thread.isRunning():
             n += 1
             if n == 100:
@@ -29,7 +36,10 @@ class _Loop(QThread):
             QCoreApplication.processEvents()
             self.sinal.emit(n)
         self.sinal.emit(100)
-        [self.cls.setEnabled(True) for botao in self.cls.lista_botoes]
+        if self.cls is None:
+            ...
+        else:
+            [self.cls.setEnabled(True) for botao in self.cls.lista_botoes]
 
 
 class _Thread(QThread):
@@ -110,6 +120,7 @@ class Download(QWidget):
         self.grid_sys.setSpacing(50)
 
         self.sistema = QComboBox()
+        self.sistema.setEditable(True)
         self.sistema.addItems(['SELECIONAR SISTEMA',
                                'SIH', 'SIM', 'SINAN', 'SINASC'])
         self.sistema.currentTextChanged.connect(self.escolhe_sistema)
@@ -122,6 +133,7 @@ class Download(QWidget):
         self.locais.addItems(['SELECIONAR TODOS/ESTADO/REGIÃO',
                               'TODOS', 'ESTADO', 'REGIÃO'])
         self.locais.currentTextChanged.connect(self.escolhe_estado_ou_regiao)
+        self.locais.setEditable(True)
         self.estados_regioes = QComboBox()
         self.estados_regioes.setEditable(True)
         self.estados_regioes.setEnabled(False)
@@ -134,12 +146,15 @@ class Download(QWidget):
         self.ano_final.setRange(2010, 2019)
         self.spin_cores_label = QLabel('SETAR CORES:')
         self.spin_cores = QSpinBox()
+        self.spin_cores.setMinimum(2)
+        self.spin_cores.setMaximum(cpu_count() - 2)
         self.spin_memoria_label = QLabel('SETAR MEMORIA:')
         self.spin_memoria = QSpinBox()
+        self.spin_memoria.setMinimum(2)
         self.carregar_banco = QPushButton('CARREGAR BANCO')
-        self.carregar_banco.clicked.connect(self.carregar_dados)
+        self.carregar_banco.clicked.connect(self.realiza_download)
         self.visualizar_banco = QPushButton('VISUALIZAR BANCO')
-        self.visualizar_banco.clicked.connect(self.visualizar_dados)
+        self.visualizar_banco.clicked.connect(self.thread_visualizar_dados)
 
         self.lista_botoes = [
             self.sistema, self.bases, self.locais, self.estados_regioes,
@@ -240,7 +255,7 @@ class Download(QWidget):
 
     def carregar_dados(self):
         self.sistema_chave = self.sistema.currentText()
-        condicao = ''
+        self.condicao = ''
         try:
             self.base_chave = self.bases_de_dados.get(
                 self.sistema_chave).get(self.bases.currentText())
@@ -261,19 +276,22 @@ class Download(QWidget):
                     for val in self.regioes.get(key)
                 ]
 
-            cond = [self.sistema_chave, self.base_chave,
-                    self.local_selecionado, self.data]
+            self.cond = [self.sistema_chave, self.base_chave,
+                         self.local_selecionado, self.data]
 
-            condicao = [
+            self.condicao = [
                 self.sistem_chave != 'SELECIONAR SISTEMA',
                 self.local_selecionado != 'SELECIONAR TODOS/ESTADO/REGiÃO'
             ]
         except AttributeError:
             ...
 
-        if all(condicao):
+    def realiza_download(self):
+        self.carregar_dados()
+
+        if all(self.condicao):
             self.thread_csv = _Thread(PyDatasus().get_csv_db_complete,
-                                      *cond)
+                                      *self.cond)
             self.thread_csv.start()
 
             self.loop = _Loop(self.thread_csv, self)
@@ -298,9 +316,105 @@ class Download(QWidget):
         else:
             return str(self.ano_inicial.value())
 
+    def ativar_spark(self):
+        try:
+            self.spark.stop()
+        except AttributeError:
+            ...
+
+        except ValueError:
+            ...
+
+        self.spark = start_spark(spark_conf(
+            app_name='pyDbSUS',
+            n_cores=self.spin_cores.value(),
+            executor_memory=self.spin_memoria.value(),
+            driver_memory=20)
+        )
+
+    def thread_visualizar_dados(self):
+        self.thread_executar_visualizar_dados = _Thread(self.escreve_tabela)
+        self.thread_executar_visualizar_dados.start()
+        self.outro_loop = _Loop(self.thread_executar_visualizar_dados)
+        self.outro_loop.start()
+
+    def transforma_datas(self):
+        if self.cond[0] == 'SINAN':
+            if isinstance(self.cond[3], list):
+                return [x[2:4] for x in self.cond[3]]
+
+            elif isinstance(self.cond[3], str):
+                return self.cond[3][2:4]
+        else:
+            return self.cond[3]
+
     def visualizar_dados(self):
-        print(self.sistema_chave, self.base_chave, self.local_selecionado,
-              self.data)
+        self.carregar_dados()
+        self.cond[3] = self.transforma_datas()
+
+        if all(self.condicao):
+            self.ativar_spark()
+
+        if isinstance(self.cond[2], str) and isinstance(self.cond[3], str):
+            self.regex = [self.cond[1] + self.cond[2] + self.cond[3] + '.csv']
+
+        elif isinstance(self.cond[2], str) and isinstance(self.cond[3], list):
+            self.regex = [self.cond[1] + self.cond[2] + x + '.csv'
+                          for x in self.cond[3]]
+
+        elif isinstance(self.cond[2], list) and isinstance(self.cond[3], list):
+            self.regex = [self.cond[1] + x + y + '.csv'
+                          for x in self.cond[2]
+                          for y in self.cond[3]]
+
+        elif isinstance(self.cond[2], list) and isinstance(self.cond[3], str):
+            self.regex = [self.cond[1] + x + self.cond[3] + '.csv'
+                          for x in self.cond[2]]
+
+        caminho_sistema = path.expanduser(
+            f'~/Documentos/files_db/{self.sistema_chave}/')
+
+        bases = re.compile('|'.join(self.regex))
+        arquivos = []
+        for arquivo_csv in listdir(caminho_sistema):
+            if re.search(bases, arquivo_csv):
+                arquivos.append(caminho_sistema + arquivo_csv)
+
+        self.df = self.spark.read.csv(arquivos, header=True)
+
+    def escreve_tabela(self):
+        self.visualizar_dados()
+        self.tabela.clear()
+
+        coluna_ordenada = {}
+
+        if self.df.columns[0] == '_c0':
+            for coluna in self.df.columns[1:]:
+                coluna_ordenada[coluna] = []
+        else:
+            for coluna in self.df.columns:
+                coluna_ordenada[coluna] = []
+
+        self.colunas = list(coluna_ordenada.keys())
+        self.colunas.sort()
+
+        for i, column in enumerate(self.colunas):
+            self.tabela.setItem(0, i, QTableWidgetItem(column))
+            i += 1
+
+        column_n = 0
+        row = 1
+
+        for column in coluna_ordenada:
+            for i in range(1, 11):
+                self.tabela.setItem(
+                    row, column_n, QTableWidgetItem(
+                        str(
+                            self.df.select(
+                                self.df[column]).take(i)[i - 1][0])))
+                row += 1
+            row = 1
+            column_n += 1
 
 
 if __name__ == '__main__':
