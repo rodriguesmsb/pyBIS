@@ -98,6 +98,9 @@ class Download(QWidget):
             'Sul': ['PR', 'RS', 'SC']
         }
         self.bases_de_dados = {
+            'SIH': {
+                'Internações Hospitalares': 'AIH'
+            },
             'SIM': {
                 'Óbito': 'DO', 'Óbito Fetal': 'DOFE'
             },
@@ -240,10 +243,7 @@ class Download(QWidget):
         self.bases.clear()
         self.bases.setEnabled(True)
 
-        if text == 'SIH':
-            ...
-
-        elif text == 'SELECIONAR SISTEMA':
+        if text == 'SELECIONAR SISTEMA':
             self.bases.setEnabled(False)
 
         else:
@@ -256,6 +256,7 @@ class Download(QWidget):
     def carregar_dados(self):
         self.sistema_chave = self.sistema.currentText()
         self.condicao = ''
+        self.cond = ''
         try:
             self.base_chave = self.bases_de_dados.get(
                 self.sistema_chave).get(self.bases.currentText())
@@ -278,6 +279,8 @@ class Download(QWidget):
 
             self.cond = [self.sistema_chave, self.base_chave,
                          self.local_selecionado, self.data]
+            if self.cond[0] == 'SIH':
+                self.cond[0] = 'SIHSUS'
 
             self.condicao = [
                 self.sistem_chave != 'SELECIONAR SISTEMA',
