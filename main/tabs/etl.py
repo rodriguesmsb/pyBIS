@@ -24,7 +24,9 @@ class Etl(QWidget):
         self.tabela_aplicar = QTableWidget(150, 1)
         self.tabela_aplicar.setColumnWidth(0, 520)
         self.botao_adicionar = QPushButton('Adicionar')
+        self.botao_adicionar.clicked.connect(self.adicionar_linha)
         self.botao_remover = QPushButton('Remover')
+        self.botao_remover.clicked.connect(self.remover_item)
         self.botao_aplicar_aplicar = QPushButton('Aplicar')
 
         self.grupo_tabelas = QGroupBox()
@@ -43,7 +45,8 @@ class Etl(QWidget):
 
         self.grid_extracao.addWidget(self.botao_adicionar, 1, 1, Qt.AlignRight)
         self.grid_extracao.addWidget(self.botao_remover, 2, 1, Qt.AlignRight)
-        self.grid_extracao.addWidget(self.botao_aplicar_aplicar, 3, 1, Qt.AlignRight)
+        self.grid_extracao.addWidget(self.botao_aplicar_aplicar, 3, 1,
+                                     Qt.AlignRight)
 
         self.grupo_transformar = QGroupBox('Transformação')
         self.grid_transformar = QGridLayout()
@@ -130,6 +133,17 @@ class Etl(QWidget):
         self.setLayout(self.main_layout)
 
         self.show()
+
+
+    def adicionar_linha(self):
+        selecionado = self.tabela_adicionar.currentRow()
+        local_aplicar = self.tabela_aplicar.currentRow()
+        coluna = self.tabela_adicionar.item(selecionado, 0).text()
+        self.tabela_aplicar.setItem(local_aplicar, 0, QTableWidgetItem(coluna))
+
+    def remover_item(self):
+        selecionado = self.tabela_aplicar.currentRow()
+        self.tabela_aplicar.removeRow(selecionado)
 
 
 if __name__ == '__main__':

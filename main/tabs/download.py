@@ -154,7 +154,7 @@ class Download(QWidget):
         self.carregar_banco = QPushButton('CARREGAR BANCO')
         self.carregar_banco.clicked.connect(self.realiza_download)
         self.visualizar_banco = QPushButton('VISUALIZAR BANCO')
-        self.visualizar_banco.clicked.connect(self.thread_visualizar_dados)
+        # self.visualizar_banco.clicked.connect(self.thread_visualizar_dados)
 
         self.lista_botoes = [
             self.sistema, self.bases, self.locais, self.estados_regioes,
@@ -331,12 +331,6 @@ class Download(QWidget):
             executor_memory=self.spin_memoria.value(),
             driver_memory=20)
         )
-
-    def thread_visualizar_dados(self):
-        self.thread_executar_visualizar_dados = _Thread(self.escreve_tabela)
-        self.thread_executar_visualizar_dados.start()
-        self.outro_loop = _Loop(self.thread_executar_visualizar_dados)
-        self.outro_loop.start()
 
     def transforma_datas(self):
         if self.cond[0] == 'SINAN':
