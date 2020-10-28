@@ -1,3 +1,4 @@
+from sys import argv
 import pathlib
 from os import path, mkdir, listdir
 from os.path import expanduser
@@ -226,5 +227,9 @@ class PyDatasus:
 
 
 if __name__ == '__main__':
-    PyDatasus().get_csv('SINASC')
+    sistema = argv[1]
+    banco = argv[2]
+    local = argv[3]
+    data = argv[4]
+    PyDatasus().get_csv_db_complete(sistema, banco, local, data)
     # PyDatasus().get_db_complete('SIM')
