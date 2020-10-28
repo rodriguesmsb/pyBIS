@@ -1,7 +1,7 @@
 from sys import argv
 import pathlib
-from os import path, mkdir, listdir
-from os.path import expanduser
+from os import path, mkdir
+# from os.path import expanduser
 import ftplib as ftp
 from os import system as sys_exec
 import re
@@ -37,28 +37,54 @@ class PyDatasus:
             elif isinstance(dates, list):
                 dates = [date[2:4] for date in dates]
 
-        else:
-            ...
+        elif system == 'SIHSUS':
+            if isinstance(states, list) and isinstance(dates, list):
+                regex = [
+                    database + state + r'\d{2}' + date[2:4]
+                    + r'\.[dDc][bBs][cCv]'
+                    for state in states for date in dates
+                ]
+            elif isinstance(states, list) and isinstance(dates, str):
+                regex = [
+                    database + state + r'\d{2}' + dates[2:4]
+                    + r'\.[dDc][bBs][cCv]'
+                    for state in states
+                ]
+
+            elif isinstance(states, str) and isinstance(dates, str):
+                regex = [
+                    database + states + r'\d{2}' + dates[2:4]
+                    + r'\.[dDc][bBs][cCv]'
+                ]
+
+            elif isinstance(states, str) and isinstance(dates, list):
+                regex = [
+                    database + state + r'\d{2}' + dates[2:4]
+                    + r'\.[dDc][bBs][cCv]'
+                    for state in states
+                ]
 
         if isinstance(states, list) and isinstance(dates, list):
             regex = [
-                database + state + date + r'\.[dD][bB][cC]'
+                database + state + r'\d{2}' + date[2:4] + r'\.[dDc][bBs][cCv]'
                 for state in states for date in dates
             ]
         elif isinstance(states, list) and isinstance(dates, str):
             regex = [
-                database + state + dates + r'\.[dD][bB][cC]'
+                database + state + r'\d{2}' + dates[2:4] + r'\.[dDc][bBs][cCv]'
                 for state in states
             ]
 
         elif isinstance(states, str) and isinstance(dates, str):
             regex = [
-                database + states + dates + r'\.[dD][bB][cC]'
+                database + states + r'\d{2}' + dates[2:4]
+                + r'\.[dDc][bBs][cCv]'
             ]
 
         elif isinstance(states, str) and isinstance(dates, list):
             regex = [
-                database + state + dates + r'\.[dD][bB][cC]'
+                database + state + r'\d{2}' + dates[2:4]
+                + r'\.[dDc][bBs][cCv]'
                 for state in states
             ]
 
