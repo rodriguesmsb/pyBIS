@@ -99,7 +99,7 @@ class Download(QWidget):
         }
         self.bases_de_dados = {
             'SIH': {
-                'Internações Hospitalares': 'AIH'
+                'Internações Hospitalares': 'RD'
             },
             'SIM': {
                 'Óbito': 'DO', 'Óbito Fetal': 'DOFE'
@@ -133,8 +133,8 @@ class Download(QWidget):
         self.progress_bar = QProgressBar()
         self.progress_bar.setValue(0)
         self.locais = QComboBox()
-        self.locais.addItems(['SELECIONAR TODOS/ESTADO/REGIÃO',
-                              'TODOS', 'ESTADO', 'REGIÃO'])
+        self.locais.addItems(['SELECIONAR REGIÃO', 'TODOS', 'ESTADO',
+                              'REGIÃO'])
         self.locais.currentTextChanged.connect(self.escolhe_estado_ou_regiao)
         self.locais.setEditable(True)
         self.estados_regioes = QComboBox()
