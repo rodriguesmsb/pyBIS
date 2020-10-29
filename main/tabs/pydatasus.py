@@ -38,59 +38,39 @@ class PyDatasus:
                 dates = [date[2:4] for date in dates]
 
         elif system == 'SIHSUS':
-            if isinstance(states, list) and isinstance(dates, list):
-                regex = [
-                    database + state + r'\d{2}' + date[2:4]
-                    + r'\.[dDc][bBs][cCv]'
-                    for state in states for date in dates
-                ]
-            elif isinstance(states, list) and isinstance(dates, str):
-                regex = [
-                    database + state + r'\d{2}' + dates[2:4]
-                    + r'\.[dDc][bBs][cCv]'
-                    for state in states
-                ]
+            if isinstance(dates, str):
+                dates = dates[2:4] + r'\d{2}'
 
-            elif isinstance(states, str) and isinstance(dates, str):
-                regex = [
-                    database + states + r'\d{2}' + dates[2:4]
-                    + r'\.[dDc][bBs][cCv]'
-                ]
+            elif isinstance(dates, list):
+                dates = [date[2:4] + r'\d{2}' for date in dates]
 
-            elif isinstance(states, str) and isinstance(dates, list):
-                regex = [
-                    database + state + r'\d{2}' + dates[2:4]
-                    + r'\.[dDc][bBs][cCv]'
-                    for state in states
-                ]
+        print(dates)
 
         if isinstance(states, list) and isinstance(dates, list):
             regex = [
-                database + state + r'\d{2}' + date[2:4] + r'\.[dDc][bBs][cCv]'
+                database + state + date + r'\.[dDc][bBs][cCv]'
                 for state in states for date in dates
             ]
         elif isinstance(states, list) and isinstance(dates, str):
             regex = [
-                database + state + r'\d{2}' + dates[2:4] + r'\.[dDc][bBs][cCv]'
+                database + state + dates + r'\.[dDc][bBs][cCv]'
                 for state in states
             ]
 
         elif isinstance(states, str) and isinstance(dates, str):
             regex = [
-                database + states + r'\d{2}' + dates[2:4]
-                + r'\.[dDc][bBs][cCv]'
+                database + states + dates + r'\.[dDc][bBs][cCv]'
             ]
 
         elif isinstance(states, str) and isinstance(dates, list):
             regex = [
-                database + state + r'\d{2}' + dates[2:4]
-                + r'\.[dDc][bBs][cCv]'
+                database + state + dates + r'\.[dDc][bBs][cCv]'
                 for state in states
             ]
 
         self.__create_folders(system)
         self.f = open('{}{}.csv'.format(self.path_files_csv, system), 'w+')
-        self.f.write(f'Endereco,Nome,Tamanho,Data\n')
+        self.f.write('Endereco,Nome,Tamanho,Data\n')
         self.__sep_csv(system, regex)
         self.f.close()
 
