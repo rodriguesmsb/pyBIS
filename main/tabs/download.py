@@ -279,6 +279,7 @@ class Download(QWidget):
 
             self.cond = [self.sistema_chave, self.base_chave,
                          self.local_selecionado, self.data]
+
             if self.cond[0] == 'SIH':
                 self.cond[0] = 'SIHSUS'
 
@@ -342,6 +343,13 @@ class Download(QWidget):
 
             elif isinstance(self.cond[3], str):
                 return self.cond[3][2:4]
+
+        elif self.cond[0] == 'SIHSUS':
+            if isinstance(self.cond[3], list):
+                return [x[2:4] + r'\d{2}' for x in self.cond[3]]
+
+            elif isinstance(self.cond[3], str):
+                return self.cond[3][2:4] + r'\d{2}'
         else:
             return self.cond[3]
 
@@ -368,6 +376,10 @@ class Download(QWidget):
             self.regex = [self.cond[1] + x + self.cond[3] + '.csv'
                           for x in self.cond[2]]
 
+        if self.cond[0] == 'SIHSUS':
+            self.sistema_chave = 'SIHSUS'
+
+        print(self.regex)
         caminho_sistema = path.expanduser(
             f'~/Documentos/files_db/{self.sistema_chave}/')
 
@@ -376,6 +388,7 @@ class Download(QWidget):
         for arquivo_csv in listdir(caminho_sistema):
             if re.search(bases, arquivo_csv):
                 arquivos.append(caminho_sistema + arquivo_csv)
+                print(caminho_sistema + arquivo_csv)
 
         self.df = self.spark.read.csv(arquivos, header=True)
 
