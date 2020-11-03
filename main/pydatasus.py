@@ -1,6 +1,6 @@
 from sys import argv
 import pathlib
-from os import path, mkdir
+from os import path, mkdir, remove
 # from os.path import expanduser
 import ftplib as ftp
 from os import system as sys_exec
@@ -43,8 +43,6 @@ class PyDatasus:
 
             elif isinstance(dates, list):
                 dates = [date[2:4] + r'\d{2}' for date in dates]
-
-        print(dates)
 
         if isinstance(states, list) and isinstance(dates, list):
             regex = [
@@ -112,22 +110,15 @@ class PyDatasus:
 
         self.path_files_csv = path.expanduser('~/Documentos/files_csv/')
         self.path_files_db = path.expanduser('~/Documentos/files_db/')
-        try:
-            pathlib.Path(self.path_files_csv).mkdir(parents=True,
-                                                    exist_ok=True)
-        except:
-            pass
 
-        try:
-            pathlib.Path(self.path_files_db).mkdir(parents=True,
-                                                   exist_ok=True)
-        except:
-            pass
-
+        pathlib.Path(self.path_files_csv).mkdir(parents=True,
+                                                exist_ok=True)
+        pathlib.Path(self.path_files_db).mkdir(parents=True,
+                                               exist_ok=True)
         try:
             mkdir(self.path_files_db + banco + '/')
-        except:
-            pass
+        except FileExistsError:
+            ...
 
     def __sep_csv(self, banco, regex_1=None):
         """Faz uma separação da string na variavel e depois escreve cada
@@ -144,7 +135,6 @@ class PyDatasus:
                 self.__sep_csv(x.split()[3], regex_1)
 
             elif re.match(r, x.split()[3]):
-                # print(regex_1)
                 '''
             elif (x.split()[3][0:2] in self.__SIM
                   and (x.split()[3][-8:][0:4] in self.__DATE_1)
@@ -181,15 +171,23 @@ class PyDatasus:
                                + data + '.dbc'):
                     self.convert_dbc(self.path_files_db + banco + '/'
                                      + data + '.dbc')
+                    remove(self.path_files_db + banco + '/' + data + '.dbc')
 
                     ReadDbf(self.path_files_db + banco + '/' + data + 'dbf')
+                    try:
+                        remove(self.path_files_db + banco + '/' + data + 'dbf')
+                    except FileNotFoundError:
+                        ...
 
                 elif path.isfile(self.path_files_db + banco + '/'
                                  + data + '.DBC'):
                     self.convert_dbc(self.path_files_db + banco + '/'
                                      + data + '.DBC')
 
+                    remove(self.path_files_db + banco + '/' + data + '.DBC')
+
                     ReadDbf(self.path_files_db + banco + '/' + data + 'dbf')
+                    remove(self.path_files_db + banco + '/' + data + 'dbf')
 
                 else:
                     self.__page.retrbinary(
@@ -198,9 +196,12 @@ class PyDatasus:
                              + x.split(',')[1], 'wb').write)
                     self.convert_dbc(self.path_files_db + banco + '/'
                                      + x.split(',')[1])
-
+                    remove(self.path_files_db + banco + '/' + x.split(',')[1])
                     ReadDbf(self.path_files_db + banco + '/'
                             + x.split(',')[1][:-3] + 'dbf')
+
+                    remove(self.path_files_db + banco + '/'
+                           + x.split(',')[1][:-3] + 'dbf')
 
     def __sep_db_partial(self, banco, regex):
 
@@ -220,16 +221,16 @@ class PyDatasus:
                     or (x.split()[1][0:3] in regex)
                         and (x.split()[1][-8:][0:4] in self.__DATE_1)):
 
-                        self.__page.cwd(x.split(',')[0])
-                        if path.isfile(self.path_files_db + banco + '/'
-                                       + x.split(',')[1]):
-                            ...
+                    self.__page.cwd(x.split(',')[0])
+                    if path.isfile(self.path_files_db + banco + '/'
+                                   + x.split(',')[1]):
+                        ...
 
-                        else:
-                            self.__page.retrbinary(
-                                'RETR ' + x.split(',')[1],
-                                open(self.path_files_db + banco + '/'
-                                     + x.split(',')[1], 'wb').write)
+                    else:
+                        self.__page.retrbinary(
+                            'RETR ' + x.split(',')[1],
+                            open(self.path_files_db + banco + '/'
+                                    + x.split(',')[1], 'wb').write)
 
 
 if __name__ == '__main__':
@@ -238,4 +239,3 @@ if __name__ == '__main__':
     local = argv[3]
     data = argv[4]
     PyDatasus().get_csv_db_complete(sistema, banco, local, data)
-    # PyDatasus().get_db_complete('SIM')

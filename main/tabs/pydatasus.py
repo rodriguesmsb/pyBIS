@@ -44,8 +44,6 @@ class PyDatasus:
             elif isinstance(dates, list):
                 dates = [date[2:4] + r'\d{2}' for date in dates]
 
-        print(dates)
-
         if isinstance(states, list) and isinstance(dates, list):
             regex = [
                 database + state + date + r'\.[dDc][bBs][cCv]'

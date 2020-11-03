@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 from sys import argv
-from os import path, system
-# from os import listdir
+from os import path, listdir, system
 from dbfread import DBF
 import pandas as pd
 
@@ -46,23 +45,23 @@ class ReadDbf:
         else:
             print(f'O arquivo {file_dbf} não é válido')
 
-    # def to_dataframe(self):
-    #     dataframe = {}
+    def to_dataframe(self):
+        dataframe = {}
 
-    #     for key in DBF(file_dbf, encoding='ISO-8859-1',
-    #                    load=True).field_names:
-    #         dataframe[key] = []
+        for key in DBF(file_dbf, encoding='ISO-8859-1',
+                       load=True).field_names:
+            dataframe[key] = []
 
-    #     for line in range(0, len(DBF(file_dbf,
-    #                       encoding='ISO-8859-1', load=True))):
+        for line in range(0, len(DBF(file_dbf,
+                          encoding='ISO-8859-1', load=True))):
 
-    #         for n_value in DBF(file_dbf, encoding='ISO-8859-1',
-    #                            load=True).records[line].values():
-    #             for n_key in dataframe.keys():
-    #                 dataframe[n_key].append(n_value)
+            for n_value in DBF(file_dbf, encoding='ISO-8859-1',
+                               load=True).records[line].values():
+                for n_key in dataframe.keys():
+                    dataframe[n_key].append(n_value)
 
-    #     print('to_dataframe')
-    #     return dd.from_pandas(pd.DataFrame(dataframe), npartitions=2)
+        print('to_dataframe')
+        return dd.from_pandas(pd.DataFrame(dataframe), npartitions=2)
 
     def read_dbf_to_csv(self, file_dbf):
         """Abre um arquivo com o nome do dbf splitado e substituindo a
