@@ -111,7 +111,8 @@ class Download(QWidget):
                 'Febre Maculosa': 'FMAC', 'Febre Tifóide': 'FTIF',
                 'Hanseníase': 'HANS', 'Leptospirose': 'LEPT',
                 'Meningite': 'MENI', 'Raiva': 'RAIV', 'Tétano': 'TETA',
-                'Tuberculose': 'TUBE'
+                'Tuberculose': 'TUBE', 'Zika-V': 'ZIKA', 'Dengue': 'DENG',
+                'Chickungunya': 'CHIK',
             },
             'SINASC': {
                 'Nascidos Vivos': 'DN'
