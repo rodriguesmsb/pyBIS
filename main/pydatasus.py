@@ -86,10 +86,9 @@ class PyDatasus:
             sys_exec(f'{self.blast} {db} {convertido}')
             remove(db)
             ReadDbf({convertido}, convert='convert')
-            print(convertido)
             remove(convertido)
-            del convertido
-            del db
+            convertido = None
+            db = None
 
     def get_csv_db_complete(self, system, database, states, dates):
 

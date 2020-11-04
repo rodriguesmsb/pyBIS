@@ -380,7 +380,6 @@ class Download(QWidget):
         if self.cond[0] == 'SIHSUS':
             self.sistema_chave = 'SIHSUS'
 
-        print(self.regex)
         caminho_sistema = path.expanduser(
             f'~/Documentos/files_db/{self.sistema_chave}/')
 
