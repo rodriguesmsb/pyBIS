@@ -18,6 +18,7 @@ class PyDatasus:
         """
         self.path_files_csv = ''
         self.path_files_db = ''
+        self.blast = path.join(path.dirname(__file__), 'blast-dbf')
 
         self.__page = ftp.FTP(PAGE)
         self.__page.login()
@@ -74,7 +75,6 @@ class PyDatasus:
 
     def convert_dbc(self, db):
 
-        blast = path.join(path.dirname(__file__), 'blast-dbf')
         if db.endswith('.csv'):
             ...
 
@@ -83,7 +83,13 @@ class PyDatasus:
 
         else:
             convertido = db[:-3] + 'dbf'
-            sys_exec(f'{blast} {db} {convertido}')
+            sys_exec(f'{self.blast} {db} {convertido}')
+            remove(db)
+            ReadDbf({convertido}, convert='convert')
+            print(convertido)
+            remove(convertido)
+            del convertido
+            del db
 
     def get_csv_db_complete(self, system, database, states, dates):
 
@@ -160,48 +166,24 @@ class PyDatasus:
         self.__page.cwd('..')
 
     def __sep_db_complete(self, banco, d):
-
         if path.isfile(self.path_files_csv + banco + '.csv'):
             with open(self.path_files_csv + banco + '.csv') as f:
                 data = f.readlines()
-            for x in data[1::]:
+            for x in data[1:]:
                 self.__page.cwd(x.split(',')[0])
                 data = x.split(',')[1][:-4]
-                if path.isfile(self.path_files_db + banco + '/'
-                               + data + '.dbc'):
-                    self.convert_dbc(self.path_files_db + banco + '/'
-                                     + data + '.dbc')
-                    remove(self.path_files_db + banco + '/' + data + '.dbc')
+                if not path.isfile(self.path_files_db + banco + '/' + data
+                                   + '.csv'):
 
-                    ReadDbf(self.path_files_db + banco + '/' + data + 'dbf')
-                    try:
-                        remove(self.path_files_db + banco + '/' + data + 'dbf')
-                    except FileNotFoundError:
-                        ...
-
-                elif path.isfile(self.path_files_db + banco + '/'
-                                 + data + '.DBC'):
-                    self.convert_dbc(self.path_files_db + banco + '/'
-                                     + data + '.DBC')
-
-                    remove(self.path_files_db + banco + '/' + data + '.DBC')
-
-                    ReadDbf(self.path_files_db + banco + '/' + data + 'dbf')
-                    remove(self.path_files_db + banco + '/' + data + 'dbf')
-
-                else:
                     self.__page.retrbinary(
                         'RETR ' + x.split(',')[1],
                         open(self.path_files_db + banco + '/'
                              + x.split(',')[1], 'wb').write)
+
                     self.convert_dbc(self.path_files_db + banco + '/'
                                      + x.split(',')[1])
-                    remove(self.path_files_db + banco + '/' + x.split(',')[1])
-                    ReadDbf(self.path_files_db + banco + '/'
-                            + x.split(',')[1][:-3] + 'dbf')
-
-                    remove(self.path_files_db + banco + '/'
-                           + x.split(',')[1][:-3] + 'dbf')
+                else:
+                    ...
 
     def __sep_db_partial(self, banco, regex):
 
@@ -209,7 +191,7 @@ class PyDatasus:
             with open(self.path_files_csv + banco + '.csv') as f:
                 data = f.readlines()
 
-            for x in data[1::]:
+            for x in data[1:]:
                 if (x.split()[1][0:2] in regex
                         and (x.split()[1][-8:][0:4] in self.__DATE_1)
                     or (x.split()[1][0:4] in regex)
