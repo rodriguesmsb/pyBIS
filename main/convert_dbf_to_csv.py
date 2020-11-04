@@ -2,7 +2,6 @@
 
 from sys import argv
 from os import path, system
-# from os import listdir
 from dbfread import DBF
 import pandas as pd
 
@@ -19,32 +18,33 @@ class ReadDbf:
         """A instancia recebe um parametro o nome do arquivo dbf
         e abre uma lista para os itens que serão iterados no dbf
         """
-        self.file_dbf = file_dbf
+        self.file_dbf = list(file_dbf)[0]
 
         if convert == 'convert':
             if path.isfile(self.file_dbf):
                 self.read_dbf_to_csv(
-                    self.__check_file_dbf(file_dbf))
+                    self.__check_file_dbf())
 
         else:
             ...
 
-    def __check_file_dbf(self, file_dbf):
+    def __check_file_dbf(self):
         """Confere se o arquivo inserido está no formato dbf
         se estiver, o arquivo será convertido diretamente para csv,
         caso contrário o mesmo irá passar pela conversão para dbf
         através da ferramenta blast-dbf que se encontra no mesmo
         diretório deste script
         """
-        if bool(file_dbf.endswith(('.dbf', '.DBF'))):
-            return file_dbf
+        if bool(self.file_dbf.endswith(('.dbf', '.DBF'))):
+            return self.file_dbf
 
-        elif bool(file_dbf.endswith(('.dbc', '.DBC'))):
-            system(f"./blast-dbf {file_dbf} {file_dbf.split('.')[0]}.dbf")
-            return file_dbf.split('.')[0] + '.dbf'
+        elif bool(self.file_dbf.endswith(('.dbc', '.DBC'))):
+            system(f"./blast-dbf {self.file_dbf} \
+                   {self.file_dbf.split('.')[0]}.dbf")
+            return self.file_dbf.split('.')[0] + '.dbf'
 
         else:
-            print(f'O arquivo {file_dbf} não é válido')
+            print(f'O arquivo {self.file_dbf} não é válido')
 
     # def to_dataframe(self):
     #     dataframe = {}
@@ -82,7 +82,6 @@ class ReadDbf:
             for column, value in zip(db.field_names, db.records[i].values()):
                 df[column].append(value)
 
-        print('read_dbf_to_csv')
         pd.DataFrame(df).to_csv('{}.csv'.format(file_dbf.split('.')[0]))
 
 
