@@ -1,8 +1,8 @@
-from sys import argv, exit
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QPushButton,
-                             QProgressBar, QComboBox, QGroupBox, QGridLayout,
-                             QLabel, QSpinBox, QTableWidget, QTableWidgetItem,
-                             QLineEdit)
+import sys
+from PyQt5.QtWidgets import (QApplication, QWidget, QHBoxLayout, QVBoxLayout,
+                             QTableWidget, QPushButton, QGridLayout, QComboBox,
+                             QFormLayout, QGroupBox, QLineEdit,
+                             QTableWidgetItem)
 from PyQt5.QtCore import Qt
 
 
@@ -11,129 +11,13 @@ class Etl(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle('E.T.L')
-        screen = QApplication.primaryScreen()
-        screen = screen.size()
-        self.setGeometry(0, 0, screen.width() - 100, screen.height() - 100)
+        grid = QGridLayout()
+        grid.addWidget(self.extracao(), 0, 0)
+        grid.addWidget(self.transformacao(), 0, 1)
+        grid.addWidget(self.exportacao(), 1, 0, 1, 2, Qt.AlignTop)
 
-        self.main_layout = QGridLayout()
-
-        self.tabela_adicionar = QTableWidget(150, 1)
-        self.tabela_adicionar.setColumnWidth(0, 520)
-
-        self.tabela_aplicar = QTableWidget(150, 1)
-        self.tabela_aplicar.setColumnWidth(0, 520)
-        self.botao_adicionar = QPushButton('Adicionar')
-        self.botao_adicionar.clicked.connect(self.adicionar_linha)
-        self.botao_remover = QPushButton('Remover')
-        self.botao_remover.clicked.connect(self.remover_item)
-        self.botao_aplicar_aplicar = QPushButton('Aplicar')
-
-        self.grupo_tabelas = QGroupBox()
-        self.grid_tabelas = QGridLayout()
-
-        self.grupo_botoes = QGroupBox()
-        self.grid_botoes = QGridLayout()
-
-        self.grupo_tabelas.setLayout(self.grid_tabelas)
-
-        self.grupo_extracao = QGroupBox('Extração')
-        self.grid_extracao = QGridLayout()
-
-        self.grid_extracao.addWidget(self.tabela_adicionar, 0, 0)
-        self.grid_extracao.addWidget(self.tabela_aplicar, 0, 1)
-
-        self.grid_extracao.addWidget(self.botao_adicionar, 1, 1, Qt.AlignRight)
-        self.grid_extracao.addWidget(self.botao_remover, 2, 1, Qt.AlignRight)
-        self.grid_extracao.addWidget(self.botao_aplicar_aplicar, 3, 1,
-                                     Qt.AlignRight)
-
-        self.grupo_transformar = QGroupBox('Transformação')
-        self.grid_transformar = QGridLayout()
-
-        self.tabela_transformar = QTableWidget(50, 150)
-        self.condicao_coluna = QComboBox()
-        self.condicao_maior = QPushButton('>')
-        self.condicao_menor = QPushButton('<')
-        self.condicao_maior_igual = QPushButton('>=')
-        self.condicao_menor_igual = QPushButton('<=')
-        self.condicao_diferente = QPushButton('!=')
-        self.condicao_and = QPushButton('and')
-        self.condicao_or = QPushButton('or')
-        self.condicao_in = QPushButton('in')
-        self.condicao_not = QPushButton('not')
-        self.linha_editar = QLineEdit()
-        self.botao_aplicar = QPushButton('Aplicar')
-
-        self.grupo_botoes_transformar = QGroupBox()
-        self.grid_botoes_transformar = QGridLayout()
-
-        self.grid_transformar.addWidget(self.tabela_transformar, 0, 1, 0, 2)
-
-        self.grid_botoes_transformar.addWidget(self.condicao_coluna, 0, 0)
-
-        self.grid_botoes_transformar.addWidget(self.condicao_maior, 1, 0)
-
-        self.grid_botoes_transformar.addWidget(self.condicao_menor, 2, 0)
-
-        self.grid_botoes_transformar.addWidget(self.condicao_maior_igual, 3, 0)
-
-        self.grid_botoes_transformar.addWidget(self.condicao_menor_igual, 4, 0)
-
-        self.grid_botoes_transformar.addWidget(self.condicao_diferente, 5, 0)
-
-        self.grid_botoes_transformar.addWidget(self.condicao_and, 6, 0)
-
-        self.grid_botoes_transformar.addWidget(self.condicao_or, 7, 0)
-
-        self.grid_botoes_transformar.addWidget(self.condicao_in, 8, 0)
-
-        self.grid_botoes_transformar.addWidget(self.condicao_not, 9, 0)
-
-        self.grupo_botoes_transformar.setLayout(self.grid_botoes_transformar)
-
-        self.grid_transformar.addWidget(self.grupo_botoes_transformar, 0, 0,
-                                        Qt.AlignTop)
-
-        self.grid_transformar.addWidget(self.linha_editar, 1, 1,
-                                        Qt.AlignBottom)
-        self.grid_transformar.addWidget(self.botao_aplicar, 1, 2)
-
-        self.grupo_exportar = QGroupBox('Exportação')
-        self.grid_exportar = QGridLayout()
-
-        self.tabela_exportar = QTableWidget(10, 90)
-        self.botao_exportar = QPushButton('Exportar .csv')
-
-        self.grid_exportar.addWidget(self.tabela_exportar, 0, 0, 1, 0,
-                                     Qt.AlignTop)
-        self.grid_exportar.addWidget(self.botao_exportar, 1, 1)
-
-        self.label_grafico = QLabel('')
-        self.botao_salvar_html = QPushButton('Gerar Profile')
-
-        self.grupo_profile = QGroupBox('Profile')
-        self.grid_profile = QGridLayout()
-
-        self.grid_profile.addWidget(self.botao_salvar_html, 0, 1,
-                                    Qt.AlignJustify)
-        self.grid_profile.addWidget(self.label_grafico, 0, 0)
-        # self.grid_profile.addWidget(self.barra_salvar_html, 0, 0)
-
-        self.grupo_extracao.setLayout(self.grid_extracao)
-        self.grupo_transformar.setLayout(self.grid_transformar)
-        self.grupo_exportar.setLayout(self.grid_exportar)
-        self.grupo_profile.setLayout(self.grid_profile)
-
-        self.main_layout.addWidget(self.grupo_extracao, 0, 0)
-        self.main_layout.addWidget(self.grupo_transformar, 0, 1)
-        self.main_layout.addWidget(self.grupo_exportar, 1, 0)
-        self.main_layout.addWidget(self.grupo_profile, 1, 1)
-
-        self.setLayout(self.main_layout)
-
-        self.show()
-
+        self.setLayout(grid)
+        self.setWindowTitle('Etl')
 
     def adicionar_linha(self):
         selecionado = self.tabela_adicionar.currentRow()
@@ -141,12 +25,114 @@ class Etl(QWidget):
         coluna = self.tabela_adicionar.item(selecionado, 0).text()
         self.tabela_aplicar.setItem(local_aplicar, 0, QTableWidgetItem(coluna))
 
-    def remover_item(self):
+    def remover_linha(self):
         selecionado = self.tabela_aplicar.currentRow()
         self.tabela_aplicar.removeRow(selecionado)
 
+    def extracao(self):
+        hbox_tabela = QHBoxLayout()
+        hbox_botoes = QHBoxLayout()
+        layout = QFormLayout()
+        layout_group = QGroupBox('Extração')
+
+        self.tabela_adicionar = QTableWidget(120, 1)
+        self.tabela_adicionar.setColumnWidth(0, 520)
+        self.tabela_aplicar = QTableWidget(120, 1)
+        self.tabela_aplicar.setColumnWidth(0, 520)
+
+        self.botao_adicionar = QPushButton('Adicionar')
+        self.botao_adicionar.clicked.connect(self.adicionar_linha)
+        self.botao_remover = QPushButton('Remover')
+        self.botao_remover.clicked.connect(self.remover_linha)
+        self.botao_aplicar_extracao = QPushButton('Aplicar')
+
+        botoes = [
+            self.botao_adicionar, self.botao_remover,
+            self.botao_aplicar_extracao
+        ]
+
+        hbox_tabela.addWidget(self.tabela_adicionar)
+        hbox_tabela.addWidget(self.tabela_aplicar)
+
+        for widget in botoes:
+            hbox_botoes.addWidget(widget)
+
+        layout.addRow(hbox_tabela)
+        layout.addRow(hbox_botoes)
+
+        layout_group.setLayout(layout)
+
+        return layout_group
+
+    def transformacao(self):
+        vbox = QVBoxLayout()
+        vbox_tabela = QVBoxLayout()
+        hbox = QHBoxLayout()
+        hbox_botoes = QHBoxLayout()
+        layout = QFormLayout()
+        layout_group = QGroupBox('Transformação')
+
+        self.botao_linha = QComboBox()
+        self.botao_maior = QPushButton('>')
+        self.botao_menor = QPushButton('<')
+        self.botao_maior_igual = QPushButton('>=')
+        self.botao_menor_igual = QPushButton('<=')
+        self.botao_igual = QPushButton('==')
+        self.botao_diferente = QPushButton('!=')
+        self.botao_and = QPushButton('and')
+        self.botao_or = QPushButton('or')
+        self.botao_in = QPushButton('in')
+        self.botao_not = QPushButton('not')
+
+        self.tabela_transformar = QTableWidget(150, 150)
+        self.query = QLineEdit()
+        self.botao_aplicar_transformacao = QPushButton('Aplicar')
+
+        vbox.addWidget(self.botao_linha)
+        vbox.addWidget(self.botao_maior)
+        vbox.addWidget(self.botao_menor)
+        vbox.addWidget(self.botao_maior_igual)
+        vbox.addWidget(self.botao_menor_igual)
+        vbox.addWidget(self.botao_igual)
+        vbox.addWidget(self.botao_diferente)
+        vbox.addWidget(self.botao_and)
+        vbox.addWidget(self.botao_or)
+        vbox.addWidget(self.botao_in)
+        vbox.addWidget(self.botao_not)
+
+        hbox.addLayout(vbox)
+
+        hbox_botoes.addWidget(self.query)
+        hbox_botoes.addWidget(self.botao_aplicar_transformacao)
+        vbox_tabela.addWidget(self.tabela_transformar)
+        vbox_tabela.addLayout(hbox_botoes)
+
+        hbox.addLayout(vbox_tabela)
+
+        layout.addRow(hbox)
+        layout_group.setLayout(layout)
+
+        return layout_group
+
+    def exportacao(self):
+        grid = QGridLayout()
+        self.tabela_exportar = QTableWidget(150, 150)
+        self.botao_exportar = QPushButton('Exportar ".csv"')
+        layout_group = QGroupBox('Exportação')
+
+        grid.addWidget(self.tabela_exportar, 0, 0)
+        grid.addWidget(self.botao_exportar, 1, 0, Qt.AlignRight)
+
+        layout_group.setLayout(grid)
+
+        return layout_group
+
+    def profile(self):
+        ...
+
 
 if __name__ == '__main__':
-    app = QApplication(argv)
-    etl = Etl()
-    exit(app.exec_())
+    app = QApplication([])
+    window = Etl()
+    window.show()
+    sys.exit(app.exec_())
