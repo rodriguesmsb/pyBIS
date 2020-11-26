@@ -2,10 +2,14 @@
 
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QTabWidget, QTabBar,
                              QTableWidgetItem, QFileDialog, QStylePainter,
-                             QStyle, QStyleOptionTab)
+                             QStyle, QStyleOptionTab, QStyleFactory)
+from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QRect, QPoint
 from pandas_profiling import ProfileReport
+
 import qdarkstyle
+import qdarkgraystyle
+import pyqt5_material
 
 
 class TabBar(QTabBar):
@@ -39,8 +43,7 @@ class TabBar(QTabBar):
 
 class TabWidget(QTabWidget):
     def __init__(self, *args, **kwargs):
-        QTabWidget.__init__(self, *args, **kwargs)
-        # super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.setTabBar(TabBar(self))
         self.setTabPosition(QTabWidget.West)
 
@@ -50,13 +53,14 @@ class Pydbsus_gui(QMainWindow):
     def __init__(self, *abas):
         super().__init__()
 
-        self.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
+        # self.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
         self.setWindowTitle('pyBiss')
         self.tabs = TabWidget()
+        self.tabs.setContentsMargins(100, 100, 100, 100)
         # self.tabs.setTabPosition(QTabWidget.West)
 
         for aba in abas:
-            self.tabs.addTab(aba, aba.windowTitle())
+            self.tabs.addTab(aba, QIcon(aba.windowIcon()), aba.windowTitle())
 
         self.setCentralWidget(self.tabs)
 
@@ -183,14 +187,29 @@ def thread_exportar_dados():
     etl.thread_aplicar_itens_etl.start()
 
 
+def setStyle(text):
+    if text == 'Fusion':
+        app.setStyleSheet('')
+        app.setStyle(QStyleFactory.create('Fusion'))
+    elif text == 'Windows':
+        app.setStyleSheet('')
+        app.setStyle(QStyleFactory.create('Windows'))
+    elif text == 'Dark':
+        app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
+    elif text == 'DarkGray':
+        app.setStyleSheet(qdarkgraystyle.load_stylesheet())
+
+
 if __name__ == '__main__':
     import sys
 
     from tabs.download import Download, _Thread
     from tabs.etl import Etl
     from tabs.merge import Merge
+    from tabs.config import Config
 
     app = QApplication(sys.argv)
+    # app.setStyle(QStyleFactory.create('Windows'))
     download = Download()
     download.visualizar_banco.clicked.connect(thread_visualizar_dados)
 
@@ -202,6 +221,8 @@ if __name__ == '__main__':
     # etl.botao_salvar_html.clicked.connect(exportar_profile)
 
     merge = Merge()
+    config = Config()
+    config.select_layout.currentTextChanged.connect(setStyle)
 
-    main = Pydbsus_gui(download, etl, merge)
+    main = Pydbsus_gui(download, etl, merge, config)
     sys.exit(app.exec_())
