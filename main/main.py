@@ -12,7 +12,9 @@ class Pydbsus_gui(QMainWindow):
         super().__init__()
 
         self.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
+        self.setWindowTitle('pyBiss')
         self.tabs = QTabWidget()
+        self.tabs.setTabPosition(QTabWidget.West)
 
         for aba in abas:
             self.tabs.addTab(aba, aba.windowTitle())
@@ -154,9 +156,11 @@ if __name__ == '__main__':
     download.visualizar_banco.clicked.connect(thread_visualizar_dados)
 
     etl = Etl()
-    etl.botao_aplicar_aplicar.clicked.connect(thread_exportar_dados)
+    etl.botao_aplicar_extracao.clicked.connect(thread_exportar_dados)
+
+    # etl.botao_aplicar_aplicar.clicked.connect(thread_exportar_dados)
     etl.botao_exportar.clicked.connect(etl_exportar_csv)
-    etl.botao_salvar_html.clicked.connect(exportar_profile)
+    # etl.botao_salvar_html.clicked.connect(exportar_profile)
 
     merge = Merge()
 
