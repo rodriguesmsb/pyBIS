@@ -1,9 +1,15 @@
 from sys import argv, exit
+from os import path
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QComboBox,
                              QGroupBox, QGridLayout, QTableWidget,
                              QTableWidgetItem, QFileDialog)
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
 import pandas as pd
+
+
+img_folder = path.dirname(__file__)
+img_merge = path.join(img_folder, 'imgs/mesclar/')
 
 
 class Merge(QWidget):
@@ -12,6 +18,7 @@ class Merge(QWidget):
         super().__init__()
 
         self.setWindowTitle('Mesclar')
+        self.setWindowIcon(QIcon(img_merge + 'merge.png'))
         screen = QApplication.primaryScreen()
         screen = screen.size()
         self.setGeometry(0, 0, screen.width() - 100, screen.height() - 100)

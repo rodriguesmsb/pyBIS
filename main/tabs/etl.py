@@ -1,9 +1,14 @@
 import sys
+from os import path
 from PyQt5.QtWidgets import (QApplication, QWidget, QHBoxLayout, QVBoxLayout,
                              QTableWidget, QPushButton, QGridLayout, QComboBox,
                              QFormLayout, QGroupBox, QLineEdit,
                              QTableWidgetItem)
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
+
+img_folder = path.dirname(__file__)
+img_etl = path.join(img_folder, 'imgs/etl/')
 
 
 class Etl(QWidget):
@@ -11,6 +16,7 @@ class Etl(QWidget):
     def __init__(self):
         super().__init__()
 
+        self.setWindowIcon(QIcon(img_etl + 'etl.png'))
         grid = QGridLayout()
         grid.addWidget(self.extracao(), 0, 0)
         grid.addWidget(self.transformacao(), 0, 1)

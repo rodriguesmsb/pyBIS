@@ -7,9 +7,13 @@ from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton,
                              QProgressBar, QComboBox, QGroupBox, QGridLayout,
                              QLabel, QSpinBox, QTableWidget, QTableWidgetItem)
 from PyQt5.QtCore import (Qt, pyqtSlot, pyqtSignal, QThread, QCoreApplication)
+from PyQt5.QtGui import QIcon
 
 from pydatasus import PyDatasus
 from f_spark import start_spark, spark_conf
+
+img_folder = path.dirname(__file__)
+img_download = path.join(img_folder, 'imgs/iniciar/')
 
 
 class _Loop(QThread):
@@ -60,6 +64,7 @@ class Download(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Iniciar')
+        self.setWindowIcon(QIcon(img_download + 'botao-de-download.png'))
         screen = QApplication.primaryScreen()
         screen = screen.size()
         self.setGeometry(0, 0, screen.width() - 100, screen.height() - 100)
@@ -388,7 +393,7 @@ class Download(QWidget):
         for arquivo_csv in listdir(caminho_sistema):
             if re.search(bases, arquivo_csv):
                 arquivos.append(caminho_sistema + arquivo_csv)
-                print(caminho_sistema + arquivo_csv)
+                # print(caminho_sistema + arquivo_csv)
 
         self.df = self.spark.read.csv(arquivos, header=True)
 
