@@ -3,13 +3,12 @@
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QTabWidget, QTabBar,
                              QTableWidgetItem, QFileDialog, QStylePainter,
                              QStyle, QStyleOptionTab, QStyleFactory)
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QRect, QPoint
+from PyQt5.QtCore import QRect, QPoint, pyqtSlot
+from PyQt5.QtGui import QFont, QPalette, QColor
 from pandas_profiling import ProfileReport
 
 import qdarkstyle
 import qdarkgraystyle
-import pyqt5_material
 
 
 class TabBar(QTabBar):
@@ -53,14 +52,12 @@ class Pydbsus_gui(QMainWindow):
     def __init__(self, *abas):
         super().__init__()
 
-        # self.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
         self.setWindowTitle('pyBiss')
         self.tabs = TabWidget()
-        self.tabs.setContentsMargins(100, 100, 100, 100)
-        # self.tabs.setTabPosition(QTabWidget.West)
 
         for aba in abas:
-            self.tabs.addTab(aba, QIcon(aba.windowIcon()), aba.windowTitle())
+            # self.tabs.addTab(aba, QIcon(aba.windowIcon()), aba.windowTitle())
+            self.tabs.addTab(aba, aba.windowIcon(), '')
 
         self.setCentralWidget(self.tabs)
 
@@ -191,13 +188,43 @@ def setStyle(text):
     if text == 'Fusion':
         app.setStyleSheet('')
         app.setStyle(QStyleFactory.create('Fusion'))
+        config.select_font.setEnabled(True)
+        config.select_size_font.setEnabled(True)
+        config.select_color.setEnabled(True)
     elif text == 'Windows':
         app.setStyleSheet('')
         app.setStyle(QStyleFactory.create('Windows'))
+        config.select_font.setEnabled(True)
+        config.select_size_font.setEnabled(True)
+        config.select_color.setEnabled(True)
     elif text == 'Dark':
         app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
+        config.select_font.setEnabled(False)
+        config.select_size_font.setEnabled(False)
+        config.select_color.setEnabled(False)
     elif text == 'DarkGray':
         app.setStyleSheet(qdarkgraystyle.load_stylesheet())
+        config.select_font.setEnabled(False)
+        config.select_size_font.setEnabled(False)
+        config.select_color.setEnabled(False)
+
+
+@pyqtSlot(int)
+def setFont(val):
+    app.setFont(QFont('', val))
+
+
+def setFontFamily(text):
+    app.setFont(QFont(text))
+
+
+@pyqtSlot(str)
+def setFontColor(color):
+    print(color)
+    palette.setColor(QPalette.Text, QColor(color))
+    palette.setColor(QPalette.ButtonText, QColor(color))
+    palette.setColor(QPalette.QProgressBar, QColor(color))
+    app.setPalette(palette)
 
 
 if __name__ == '__main__':
@@ -209,6 +236,7 @@ if __name__ == '__main__':
     from tabs.config import Config
 
     app = QApplication(sys.argv)
+    palette = QPalette()
     # app.setStyle(QStyleFactory.create('Windows'))
     download = Download()
     download.visualizar_banco.clicked.connect(thread_visualizar_dados)
@@ -222,7 +250,11 @@ if __name__ == '__main__':
 
     merge = Merge()
     config = Config()
+
     config.select_layout.currentTextChanged.connect(setStyle)
+    config.select_size_font.valueChanged.connect(setFont)
+    config.select_font.currentTextChanged.connect(setFontFamily)
+    # config.select_color._color.connect(setFontColor)
 
     main = Pydbsus_gui(download, etl, merge, config)
     sys.exit(app.exec_())

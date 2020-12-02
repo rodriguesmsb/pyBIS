@@ -470,7 +470,8 @@ def exportar_reduzido():
 
 
 def get_merge_data():
-    merge_data(b1, b2, [x.text() for x in mesclar.colunas_selecionadas.selectedItems()])
+    merge_data(b1, b2, [x.text() for x in
+                        mesclar.colunas_selecionadas.selectedItems()])
 
 
 def merge_data(b1, b2, columns):
@@ -875,7 +876,7 @@ def aplicar_itens():
 
         for i, coluna in enumerate(new_df.columns):
             etl.tabela_exportar.setItem(0, i, QTableWidgetItem(coluna))
-        numero_column = new_df.select(new_df.columns[0]).count()
+        # numero_column = new_df.select(new_df.columns[0]).count()
 
         column_n = 0
         row = 1

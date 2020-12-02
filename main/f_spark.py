@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from os import system, getcwd, path
+from os import system, path
 import platform
 import findspark
 spark_home = path.join(path.dirname(__file__), 'spark-3.0.0-bin-hadoop3.2')
