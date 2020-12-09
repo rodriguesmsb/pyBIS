@@ -79,11 +79,12 @@ class Etl(QWidget):
         layout_group = QGroupBox('Transformação')
 
         self.botao_linha = QComboBox()
+        # self.botao_linha.setEditable(True)
         self.botao_maior = QPushButton('>')
         self.botao_menor = QPushButton('<')
         self.botao_maior_igual = QPushButton('>=')
         self.botao_menor_igual = QPushButton('<=')
-        self.botao_igual = QPushButton('==')
+        self.botao_igual = QPushButton('equal')
         self.botao_diferente = QPushButton('!=')
         self.botao_and = QPushButton('and')
         self.botao_or = QPushButton('or')
@@ -133,8 +134,7 @@ class Etl(QWidget):
 
         return layout_group
 
-    def profile(self):
-        ...
+# ----------------------------------------------------------------------- #
 
 
 if __name__ == '__main__':
