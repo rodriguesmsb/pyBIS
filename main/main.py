@@ -79,6 +79,7 @@ def escreve_tabela_download():
 
     colunas = list(coluna_ordenada.keys())
     colunas.sort()
+    etl.botao_linha.addItems(colunas)
 
     for i, column in enumerate(colunas):
         download.tabela.setItem(0, i, QTableWidgetItem(column))
@@ -131,6 +132,25 @@ def aplicar_itens_etl():
             row += 1
         row = 1
         column_n += 1
+
+
+@pyqtSlot(str)
+def write_column_selected(column):
+    etl.query.setText(column)
+
+
+# @pyqtSlot(str)
+def write_button_clicked():
+    expression = ' ' + etl.sender().text() + ' '
+    if expression == ' equal ':
+        expression = ' == '
+    etl.query.setText(etl.botao_linha.currentText() + expression)
+
+
+def apply_query():
+    expression = etl.query.text().split(' ')
+    download.df.filter(download.df[expression[0]] + ' ' + expression[1]
+                       + ' ' + expression[2])
 
 
 def etl_exportar_csv():
@@ -233,6 +253,7 @@ if __name__ == '__main__':
     from tabs.download import Download, _Thread
     from tabs.etl import Etl
     from tabs.merge import Merge
+    from tabs.dashboard import Dashboard
     from tabs.config import Config
 
     app = QApplication(sys.argv)
@@ -246,9 +267,22 @@ if __name__ == '__main__':
 
     # etl.botao_aplicar_aplicar.clicked.connect(thread_exportar_dados)
     etl.botao_exportar.clicked.connect(etl_exportar_csv)
+    etl.botao_linha.currentTextChanged.connect(write_column_selected)
+    etl.botao_maior.clicked.connect(write_button_clicked)
+    etl.botao_menor.clicked.connect(write_button_clicked)
+    etl.botao_maior_igual.clicked.connect(write_button_clicked)
+    etl.botao_menor_igual.clicked.connect(write_button_clicked)
+    etl.botao_igual.clicked.connect(write_button_clicked)
+    etl.botao_diferente.clicked.connect(write_button_clicked)
+    etl.botao_and.clicked.connect(write_button_clicked)
+    etl.botao_or.clicked.connect(write_button_clicked)
+    etl.botao_in.clicked.connect(write_button_clicked)
+    etl.botao_not.clicked.connect(write_button_clicked)
+    etl.botao_aplicar_transformacao.clicked.connect(apply_query)
     # etl.botao_salvar_html.clicked.connect(exportar_profile)
 
     merge = Merge()
+    dash = Dashboard()
     config = Config()
 
     config.select_layout.currentTextChanged.connect(setStyle)
@@ -256,5 +290,5 @@ if __name__ == '__main__':
     config.select_font.currentTextChanged.connect(setFontFamily)
     # config.select_color._color.connect(setFontColor)
 
-    main = Pydbsus_gui(download, etl, merge, config)
+    main = Pydbsus_gui(download, etl, merge, dash, config)
     sys.exit(app.exec_())
