@@ -41,10 +41,18 @@ class Etl(QWidget):
         layout = QFormLayout()
         layout_group = QGroupBox('Extração')
 
-        self.tabela_adicionar = QTableWidget(120, 1)
-        self.tabela_adicionar.setColumnWidth(0, 520)
         self.tabela_aplicar = QTableWidget(120, 1)
+        self.tabela_adicionar = QTableWidget(120, 1)
+        self.tabela_adicionar.setHorizontalHeaderItem(
+            0, QTableWidgetItem('Selecione suas colunas'))
+        self.tabela_adicionar.horizontalHeader().setDefaultAlignment(
+            Qt.AlignLeft)
+        self.tabela_adicionar.setColumnWidth(0, 520)
         self.tabela_aplicar.setColumnWidth(0, 520)
+        self.tabela_aplicar.setHorizontalHeaderItem(
+            0, QTableWidgetItem('Colunas Selecionadas'))
+        self.tabela_aplicar.horizontalHeader().setDefaultAlignment(
+            Qt.AlignLeft)
 
         self.botao_adicionar = QPushButton('Adicionar')
         self.botao_adicionar.clicked.connect(self.adicionar_linha)
@@ -91,7 +99,13 @@ class Etl(QWidget):
         self.botao_in = QPushButton('in')
         self.botao_not = QPushButton('not')
 
-        self.tabela_transformar = QTableWidget(150, 150)
+        self.tabela_transformar = QTableWidget(150, 1)
+        self.tabela_transformar.horizontalHeader().setDefaultAlignment(
+            Qt.AlignLeft)
+        self.tabela_transformar.setHorizontalHeaderItem(
+            0, QTableWidgetItem('Histórico de Filtros'))
+        # self.tabela_transformar.setHeader
+        self.tabela_transformar.setColumnWidth(0, 500)
         self.query = QLineEdit()
         self.botao_aplicar_transformacao = QPushButton('Aplicar')
 
@@ -133,8 +147,6 @@ class Etl(QWidget):
         layout_group.setLayout(grid)
 
         return layout_group
-
-# ----------------------------------------------------------------------- #
 
 
 if __name__ == '__main__':
