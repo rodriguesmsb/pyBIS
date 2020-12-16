@@ -3,7 +3,7 @@
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QTabWidget, QTabBar,
                              QTableWidgetItem, QFileDialog, QStylePainter,
                              QStyle, QStyleOptionTab, QStyleFactory)
-from PyQt5.QtCore import QRect, QPoint, pyqtSlot
+from PyQt5.QtCore import QRect, QPoint, pyqtSlot, Qt
 from PyQt5.QtGui import QFont, QPalette, QColor
 from pandas_profiling import ProfileReport
 
@@ -82,7 +82,9 @@ def escreve_tabela_download():
     etl.botao_linha.addItems(colunas)
 
     for i, column in enumerate(colunas):
-        download.tabela.setItem(0, i, QTableWidgetItem(column))
+        download.tabela.horizontalHeader().setDefaultAlignment(Qt.AlignCenter)
+        download.tabela.setHorizontalHeaderItem(i, QTableWidgetItem(column))
+        download.tabela.update()
         i += 1
 
     etl.tabela_adicionar.clear()
@@ -90,7 +92,7 @@ def escreve_tabela_download():
         etl.tabela_adicionar.setItem(e, 0, QTableWidgetItem(c))
 
     column_n = 0
-    row = 1
+    row = 0
 
     for column in colunas:
         for i in range(1, 11):
@@ -100,7 +102,7 @@ def escreve_tabela_download():
                         download.df.select(
                             download.df[column]).take(i)[i - 1][0])))
             row += 1
-        row = 1
+        row = 0
         column_n += 1
 
 
@@ -172,17 +174,19 @@ def apply_query():
     columns.sort()
 
     for n, column in enumerate(columns):
-        etl.tabela_exportar.setItem(0, n, QTableWidgetItem(column))
+        etl.tabela_exportar.setHorizontalHeaderItem(n,
+                                                    QTableWidgetItem(column))
+        # etl.tabela_exportar.setItem(0, n, QTableWidgetItem(column))
 
     column_n = 0
-    row = 1
+    row = 0
 
     for item in columns:
-        for i in range(1, 11):
+        for i in range(0, 11):
             etl.tabela_exportar.setItem(row, column_n, QTableWidgetItem(
                 str(df_filtered[i][item])))
             row += 1
-        row = 1
+        row = 0
         column_n += 1
 
 
