@@ -139,7 +139,6 @@ def write_column_selected(column):
     etl.query.setText(column)
 
 
-# @pyqtSlot(str)
 def write_button_clicked():
     expression = ' ' + etl.sender().text() + ' '
     if expression == ' equal ':
@@ -149,8 +148,42 @@ def write_button_clicked():
 
 def apply_query():
     expression = etl.query.text().split(' ')
-    download.df.filter(download.df[expression[0]] + ' ' + expression[1]
-                       + ' ' + expression[2])
+
+    booleanos = '> < >= <= == != in or not and'.split()
+    selector = ''
+    if expression[1] in booleanos:
+        selector = booleanos[booleanos.index(expression[1])]
+
+    df_filtered = download.df.filter(
+        f"{expression[0]} {selector} '{expression[2]}'").collect()
+
+    for row in range(0, 100):
+        if not etl.tabela_transformar.item(row, 0):
+            etl.tabela_transformar.setItem(row, 0, QTableWidgetItem(
+                f'{expression[0]} {selector} {expression[2]}')
+            )
+            break
+
+    columns = []
+    if '_c0' in df_filtered[0].__fields__:
+        columns = [x for x in df_filtered[0].__fields__[1:]]
+    else:
+        columns = [x for x in df_filtered[0].__fields__]
+    columns.sort()
+
+    for n, column in enumerate(columns):
+        etl.tabela_exportar.setItem(0, n, QTableWidgetItem(column))
+
+    column_n = 0
+    row = 1
+
+    for item in columns:
+        for i in range(1, 11):
+            etl.tabela_exportar.setItem(row, column_n, QTableWidgetItem(
+                str(df_filtered[i][item])))
+            row += 1
+        row = 1
+        column_n += 1
 
 
 def etl_exportar_csv():
