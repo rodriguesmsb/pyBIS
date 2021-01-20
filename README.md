@@ -6,7 +6,7 @@ Atualmente a forma mais fácil de utilizar a interface é clonando o repositóri
 
 
 ```shell
-python pydbsus-gui.py
+python main.py
 ```
 
 # Recursos implantados
