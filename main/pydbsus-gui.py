@@ -263,7 +263,7 @@ class Merge(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle('Mesclar')
+        self.setWindowTitle('Integrar')
         screen = QApplication.primaryScreen()
         screen = screen.size()
         self.setGeometry(0, 0, screen.width() - 100, screen.height() - 100)
@@ -470,7 +470,7 @@ def exportar_reduzido():
 
 
 def get_merge_data():
-    merge_data(b1, b2, [x.text() for x in mesclar.colunas_selecionadas.selectedItems()])
+    merge_data(b1, b2, [x.text() for x in Integrar.colunas_selecionadas.selectedItems()])
 
 
 def merge_data(b1, b2, columns):
@@ -482,16 +482,16 @@ def merge_data(b1, b2, columns):
     i = 0
     lista = df_reduzido.columns
     for column in lista:
-        mesclar.tabela_juncao.setItem(0, i, QTableWidgetItem(column))
+        Integrar.tabela_juncao.setItem(0, i, QTableWidgetItem(column))
         i += 1
 
     column_n = 0
     row = 1
     for column in lista:
         for i in range(1, 11):
-            mesclar.tabela_juncao.setItem(row, column_n,
-                                          QTableWidgetItem(
-                                              str(df_reduzido[column][i])))
+            Integrar.tabela_juncao.setItem(row, column_n,
+                                           QTableWidgetItem(
+                                               str(df_reduzido[column][i])))
             row += 1
         row = 1
         column_n += 1
@@ -503,7 +503,7 @@ def get_same_columns(df1, df2):
     for column in df1.columns:
         if column in df2.columns:
             result_index.append(column)
-    mesclar.selecionar_coluna.addItems(result_index)
+    Integrar.selecionar_coluna.addItems(result_index)
 
     return result_index
 
@@ -522,7 +522,7 @@ def year_month(date):
 
 def b1_():
     global b1
-    filename, _ = QFileDialog.getOpenFileName(mesclar,
+    filename, _ = QFileDialog.getOpenFileName(Integrar,
                                               'Open File',
                                               'Arquivo csv (*.csv)')
     b1 = pd.read_csv(filename, low_memory=False)
@@ -538,16 +538,16 @@ def b1_():
     i = 0
     lista = b1.columns[1:]
     for column in lista:
-        mesclar.tabela_esquerda.setItem(0, i, QTableWidgetItem(column))
+        Integrar.tabela_esquerda.setItem(0, i, QTableWidgetItem(column))
         i += 1
 
     column_n = 0
     row = 1
     for column in lista:
         for i in range(1, 11):
-            mesclar.tabela_esquerda.setItem(row, column_n,
-                                            QTableWidgetItem(
-                                                str(b1[column][i])))
+            Integrar.tabela_esquerda.setItem(row, column_n,
+                                             QTableWidgetItem(
+                                                 str(b1[column][i])))
             row += 1
         row = 1
         column_n += 1
@@ -555,7 +555,7 @@ def b1_():
 
 def b2_():
     global b2
-    filename, _ = QFileDialog.getOpenFileName(mesclar,
+    filename, _ = QFileDialog.getOpenFileName(Integrar,
                                               'Open File',
                                               'Arquivo csv (*.csv)')
     b2 = pd.read_csv(filename, low_memory=False)
@@ -571,16 +571,16 @@ def b2_():
     i = 0
     lista = b2.columns[1:]
     for column in lista:
-        mesclar.tabela_direita.setItem(0, i, QTableWidgetItem(column))
+        Integrar.tabela_direita.setItem(0, i, QTableWidgetItem(column))
         i += 1
 
     column_n = 0
     row = 1
     for column in lista:
         for i in range(1, 11):
-            mesclar.tabela_direita.setItem(row, column_n,
-                                           QTableWidgetItem(
-                                               str(b2[column][i])))
+            Integrar.tabela_direita.setItem(row, column_n,
+                                            QTableWidgetItem(
+                                                str(b2[column][i])))
             row += 1
         row = 1
         column_n += 1
@@ -589,9 +589,9 @@ def b2_():
 
 
 def add_column_same():
-    text = mesclar.selecionar_coluna.currentText()
-    mesclar.colunas_selecionadas.setItem(
-        mesclar.colunas_selecionadas.currentRow(), 0,  QTableWidgetItem(text))
+    text = Integrar.selecionar_coluna.currentText()
+    Integrar.colunas_selecionadas.setItem(
+        Integrar.colunas_selecionadas.currentRow(), 0,  QTableWidgetItem(text))
 
 
 def sistema_bases(text):
@@ -607,7 +607,8 @@ def sistema_bases(text):
             'Animais Peçonhentos', 'Botulismo', 'Chagas', 'Cólera',
             'Coqueluche', 'Difteria', 'Esquistossomose', 'Febre Maculosa',
             'Febre Tifóide', 'Hanseníase', 'Leptospirose', 'Meningite',
-            'Raiva', 'Tétano', 'Tuberculose'
+            'Raiva', 'Tétano', 'Tuberculose', 'Zika-V', 'Chickungunya',
+            'Dengue'
         ])
     elif text == 'SINASC':
         download.bases.addItem('Nascidos Vivos')
@@ -729,7 +730,8 @@ def seleciona_banco():
         'Esquistossomose': 'ESQU', 'Febre Maculosa': 'FMAC',
         'Febre Tifóide': 'FTIF', 'Hanseníase': 'HANS',
         'Leptospirose': 'LEPT', 'Meningite': 'MENI',
-        'Raiva': 'RAIV', 'Tétano': 'TETA',
+        'Raiva': 'RAIV', 'Tétano': 'TETA', 'Zika-V': 'ZIKA',
+        'Dengue': 'DENG', 'Chickungunya': 'CHIK',
         'Tuberculose': 'TUBE', 'Nascidos Vivos': 'DN'
     }
     if download.bases.currentText() in dicionario_doencas:
@@ -764,6 +766,7 @@ def visualizar_banco():
 
         elif isinstance(datas, int) and isinstance(locais, str):
             banco = [base + str(locais) + str(datas) + '.csv']
+
     elif sistema == 'SINAN':
         if isinstance(datas, list) and isinstance(locais, list):
             banco = [base + local + str(data)[2:4] + '.csv'
@@ -781,6 +784,7 @@ def visualizar_banco():
         elif isinstance(datas, int) and isinstance(locais, str):
             banco = [base + str(locais) + str(datas)[2:4] + '.csv']
 
+    print(banco)
     bases = re.compile('|'.join(banco), re.IGNORECASE)
     caminho_sistema = path.expanduser(f'~/Documentos/files_db/{sistema}/')
 
@@ -789,7 +793,7 @@ def visualizar_banco():
         if re.search(bases, arquivo_csv):
             arquivos.append(caminho_sistema + arquivo_csv)
 
-    df = spark.read.csv(arquivos, header=True)
+    df = spark.read.csv(arquivos, header=True, inferSchema=True)
 
     return df
 
@@ -999,14 +1003,14 @@ if __name__ == '__main__':
     etl.condicao_coluna.setEditable(True)
 
     ajuda = Ajuda()
-    mesclar = Merge()
+    Integrar = Merge()
 
-    mesclar.escolher_csv_esquerda.clicked.connect(b1_)
-    mesclar.escolher_csv_direita.clicked.connect(b2_)
-    mesclar.selecionar_coluna.setEditable(True)
-    mesclar.adicionar_coluna.clicked.connect(add_column_same)
-    mesclar.botao_aplicar.clicked.connect(get_merge_data)
-    mesclar.botao_exportar.clicked.connect(exportar_reduzido)
+    Integrar.escolher_csv_esquerda.clicked.connect(b1_)
+    Integrar.escolher_csv_direita.clicked.connect(b2_)
+    Integrar.selecionar_coluna.setEditable(True)
+    Integrar.adicionar_coluna.clicked.connect(add_column_same)
+    Integrar.botao_aplicar.clicked.connect(get_merge_data)
+    Integrar.botao_exportar.clicked.connect(exportar_reduzido)
 
-    pydb = Pydbsus_gui(download, etl, mesclar, ajuda)
+    pydb = Pydbsus_gui(download, etl, Integrar, ajuda)
     exit(app.exec_())
