@@ -89,8 +89,6 @@ class PyDatasus:
             pass
 
 
-
-
         else:
             convertido = db[:-3] + 'dbf'
             sys_exec(f'{self.blast} {db} {convertido}')
@@ -172,7 +170,6 @@ class PyDatasus:
         self.__page.cwd('..')
 
     def __sep_db_complete(self, banco, d):
-        print(banco)
         if path.isfile(self.path_files_csv + banco + '.csv'):
             with open(self.path_files_csv + banco + '.csv') as f:
                 data = f.readlines()

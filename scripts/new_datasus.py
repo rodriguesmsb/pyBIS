@@ -2,11 +2,11 @@ import sys
 import re
 import pathlib
 import time
-from os import path, mkdir
-from PyQt5.QtWidgets import QApplication, QProgressBar
+from os import path, mkdir, remove, system
 from PyQt5.QtGui import QFont
 import ftplib as ftp
-from threading import Thread
+
+from convert_dbf_to_csv import ReadDbf
 
 
 class PyDatasus:
@@ -15,6 +15,7 @@ class PyDatasus:
         self.__none = None
         self.__page = ftp.FTP('ftp.datasus.gov.br')
         self.__page.login()
+        self.__blast = path.join(path.dirname(__file__), 'blast-dbf')
         self.__page.cwd('/dissemin/publicos/')
         self.__path_table = path.expanduser('~/datasus_tabelas/')
         self.__path_dbc = path.expanduser('~/datasus_dbc/')
@@ -22,42 +23,17 @@ class PyDatasus:
 
     def get_table_csv(self, database: str, base: [str, list],
             state: [str, list], date: [str, list]):
-        # if self.__none == None:
-        #     self.__none = None
-        #     self.__pbar = QProgressBar()
-        #     self.__pbar.setWindowTitle('Escrevendo seus dados...')
-        #     self.__pbar.setGeometry(300, 300, 300, 50)
-        #     self.__pbar.setFont(QFont('Arial', 15))
-        #     self.__count = 0
-        #     self.__pbar.setValue(self.__count)
-        #     self.__pbar.show()
 
         date = self.__adjust_date(database, date)
         pattern = self.__generate_pattern(database, base, state, date)
         self.__create_folder(database, base, table_or_dbc='table')
-        # self.__get_data_table(database, pattern)
+        self.__table = open(f'{self.__path_table}{database}.csv', 'w+')
+        self.__table.write('Endereço,Nome,Tamanho,Data\n')
         self.__get_data_table(database, pattern)
-        self.__table.close()
-
-    def __write_table(self, pwd, node):
-        self.__table.write('{},{},{} KB,{}\n'.format(
-            self.__page.pwd(), node.split()[3],
-            str(int(node.split()[2]) / 1000), node.split()[0])
-        )
         self.__table.close()
 
 
     def get_file_dbc(self, database, base, state, date):
-        if self.__none == None:
-            self.__none = None
-            self.__pbar = QProgressBar()
-            self.__pbar.setWindowTitle('Escrevendo seus dados...')
-            self.__pbar.setGeometry(300, 300, 300, 50)
-            self.__pbar.setFont(QFont('Arial', 15))
-            self.__count = 0
-            self.__pbar.setValue(self.__count)
-            self.__pbar.show()
-
             date = self.__adjust_date(database, date)
             patterns = self.__generate_pattern(database, base, state, date)
 
@@ -66,9 +42,31 @@ class PyDatasus:
                     self.__create_folder(database, pattern.split('\\')[0],
                                          table_or_dbc='dbc')
                     self.__get_data_dbc(database)
+
             elif isinstance(patterns, str):
                 self.__create_folder(database, patterns, table_or_dbc='dbc')
                 self.__get_data_dbc(pattterns)
+
+
+    def get_data(self, database, base, state, date):
+        self.get_table_csv(database, base, state, date)
+        self.get_file_dbc(database, base, state, date)
+
+
+    def __convert_dbc(self, db):
+        if db.endswith('.csv'):
+            pass
+
+        elif db.endswith('.dbf'):
+            pass
+
+        else:
+            convertido = db[:-3] + 'dbf'
+            system(f'./{self.__blast} {db} {convertido}')
+            remove(db)
+            print(convertido)
+            ReadDbf(f'{convertido}', convert='convert')
+            remove(convertido)
 
 
     def __adjust_date(self, database, dates):
@@ -101,20 +99,15 @@ class PyDatasus:
 
 
     def __create_folder(self, database, pattern, table_or_dbc):
-        if table_or_dbc == 'table':
-            pathlib.Path(self.__path_table).mkdir(parents=True, exist_ok=True)
-            self.__table = open(self.__path_table + database + '.csv', 'w+')
-            self.__table.write('Endereço,Nome,Tamanho,Data\n')
-
-        elif table_or_dbc == 'dbc':
-            pathlib.Path(self.__path_dbc).mkdir(parents=True, exist_ok=True)
+        pathlib.Path(self.__path_table).mkdir(parents=True, exist_ok=True)
+        pathlib.Path(self.__path_dbc).mkdir(parents=True, exist_ok=True)
+        try:
             mkdir(self.__path_dbc + database + '/')
-            self.__dbc = open(self.__path_dbc + database + '/'
-                              + pattern + '.dbc', 'wb')
+        except FileExistsError:
+            pass
 
 
     def __get_data_table(self, database, pattern):
-        self.__table = open(self.__path_table + database + '.csv', 'w+')
         branch = []
 
         self.__page.cwd(database)
@@ -126,11 +119,10 @@ class PyDatasus:
             if 'DIR' in node:
                 self.__get_data_table(node.split()[3], pattern)
             elif re.match(r, node.split()[3]):
-                self.__write_table(self.__page.pwd(), node)
-                # self.__table.write('{},{},{} KB,{}\n'.format(
-                #     self.__page.pwd(), node.split()[3],
-                #     str(int(node.split()[2]) / 1000), node.split()[0])
-                # )
+                self.__table.write('{},{},{} KB,{}\n'.format(
+                    self.__page.pwd(), node.split()[3],
+                    str(int(node.split()[2]) / 1000), node.split()[0])
+                )
             else:
                 pass
 
@@ -141,23 +133,24 @@ class PyDatasus:
         if path.isfile(self.__path_table + database + '.csv'):
             with open(self.__path_table + database + '.csv') as table:
                 lines = table.readlines()
-
             for line in lines[1:]:
                 self.__page.cwd(line.split(',')[0])
-                print(line)
-                lines = line.split(',')[1][:4]
-                if not path.isfile(self.__path_dbc + database + '/' + lines
+                data = line.split(',')[1][:4]
+                if not path.isfile(self.__path_dbc + database + '/' + data
                                    + '.csv'):
-                    print(self.__path_dbc + database + '/' + lines)
-                    self.__totalsize = self.__page.size(line.split(',')[1])
-                    self.__page.retrbinary('RETR ' + line.split(',')[1],
-                                           self.__update_progressbar_download)
+                    self.__page.retrbinary(
+                        'RETR ' + line.split(',')[1],
+                        open(self.__path_dbc + database + '/'
+                             + line.split(',')[1], 'wb').write)
+
+                    self.__convert_dbc(self.__path_dbc + database + '/'
+                                       + line.split(',')[1])
                 else:
                     pass
 
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
     datasus = PyDatasus()
-    datasus.get_table_csv('SIM', 'DO', 'AC', '2010')
-    sys.exit(app.exec_())
+    # datasus.get_table_csv('SIM', 'DO', 'AC', ['2010', '2011'])
+    # datasus.get_file_dbc('SIM', 'DO', 'AC', '2010')
+    datasus.get_data('SIM', 'DO', 'AC', '2010')
