@@ -137,8 +137,10 @@ class PyDatasus:
             for line in lines[1:]:
                 self.__page.cwd(line.split(',')[0])
                 data = line.split(',')[1][:4]
-                if not path.isfile(self.__path_dbc + database + '/' + data
+                if not path.isfile(self.__path_dbc + database + '/'
+                                   + line.split(',')[1].split('.')[0]
                                    + '.csv'):
+
                     self.__page.retrbinary(
                         'RETR ' + line.split(',')[1],
                         open(self.__path_dbc + database + '/'
@@ -146,12 +148,12 @@ class PyDatasus:
 
                     self.__convert_dbc(self.__path_dbc + database + '/'
                                        + line.split(',')[1])
+
                 else:
                     pass
 
 
+
 if __name__ == '__main__':
     datasus = PyDatasus()
-    # datasus.get_table_csv('SIM', 'DO', 'AC', '2010')
-    # datasus.get_file_dbc('SIM', 'DO', 'AC', '2010')
     datasus.get_data('SIM', 'DO', 'AC', ['2010', '2011', '2012'])

@@ -13,41 +13,6 @@ from f_spark import spark_conf, start_spark
 dir_json = os.path.join(os.path.dirname(__file__), '../json/')
 
 
-class UpdateBar(QThread):
-    val = pyqtSignal(int)
-
-    def __init__(self, thread, pbar):
-        super().__init__()
-        self.thread = thread
-        self.pbar = pbar
-
-    def run(self):
-        self.val.emit('__updateProgressBar(int)', 0)
-        count = 0
-        while self.thread.isRunning():
-            count += 1
-            time.sleep(1)
-            if count >= 99:
-                count = 0
-            self.val.emit('__updateProgressBar(int)', count)
-            self.pbar.setValue(count)
-            # QTimer.singleShot(2, lambda: self.run())
-        self.val.emit(100)
-        QApplication.processEvents()
-
-
-class MyThread(QThread):
-
-    def __init__(self, fn, *args):
-        super().__init__()
-        self.fn = fn
-        self.args = args
-
-    def run(self):
-        self.fn(*self.args)
-        QApplication.processEvents()
-
-
 def read_database():
     with open(dir_json + 'database.json') as f:
         data = json.load(f)
@@ -164,10 +129,9 @@ def gen_csv(system, database, states, year, year_, program):
         ...
 
     program.datasus = PyDatasus()
-    program.thread = MyThread(program.datasus.get_csv_db_complete, *download)
-    program.thread = MyThread(PyDatasus().get_csv_db_complete, *download)
+    program.datasus.get_data(*download)
+    QApplication.processEvents()
     # program.pbar = UpdateBar(program.thread, program.progressBar)
-    program.thread.start()
     # program.pbar.start()
 
 

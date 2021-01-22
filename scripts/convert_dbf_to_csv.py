@@ -72,15 +72,28 @@ class ReadDbf:
         Aplica um loop para iterar os valores de dicionários dentro do
         arquivo dbf diretamente no arquivo csv.
         """
+        def loop_proc():
+            val = 0
+            while True:
+                yield val
+                val += 1
+
+        loop = loop_proc()
+
         df = {}
         db = DBF(file_dbf, encoding='iso-8859-1', load=True)
 
         for column in db.field_names:
             df[column] = []
 
-        for i in range(0, len(db)):
-            for column, value in zip(db.field_names, db.records[i].values()):
-                df[column].append(value)
+
+        for i in loop: #range(0, len(db)):
+            try:
+                for column, value in zip(db.field_names,
+                                         db.records[i].values()):
+                    df[column].append(value)
+            except IndexError:
+                break
 
         pd.DataFrame(df).to_csv('{}.csv'.format(file_dbf.split('.')[0]))
 
