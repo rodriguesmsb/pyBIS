@@ -206,7 +206,7 @@ def finder_csv(system, regex):
     bases = re.compile('|'.join(regex))
     files = []
     for file_csv in os.listdir(
-        os.path.expanduser('~/datasus/dbc/' + system + '/')):
+        os.path.expanduser('~/datasus_dbc/' + system + '/')):
         if re.search(bases, file_csv):
             files.append(
                 os.path.expanduser(
