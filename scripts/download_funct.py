@@ -304,3 +304,17 @@ def gen_sample(system, base, state, year, year_p, table, cores, mem,
         write_table(table, data)
         send_data_to_etl_column(data, column_add)
         send_data_to_combobox(data, combobox)
+
+
+def thread_gen_sample(system, base, state, year, year_p, table, cores, mem,
+                      column_add, column_apply, combobox, program):
+
+    program.thread_sample = _Thread(gen_sample, *[system, base, state, year,
+                                    year_p, table, cores, mem, column_add,
+                                    column_apply, combobox])
+    program.loop = _Loop(program.thread_sample)
+    global pbar
+    pbar = program.progressBar
+    program.loop.sinal.connect(update_progressbar)
+    program.thread_sample.start()
+    program.loop.start()

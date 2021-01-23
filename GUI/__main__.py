@@ -31,12 +31,12 @@ if __name__ == '__main__':
     analysis_ui = AnalysisUI()
     config = Config()
     download.view_data.clicked.connect(
-            lambda: dd.gen_sample(download.database, download.base,
-                                  download.locale_, download.year,
-                                  download.year_, download.sample,
-                                  download.cores, download.memory,
-                                  etl.column_add, etl.column_apply,
-                                  etl.line_select)
+            lambda: dd.thread_gen_sample(download.database, download.base,
+                                         download.locale_, download.year,
+                                         download.year_, download.sample,
+                                         download.cores, download.memory,
+                                         etl.column_add, etl.column_apply,
+                                         etl.line_select, download)
     )
 
     manager = Manager(download, etl, merge, dashboard, analysis_ui, config)
