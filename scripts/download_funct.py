@@ -1,7 +1,7 @@
 import os
 import json
 import re
-import time
+from time import sleep
 from PyQt5.QtWidgets import QTableWidgetItem, QApplication
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot, QTimer
@@ -11,6 +11,40 @@ from f_spark import spark_conf, start_spark
 
 
 dir_json = os.path.join(os.path.dirname(__file__), '../json/')
+
+
+class _Loop(QThread):
+    sinal = pyqtSignal(int)
+
+    def __init__(self, thread):
+        super().__init__()
+        self.thread = thread
+
+    def run(self):
+        n = 0
+
+        while self.thread.isRunning():
+            n += 1
+            if n == 100:
+                n = 0
+
+            sleep(0.3)
+            QApplication.processEvents()
+            self.sinal.emit(n)
+        self.sinal.emit(100)
+
+
+class _Thread(QThread):
+
+    def __init__(self, fn, *arg, **kw):
+        super().__init__()
+        self.fn = fn
+        self.arg = arg
+        self.kw = kw
+
+    @pyqtSlot()
+    def run(self):
+        self.fn(*self.arg, **self.kw)
 
 
 def read_database():
@@ -111,6 +145,12 @@ def transform_date(system, date):
     else:
         return date
 
+
+@pyqtSlot(int)
+def update_progressbar(val):
+    pbar.setValue(val)
+
+
 def gen_csv(system, database, states, year, year_, program):
     try:
         system_, base_ = return_bases(system, database)
@@ -128,11 +168,13 @@ def gen_csv(system, database, states, year, year_, program):
     except UnboundLocalError:
         ...
 
-    program.datasus = PyDatasus()
-    program.datasus.get_data(*download)
-    QApplication.processEvents()
-    # program.pbar = UpdateBar(program.thread, program.progressBar)
-    # program.pbar.start()
+    program.datasus = _Thread(PyDatasus().get_data, *download)
+    program.loop = _Loop(program.datasus)
+    global pbar
+    pbar = program.progressBar
+    program.loop.sinal.connect(update_progressbar)
+    program.datasus.start()
+    program.loop.start()
 
 
 def active_spark(cores, mem):
