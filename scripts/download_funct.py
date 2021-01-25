@@ -279,8 +279,12 @@ def send_data_to_combobox(header, combobox):
     combobox.addItems(cols)
 
 
+def send_(data, panel):
+    panel.data = data
+
+
 def gen_sample(system, base, state, year, year_p, table, cores, mem,
-               column_add, column_apply, combobox):
+               column_add, column_apply, combobox, panel):
     table.clear()
     model = QStandardItemModel()
     column_apply.setModel(model)
@@ -296,6 +300,7 @@ def gen_sample(system, base, state, year, year_p, table, cores, mem,
         write_table(table, data)
         send_data_to_etl_column(data, column_add)
         send_data_to_combobox(data, combobox)
+        send_(data, panel)
     else:
         data = read_file(
             finder_csv(system.currentText(), create_regex(system_, base,
@@ -304,14 +309,15 @@ def gen_sample(system, base, state, year, year_p, table, cores, mem,
         write_table(table, data)
         send_data_to_etl_column(data, column_add)
         send_data_to_combobox(data, combobox)
+        send_(data, panel)
 
 
 def thread_gen_sample(system, base, state, year, year_p, table, cores, mem,
-                      column_add, column_apply, combobox, program):
+                      column_add, column_apply, combobox, program, panel):
 
     program.thread_sample = _Thread(gen_sample, *[system, base, state, year,
                                     year_p, table, cores, mem, column_add,
-                                    column_apply, combobox])
+                                    column_apply, combobox, panel])
     program.loop = _Loop(program.thread_sample)
     global pbar
     pbar = program.progressBar
