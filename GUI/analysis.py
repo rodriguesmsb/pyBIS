@@ -29,7 +29,17 @@ class AnalysisUI(QWidget):
                                      self.frame_analysis)
         )
 
+        self.frame_map.pushButton_3.clicked.connect(
+            lambda: an.get_shapefile(self.frame_map.pushButton_3,
+                                     self.frame_map.lineEdit)
+        )
+
         self.frame_data = uic.loadUi(layout + 'frame_data.ui')
+
+        self.frame_data.pushButton.clicked.connect(
+            lambda: an.get_csv(self.frame_data.pushButton,
+                               self.frame_data.lineEdit)
+        )
 
         self.frame_data.pushButton_2.clicked.connect(
             lambda: an.trade_frame(layout_box, self.frame_data,
