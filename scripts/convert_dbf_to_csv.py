@@ -74,7 +74,7 @@ class ReadDbf:
         arquivo dbf diretamente no arquivo csv.
         """
 
-        dbf = DBF(file_dbf)
+        dbf = DBF(file_dbf, encoding='iso-8859-1')
 
         with open('{}.csv'.format(file_dbf.split(".")[0]), 'w+') as csvfile:
             data = csv.writer(csvfile)
