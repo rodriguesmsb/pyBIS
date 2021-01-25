@@ -37,12 +37,12 @@ class Etl(QMainWindow):
                 lambda: et.operator_line_edit(self, self.line_edit)
             )
 
-        self.apply_filter.clicked.connect(
-            lambda: et.apply_filter(self.line_edit)
-        )
-
         model = QStandardItemModel()
         self.column_ext.setModel(model)
+
+        self.apply_filter.clicked.connect(
+            lambda: et.apply_filter(self.line_select, self.line_edit, self)
+        )
 
         self.gen_filter.clicked.connect(
             lambda: et.add_list_filter(
@@ -53,3 +53,6 @@ class Etl(QMainWindow):
             lambda: et.rm_column(self.column_ext)
         )
 
+        self.button_export.clicked.connect(
+            lambda: et.export_file_csv(self.button_export, self)
+        )

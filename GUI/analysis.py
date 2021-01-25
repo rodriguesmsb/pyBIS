@@ -31,7 +31,10 @@ class AnalysisUI(QWidget):
 
         self.frame_map.pushButton_3.clicked.connect(
             lambda: an.get_shapefile(self.frame_map.pushButton_3,
-                                     self.frame_map.lineEdit)
+                                     self.frame_map.lineEdit,
+                                     self.frame_map.comboBox,
+                                     self.frame_map.comboBox_2,
+                                     self.frame_map.comboBox_3)
         )
 
         self.frame_data = uic.loadUi(layout + 'frame_data.ui')
