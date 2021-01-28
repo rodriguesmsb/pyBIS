@@ -2,7 +2,8 @@ import re
 from os import path
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QTableWidgetItem
+import csv
 
 
 dir_dbc = path.expanduser('~/datasus_dbc/')
@@ -44,8 +45,8 @@ def rm_column(col):
 
 def add_list_filter(combobox, line, model):
     if len(combobox.currentText() + line.text()) != 0:
-        model.appendRow(QStandardItem(combobox.currentText() + ' '
-                                      + line.text()))
+        model.appendRow(QStandardItem(combobox.currentText()
+                                      + ' ' + line.text()))
 
 
 def operator_line_edit(operator, edit):
@@ -59,49 +60,38 @@ def operator_line_edit(operator, edit):
             edit.setText(operator.sender().text() + ' ')
 
 
-def write_header(table, expression, filtered):
-    table.setRowCount(10)
-    for row in range(0, 11):
-        if not table.item(row, 0):
-            table.setItem(row, 0,
-                          QTableWidgetItem(
-                              f'{expression[0]} {selector} {expression[2]}')
-            )
-            break
+def apply_filter(combobox, line, panel):
+    model = panel.column_ext.model()
+    expression = [model.item(idx).text() for idx in range(model.rowCount())]
+
+    panel.filtered = panel.data.filter(' and '.join(expression))
 
     cols = []
-    if '_c0' in filtered[0].__fields__:
-        cols = [x for x in filtered[0].__fields__[1:]]
+    if '_c0' in panel.filtered.columns[0]:
+      cols = [x for x in panel.filtered.columns[1:]]
     else:
-        cols = [x for x in filtered[0].__fields__]
+      cols = [x for x in panel.filtered.columns]
     cols.sort()
 
-    for idx, col in enumerate(cols):
-        table.setHorizontalHeaderItem(idx, QTableWidgetItem(col))
+    panel.table_export.setColumnCount(len(cols))
+    panel.table_export.setRowCount(10)
+    panel.table_export.clear()
 
-
-def write_body():
+    for n, col in enumerate(cols):
+        panel.table_export.setHorizontalHeaderItem(n, QTableWidgetItem(col))
+    
     col_n = 0
     row_n = 0
 
-    for itm in cols:
-        for i in range(11):
-            table.setItem(row, col_n,
-                          QTableWidgetItem(str(filtered[i][itm])))
+    for line in cols:
+        for i in range(1, 11):
+            panel.table_export.setItem(
+                row_n, col_n, QTableWidgetItem(
+                    str(panel.filtered.select(
+                        panel.filtered[line]).take(i)[i - 1][0])))
             row_n += 1
         row_n = 0
-        col_n += 0
-
-
-def apply_filter(combobox, line, panel):
-    model = panel.column_ext.model()
-    expression = [model.item(idx).text()
-                  for idx in range(model.rowCount())]
-
-    # filtered = None
-    # for ff in expression:
-    panel.data = panel.data.filter(' & '.join(expression)).collect()
-    print('rodou')
+        col_n += 1
 
 
 def export_file_csv(button, panel):
@@ -110,6 +100,10 @@ def export_file_csv(button, panel):
                                                   f'{dir_dbc}',
                                                   'file csv (*.csv)')
         if filename:
-            panel.data.toPandas().to_csv(filename, index=False)
+            with open('{}.csv'.format(filename), 'w+') as csvfile:
+                data = csv.writer(csvfile)
+                data.writerow(panel.filtered.columns)
+                for row in panel.filtered:
+                    data.writerow(list(row))
     except NameError:
         pass

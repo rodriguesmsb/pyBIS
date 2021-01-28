@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
 import os
+import subprocess
 import sys
+from threading import Thread
+import webbrowser
 from PyQt5 import uic
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QLabel,
                              QStyleFactory)
@@ -19,51 +22,24 @@ import download_funct as dd
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../scripts'))
-layout = os.path.join(os.path.dirname(__file__), 'layouts/')
 icos = os.path.join(os.path.dirname(__file__), 'imgs/')
 
+from scripts.SpatialSUSapp import app as server
 
-# def setStyle(text):
-#     if text == 'Fusion':
-#         app.setStyleSheet('')
-#         app.setStyle(QStyleFactory.create('Fusion'))
-#         config.select_font.setEnabled(True)
-#         config.select_size_font.setEnabled(True)
-#         config.select_color.setEnabled(True)
-#     elif text == 'Windows':
-#         app.setStyleSheet('')
-#         app.setStyle(QStyleFactory.create('Windows'))
-#         config.select_font.setEnabled(True)
-#         config.select_size_font.setEnabled(True)
-#         config.select_color.setEnabled(True)
-#     elif text == 'Dark':
-#         app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
-#         config.select_font.setEnabled(False)
-#         config.select_size_font.setEnabled(False)
-#         config.select_color.setEnabled(False)
-#     elif text == 'DarkGray':
-#         app.setStyleSheet(qdarkgraystyle.load_stylesheet())
-#         config.select_font.setEnabled(False)
-#         config.select_size_font.setEnabled(False)
-#         config.select_color.setEnabled(False)
-# 
-# 
-# @pyqtSlot(int)
-# def setFont(val):
-#     app.setFont(QFont('', val))
-# 
-# 
-# def setFontFamily(text):
-#     app.setFont(QFont(text))
-# 
-# 
-# @pyqtSlot(str)
-# def setFontColor(color):
-#     print(color)
-#     palette.setColor(QPalette.Text, QColor(color))
-#     palette.setColor(QPalette.ButtonText, QColor(color))
-#     palette.setColor(QPalette.QProgressBar, QColor(color))
-#     app.setPalette(palette)
+
+def active_dashboard(val):
+    def attach(index):
+        os.system(f'python3 {index}')
+        webbrowser.open_new('http://127.0.0.1:8050')
+        QApplication.processEvents()
+
+    if val == 3:
+        server.run()#.run_server(debug=True)
+        # index = os.path.join(os.path.dirname(__file__),
+        #                      '../scripts/SpatialSUSapp/index.py')
+        # subprocess.Popen(["python3", index])
+        # thread = Thread(target=attach, args=(index,), daemon=True)
+        # thread.start()
 
 
 if __name__ == '__main__':
@@ -73,13 +49,8 @@ if __name__ == '__main__':
     etl = Etl()
     merge = Merge()
     dashboard = Dashboard()
-    analysis_ui = AnalysisUI()
+    analysis = AnalysisUI()
     config = Config()
-
-    # config.select_layout.currentTextChanged.connect(setStyle)
-    # config.select_size_font.valueChanged.connect(setFont)
-    # config.select_font.currentTextChanged.connect(setFontFamily)
-    # config.select_color._color.connect(setFontColor)
 
     download.view_data.clicked.connect(
             lambda: dd.thread_gen_sample(download.database, download.base,
@@ -90,6 +61,7 @@ if __name__ == '__main__':
                                          etl.line_select, download, etl)
     )
 
-    manager = Manager(download, etl, merge, dashboard, analysis_ui, config)
+    manager = Manager(download, etl, merge, dashboard, analysis, config)
+    manager.tab_manager.currentChanged.connect(active_dashboard)
     manager.setWindowIcon(QIcon(icos + 'bis.png'))
     sys.exit(app.exec_())

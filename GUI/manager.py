@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QTabBar, QTabWidget,
                              QStyle, QStyleOptionTab, QStylePainter)
-from PyQt5.QtCore import QRect, QPoint
+from PyQt5.QtCore import QRect, QPoint, Qt
 from PyQt5.QtGui import QIcon, QFont
 
 
@@ -56,6 +56,7 @@ class Manager(QMainWindow):
         self.setCentralWidget(self.tab_manager)
 
         self.show()
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
