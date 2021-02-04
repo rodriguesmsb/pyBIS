@@ -14,12 +14,12 @@ def load_items(filename, frame):
     [combobox.addItems(list(data.columns)) for combobox in combobox_s]
 
 
-def get_shapefile(button, frame):
+def get_shapefile(button):
     filename, _ = QFileDialog.getOpenFileName(button, 'Carregar Arquivo',
                                               f'{dir_dbc}',
                                               'File shp (*.shp)')
-    frame.lineEdit.setEnabled(True)
-    frame.lineEdit.setText(filename)
+    # button.setEnabled(True)
+    button.setText(filename)
     try:
         load_items(filename, frame)
     except fiona.errors.DriverError:

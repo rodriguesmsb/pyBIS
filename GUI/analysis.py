@@ -15,3 +15,10 @@ class AnalysisUI(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi(layout + 'analysis.ui', self)
+
+        self.pushButton.clicked.connect(
+            lambda: an.get_shapefile(self.pushButton)
+        )
+        self.pushButton_3.clicked.connect(
+            lambda: an.get_shapefile(self.pushButton_3)
+        )

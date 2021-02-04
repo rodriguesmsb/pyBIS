@@ -1,2 +1,11 @@
-scripts/spark-3.0.0-bin-hadoop3.2/
-GUI/beta/
+*~
+*.py~
+*.pyc
+__pycache__/
+instance/
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info

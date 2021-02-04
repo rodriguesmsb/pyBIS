@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>482</height>
+    <width>867</width>
+    <height>489</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -266,28 +266,16 @@
        <item>
         <widget class="QPushButton" name="pushButton">
          <property name="text">
-          <string>Selecionar arquivo</string>
+          <string>Shapefile</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEdit"/>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+        <widget class="QPushButton" name="pushButton_3">
+         <property name="text">
+          <string>Dados</string>
          </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Preferred</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
+        </widget>
        </item>
       </layout>
      </widget>
