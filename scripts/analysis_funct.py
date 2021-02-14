@@ -1,9 +1,13 @@
-from os import path
+import sys
+from os import path, system
+from threading import Thread
 from PyQt5.QtWidgets import QFileDialog
 import geopandas as gpd
 import fiona
 
-
+sys.path.append(path.join(path.dirname(__file__), 'SpatialSUSapp'))
+import index
+# index = path.join(path.dirname(__file__), 'SpatialSUSapp/index.py')
 dir_dbc = path.expanduser('~/datasus_dbc/')
 
 
@@ -28,9 +32,9 @@ def get_shapefile(button):
 
 def get_csv(button, line):
     try:
-        filename, _ = QFileDialog.getOpenFileName(button, 'Carregar Arquivo',
-                                                  f'{dir_dbc}',
-                                                  'File csv (*.csv)')
+        filename, _ = QFileDialog.getOpenFileName(
+            button, 'Carregar Arquivo', f'{dir_dbc}', 'File csv (*.csv)'
+        )
         line.setEnabled(True)
         line.setText(filename)
     except FileNotFoundError:
@@ -40,3 +44,9 @@ def get_csv(button, line):
 def trade_frame(layout, parent, frame):
     parent.setHidden(True)
     frame.setHidden(False)
+
+
+def start_server(program):
+    # index.app.run_server(debug=True)
+    program.analysis = Thread(target=index.app.run_server, daemon=True)
+    program.analysis.start()
