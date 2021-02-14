@@ -9,4 +9,4 @@ htmlcov/
 dist/
 build/
 *.egg-info
-/*.swp
+*/*.swp
