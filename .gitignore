@@ -10,3 +10,5 @@ dist/
 build/
 *.egg-info
 */*.swp
+GUI/beta/
+*/__pycache__
