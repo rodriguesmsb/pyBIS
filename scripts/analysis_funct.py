@@ -1,13 +1,13 @@
 import sys
 from os import path, system
 from threading import Thread
+import webbrowser
 from PyQt5.QtWidgets import QFileDialog
 import geopandas as gpd
 import fiona
 
 sys.path.append(path.join(path.dirname(__file__), 'SpatialSUSapp'))
 import index
-# index = path.join(path.dirname(__file__), 'SpatialSUSapp/index.py')
 dir_dbc = path.expanduser('~/datasus_dbc/')
 
 
@@ -47,6 +47,8 @@ def trade_frame(layout, parent, frame):
 
 
 def start_server(program):
-    # index.app.run_server(debug=True)
     program.analysis = Thread(target=index.app.run_server, daemon=True)
     program.analysis.start()
+    program.nav = Thread(target=webbrowser.open, args=('127.0.0.1:8050',),
+                         daemon=True)
+    program.nav.start()
