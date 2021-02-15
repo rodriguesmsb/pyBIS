@@ -25,16 +25,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../scripts'))
 icos = os.path.join(os.path.dirname(__file__), 'imgs/')
 
 
-def kill_proc_tree(pid, including_parent=True):
-    parent = psutil.Process(pid)
-    for child in parent.children(recursive=True):
-        child.kill()
-    if including_parent:
-        parent.kill()
-
-
 if __name__ == '__main__':
-    global me
     app = QApplication(sys.argv)
     app.setApplicationName('pyBis')
     download = Download()
@@ -55,5 +46,4 @@ if __name__ == '__main__':
 
     manager = Manager(download, etl, merge, dashboard, analysis, config)      
     manager.setWindowIcon(QIcon(icos + 'bis.png'))
-    me = os.getpid()
     sys.exit(app.exec_())
