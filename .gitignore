@@ -1,2 +1,20 @@
+<<<<<<< HEAD
 __pycache__/
 .dbf
+=======
+*~
+*.py~
+*.pyc
+__pycache__/
+instance/
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info
+*/*.swp
+.*.swp
+GUI/beta/
+*/__pycache__
+>>>>>>> 483a276ca14d6bbfbbbf1bcad9fa2d7d751b6ba7

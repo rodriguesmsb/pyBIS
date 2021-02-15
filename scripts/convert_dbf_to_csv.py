@@ -4,6 +4,7 @@ from sys import argv
 from os import path, system
 from dbfread import DBF
 import pandas as pd
+import csv
 
 folder = path.dirname(__file__)
 blast_dbf = path.join(folder, 'blast_dbf')
@@ -72,17 +73,14 @@ class ReadDbf:
         Aplica um loop para iterar os valores de dicionários dentro do
         arquivo dbf diretamente no arquivo csv.
         """
-        df = {}
-        db = DBF(file_dbf, encoding='iso-8859-1', load=True)
 
-        for column in db.field_names:
-            df[column] = []
+        dbf = DBF(file_dbf, encoding='iso-8859-1')
 
-        for i in range(0, len(db)):
-            for column, value in zip(db.field_names, db.records[i].values()):
-                df[column].append(value)
-
-        pd.DataFrame(df).to_csv('{}.csv'.format(file_dbf.split('.')[0]))
+        with open('{}.csv'.format(file_dbf.split(".")[0]), 'w+') as csvfile:
+            data = csv.writer(csvfile)
+            data.writerow(dbf.field_names)
+            for record in dbf:
+                data.writerow(list(record.values()))
 
 
 if __name__ == '__main__':
