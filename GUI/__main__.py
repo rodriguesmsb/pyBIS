@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 
 import os
-import psutil
 import sys
-from threading import Thread
-import webbrowser
 from PyQt5 import uic
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QLabel,
                              QStyleFactory)
