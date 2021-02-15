@@ -1,0 +1,35 @@
+{
+    "estados": [
+        {"ESTADO": "Acre", "UF": "AC", "REGIÃO": "Norte"},
+        {"ESTADO": "Amapá", "UF": "AP", "REGIÃO": "Norte"},
+        {"ESTADO": "Amazonas", "UF": "AM", "REGIÃO": "Norte"},
+        {"ESTADO": "Pará", "UF": "PA", "REGIÃO": "Norte"},
+        {"ESTADO": "Rondônia", "UF": "RO", "REGIÃO": "Norte"},
+        {"ESTADO": "Roraima", "UF": "RR", "REGIÃO": "Norte"},
+        {"ESTADO": "Tocantins", "UF": "TO", "REGIÃO": "Norte"},
+
+        {"ESTADO": "Alagoas", "UF": "AL", "REGIÃO": "Nordeste"},
+        {"ESTADO": "Bahia", "UF": "BA", "REGIÃO": "Nordeste"},
+        {"ESTADO": "Ceará", "UF": "CE", "REGIÃO": "Nordeste"},
+        {"ESTADO": "Maranhão", "UF": "MA", "REGIÃO": "Nordeste"},
+        {"ESTADO": "Paraíba", "UF": "PB", "REGIÃO": "Nordeste"},
+        {"ESTADO": "Pernambuco", "UF": "PE", "REGIÃO": "Nordeste"},
+        {"ESTADO": "Piauí", "UF": "PI", "REGIÃO": "Nordeste"},
+        {"ESTADO": "Rio Grande do Norte", "UF": "RN", "REGIÃO": "Nordeste"},
+        {"ESTADO": "Sergipe", "UF": "SE", "REGIÃO": "Nordeste"},
+
+        {"ESTADO": "Distrito Federal", "UF": "DF", "REGIÃO": "Centro-Oeste"},
+        {"ESTADO": "Goiás", "UF": "GO", "REGIÃO": "Centro-Oeste"},
+        {"ESTADO": "Mato Grosso", "UF": "MT", "REGIÃO": "Centro-Oeste"},
+        {"ESTADO": "Mato Grosso do Sul", "UF": "MS", "REGIÃO": "Centro-Oeste"},
+
+        {"ESTADO": "Espírito Santo", "UF": "ES", "REGIÃO": "Sudeste"},
+        {"ESTADO": "Minas Gerais", "UF": "MG", "REGIÃO": "Sudeste"},
+        {"ESTADO": "Rio de Janeiro", "UF": "RJ", "REGIÃO": "Sudeste"},
+        {"ESTADO": "São Paulo", "UF": "SP", "REGIÃO": "Sudeste"},
+
+        {"ESTADO": "Paraná", "UF": "PR", "REGIÃO": "Sul"},
+        {"ESTADO": "Rio Grande do Sul", "UF": "RS", "REGIÃO": "Sul"},
+        {"ESTADO": "Santa Catarina", "UF": "SC", "REGIÃO": "Sul"}
+    ]
+}

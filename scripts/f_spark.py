@@ -56,8 +56,10 @@ def spark_conf(app_name, n_cores="*", executor_memory=2,
 
 
 def start_spark(conf):
-    global spark
-    sc = SparkContext(conf=conf_file)
+    try:
+        sc = SparkContext(conf=conf_file)
+    except ValueError:
+        sc = SparkContext.getOrCreate()
     spark = SparkSession(sc)
     return(spark)
 
