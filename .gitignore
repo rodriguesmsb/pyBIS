@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-__pycache__/
-.dbf
-=======
 *~
 *.py~
 *.pyc
@@ -17,4 +13,3 @@ build/
 .*.swp
 GUI/beta/
 */__pycache__
->>>>>>> 483a276ca14d6bbfbbbf1bcad9fa2d7d751b6ba7
