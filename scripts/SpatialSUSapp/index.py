@@ -17,10 +17,12 @@ from aux.functions import functions
 import pandas as pd
 
 
+<<<<<<< HEAD
 print("Estou iniciando o servidor web")
+=======
 
-while True:
-    print("I'm a bug catch me if u can")
+>>>>>>> 028be67a6893272a98f8aaa0a6529b4835fc6e09
+
 
 
 ###Add code to use external css
