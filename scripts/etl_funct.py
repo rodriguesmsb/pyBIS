@@ -61,44 +61,91 @@ def operator_line_edit(operator, edit):
 
 
 def apply_filter(combobox, line, panel):
+    items_selected = []
     drop_list = []
     model_apply = panel.column_apply.model()
-    if model_apply:
+    if model_apply.rowCount():
         for idx in range(model_apply.rowCount()):
-            drop_list.append(model_apply.item(idx).text())
-    print(drop_list)
+            items_selected.append(model_apply.item(idx).text())
+        for item in list(panel.data.columns):
+            if item not in items_selected:
+                drop_list.append(item)
+        panel.data = panel.data.drop(*drop_list)
 
-    model = panel.column_ext.model()
-    expression = [model.item(idx).text() for idx in range(model.rowCount())]
+        model = panel.column_ext.model()
+        expression = [
+            model.item(idx).text() for idx in range(model.rowCount())
+        ]
 
-    panel.filtered = panel.data.filter(' and '.join(expression))
+        panel.filtered = panel.data.filter(' and '.join(expression))
 
-    cols = []
-    if '_c0' in panel.filtered.columns[0]:
-      cols = [x for x in panel.filtered.columns[1:]]
-    else:
-      cols = [x for x in panel.filtered.columns]
-    cols.sort()
+        cols = []
+        try:
+            if '_c0' in panel.filtered.columns[0]:
+              cols = [x for x in panel.filtered.columns[1:]]
+            else:
+              cols = [x for x in panel.filtered.columns]
+        except IndexError:
+            pass
+        cols.sort()
 
-    panel.table_export.setColumnCount(len(cols))
-    panel.table_export.setRowCount(10)
-    panel.table_export.clear()
+        panel.table_export.setColumnCount(len(cols))
+        panel.table_export.setRowCount(10)
+        panel.table_export.clear()
 
-    for n, col in enumerate(cols):
-        panel.table_export.setHorizontalHeaderItem(n, QTableWidgetItem(col))
-    
-    col_n = 0
-    row_n = 0
-
-    for line in cols:
-        for i in range(1, 11):
-            panel.table_export.setItem(
-                row_n, col_n, QTableWidgetItem(
-                    str(panel.filtered.select(
-                        panel.filtered[line]).take(i)[i - 1][0])))
-            row_n += 1
+        for n, col in enumerate(cols):
+            panel.table_export.setHorizontalHeaderItem(n,
+                QTableWidgetItem(col)
+            )
+        
+        col_n = 0
         row_n = 0
-        col_n += 1
+
+        for line in cols:
+            for i in range(1, 11):
+                panel.table_export.setItem(
+                    row_n, col_n, QTableWidgetItem(
+                        str(panel.filtered.select(
+                            panel.filtered[line]).take(i)[i - 1][0])))
+                row_n += 1
+            row_n = 0
+            col_n += 1
+    else:
+        model = panel.column_ext.model()
+        expression = [
+            model.item(idx).text() for idx in range(model.rowCount())
+        ]
+
+        panel.filtered = panel.data.filter(' and '.join(expression))
+
+        cols = []
+        if '_c0' in panel.filtered.columns[0]:
+          cols = [x for x in panel.filtered.columns[1:]]
+        else:
+          cols = [x for x in panel.filtered.columns]
+        cols.sort()
+
+        panel.table_export.setColumnCount(len(cols))
+        panel.table_export.setRowCount(10)
+        panel.table_export.clear()
+
+        for n, col in enumerate(cols):
+            panel.table_export.setHorizontalHeaderItem(n,
+                QTableWidgetItem(col)
+            )
+        
+        col_n = 0
+        row_n = 0
+
+        for line in cols:
+            for i in range(1, 11):
+                panel.table_export.setItem(
+                    row_n, col_n, QTableWidgetItem(
+                        str(panel.filtered.select(
+                            panel.filtered[line]).take(i)[i - 1][0])))
+                row_n += 1
+            row_n = 0
+            col_n += 1
 
 
 def export_file_csv(button, panel):

@@ -48,7 +48,7 @@ class Etl(QMainWindow):
 
         self.gen_filter.clicked.connect(
             lambda: et.add_list_filter(
-                self.line_select, self.line_edit, model)
+                self.line_select, self.line_edit, model_ext)
         )
 
         self.rm_filter.clicked.connect(
