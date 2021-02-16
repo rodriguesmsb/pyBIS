@@ -13,27 +13,20 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 from app import app
 from apps import spatio_temporal
-from aux.functions import functions
 import pandas as pd
 
 
-<<<<<<< HEAD
-print("Estou iniciando o servidor web")
-=======
 
->>>>>>> 028be67a6893272a98f8aaa0a6529b4835fc6e09
+
 
 
 
 ###Add code to use external css
 
 ###Create a instance of Dash class
-app = dash.Dash(__name__, external_stylesheets = [
-    "https://cdnjs.cloudflare.com/\
-     ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css",
-    "https://fonts.googleapis.com/\
-     css2?family=Poppins:wght@300;400;500&display=swap"
-])
+app = dash.Dash(__name__, 
+external_stylesheets = ["https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css",
+                        "https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap"])
 app.title = "Data visualization"
 
 
