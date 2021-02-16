@@ -6,7 +6,6 @@ from PyQt5.QtWidgets import QFileDialog
 import fiona
 
 sys.path.append(path.join(path.dirname(__file__), 'SpatialSUSapp'))
-import index
 dir_dbc = path.expanduser('~/datasus_dbc/')
 
 
@@ -46,6 +45,7 @@ def trade_frame(layout, parent, frame):
 
 
 def start_server(program):
+    import index
     program.analysis = Thread(target=index.app.run_server, daemon=True)
     program.analysis.start()
     program.nav = Thread(target=webbrowser.open, args=('127.0.0.1:8050',),

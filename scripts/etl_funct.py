@@ -61,6 +61,13 @@ def operator_line_edit(operator, edit):
 
 
 def apply_filter(combobox, line, panel):
+    drop_list = []
+    model_apply = panel.column_apply.model()
+    if model_apply:
+        for idx in range(model_apply.rowCount()):
+            drop_list.append(model_apply.item(idx).text())
+    print(drop_list)
+
     model = panel.column_ext.model()
     expression = [model.item(idx).text() for idx in range(model.rowCount())]
 

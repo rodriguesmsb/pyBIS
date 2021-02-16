@@ -18,6 +18,8 @@ class Etl(QMainWindow):
         super().__init__()
         uic.loadUi(layout + 'etl.ui', self)
 
+        model_apply = QStandardItemModel()
+        self.column_apply.setModel(model_apply)
         self.button_add.clicked.connect(
             lambda: et.add_column(self.column_add, self.column_apply)
         )
@@ -37,8 +39,8 @@ class Etl(QMainWindow):
                 lambda: et.operator_line_edit(self, self.line_edit)
             )
 
-        model = QStandardItemModel()
-        self.column_ext.setModel(model)
+        model_ext = QStandardItemModel()
+        self.column_ext.setModel(model_ext)
 
         self.apply_filter.clicked.connect(
             lambda: et.apply_filter(self.line_select, self.line_edit, self)
