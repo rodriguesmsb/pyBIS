@@ -7,6 +7,8 @@ Created on Tue Jan 26 2021
 """
 
 import dash_core_components as dcc
+import dash_table as dt
+import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_leaflet as dl
 
@@ -14,19 +16,84 @@ import dash_leaflet as dl
 import pandas as pd
 
 
+cont = dbc.Card(
+    [
+        dbc.CardImg(src = "assets/form.svg", top = True, className = "card-img"),
+        dbc.CardBody(
+            [
+                html.P(
+                    "Contagem"
+                )
+            ],
+            className = "card-text"
+        ),
+    ],
+    className = "nav-item",
+)
+
+date_range = dbc.Card(
+    [
+        dbc.CardImg(src = "assets/calendar.svg", top = True, className = "card-img"),
+        dbc.CardBody(
+            [
+                html.P(
+                    "De xxx a xxx"
+                )
+            ],
+            className = "card-text"
+        ),
+    ],
+    className = "nav-item",
+)
+
+
+time_unit = dbc.Card(
+    [
+        dbc.CardImg(src = "assets/clock.svg", top = True, className = "card-img"),
+        dbc.CardBody(
+            [
+                html.P(
+                    "Unidade de tempo"
+                )
+            ],
+            className = "card-text"
+        ),
+    ],
+    className = "nav-item",
+)
+
+
+
 layout = html.Div(
+
     id = "container",
     children = [
+
+        ###Header
         html.Div(
             id = "header",
             children = ["header"],
             className = "header"
         ),
+
+        ###Navigation menu
         html.Div(
             id = "nav-bar",
-            children = ["Navigation"],
+            children = [
+                html.Div(
+                    children = [
+                        cont,
+                        date_range,
+                        time_unit
+                    ],
+                    className = "nav-bar-div"
+                )
+                
+            ],
             className = "nav-bar"
         ),
+
+        ###Main graphs
         html.Div(
             id = "main-body",
             children = [
@@ -46,13 +113,23 @@ layout = html.Div(
                             className ="leaflet-map"),
                         html.Div(
                             id = "table",
-                            children = ["Summary statistics"],
+                            children = [dt.DataTable(
+                                id = "table"
+                            )
+
+                            ],
                             className = "table"
 
                         ),
                         html.Div(
                             id = "time-series",
-                            children = ["Time-series"],
+                            children = [
+                                dcc.Graph(
+                                    id = "time-series-cases",
+                                    config = {"displayModeBar": False},
+                                    className = "ts-graph"
+                                )
+                            ],
                             className = "time-series"
                         )
 

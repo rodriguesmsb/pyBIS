@@ -18,10 +18,7 @@ import pandas as pd
 
 
 
-print("Estou iniciando o servidor web")
 
-while True:
-    print("I'm a bug catch me if u can")
 
 
 
