@@ -6,16 +6,182 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>867</width>
+    <width>879</width>
     <height>489</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Analises</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../imgs/analysis.png</normaloff>../imgs/analysis.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="2" column="1" rowspan="2">
+    <item row="1" column="0">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Preferred</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="4">
+     <widget class="QGroupBox" name="horizontalGroupBox_7">
+      <property name="title">
+       <string>Unidade de tempo</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_8">
+       <item>
+        <widget class="QRadioButton" name="radioButton_5">
+         <property name="text">
+          <string>Ano (AAAA)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="radioButton_4">
+         <property name="text">
+          <string>Mês (MM-AAAA)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="radioButton_3">
+         <property name="text">
+          <string>Dia (DD-MM-AAAA)</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Preferred</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="1">
+     <spacer name="horizontalSpacer_5">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Preferred</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="4" column="4">
+     <layout class="QVBoxLayout" name="verticalLayout_5">
+      <item>
+       <widget class="QPushButton" name="pushButton_2">
+        <property name="text">
+         <string>Iniciar analise</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBox">
+        <property name="text">
+         <string>Usar dados de exemplo</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="2" column="4">
+     <layout class="QHBoxLayout" name="horizontalLayout_9">
+      <item alignment="Qt::AlignHCenter">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>De:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDateEdit" name="dateEdit_2"/>
+      </item>
+      <item alignment="Qt::AlignHCenter">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Até:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDateEdit" name="dateEdit_3"/>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="3" rowspan="2">
+     <widget class="QGroupBox" name="verticalGroupBox_2">
+      <property name="title">
+       <string>Configuração dados (*.csv)</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QComboBox" name="comboBox_4">
+         <item>
+          <property name="text">
+           <string>id da área</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDateEdit" name="dateEdit"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBox_5">
+         <item>
+          <property name="text">
+           <string>população</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBox_6">
+         <item>
+          <property name="text">
+           <string>casos</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="2" rowspan="2">
      <widget class="QGroupBox" name="verticalGroupBox">
       <property name="title">
        <string>Configuração shapefile (*.shp)</string>
@@ -51,25 +217,66 @@
       </layout>
      </widget>
     </item>
-    <item row="5" column="3">
-     <layout class="QVBoxLayout" name="verticalLayout_5">
+    <item row="1" column="6">
+     <spacer name="horizontalSpacer_4">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Preferred</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="5">
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Preferred</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="3" column="4">
+     <layout class="QHBoxLayout" name="horizontalLayout_11">
       <item>
-       <widget class="QPushButton" name="pushButton_2">
-        <property name="text">
-         <string>Iniciar analise</string>
+       <widget class="QGroupBox" name="horizontalGroupBox_8">
+        <property name="title">
+         <string>Tipo de analise</string>
         </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="checkBox">
-        <property name="text">
-         <string>Usar dados de exemplo</string>
-        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <item>
+          <widget class="QRadioButton" name="radioButton_6">
+           <property name="text">
+            <string>Espacial</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButton_7">
+           <property name="text">
+            <string>Espaço-Temporal</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
     </item>
-    <item row="4" column="1" rowspan="2" colspan="2">
+    <item row="3" column="2" rowspan="2" colspan="2">
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
        <widget class="QGroupBox" name="horizontalGroupBox_5">
@@ -152,200 +359,6 @@
        </layout>
       </item>
      </layout>
-    </item>
-    <item row="2" column="3">
-     <widget class="QGroupBox" name="horizontalGroupBox_7">
-      <property name="title">
-       <string>Unidade de tempo</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_8">
-       <item>
-        <widget class="QRadioButton" name="radioButton_5">
-         <property name="text">
-          <string>Ano (AAAA)</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="radioButton_4">
-         <property name="text">
-          <string>Mês (MM-AAAA)</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="radioButton_3">
-         <property name="text">
-          <string>Dia (DD-MM-AAAA)</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="2" column="2" rowspan="2">
-     <widget class="QGroupBox" name="verticalGroupBox_2">
-      <property name="title">
-       <string>Configuração dados (*.csv)</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QComboBox" name="comboBox_4">
-         <item>
-          <property name="text">
-           <string>id da área</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item>
-        <widget class="QDateEdit" name="dateEdit"/>
-       </item>
-       <item>
-        <widget class="QComboBox" name="comboBox_5">
-         <item>
-          <property name="text">
-           <string>população</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="comboBox_6">
-         <item>
-          <property name="text">
-           <string>casos</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Preferred</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="2" column="0">
-     <spacer name="horizontalSpacer">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Preferred</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="1" column="1" colspan="2">
-     <widget class="QGroupBox" name="horizontalGroupBox">
-      <property name="title">
-       <string>Selecionar arquivos (*.shp) / (*.csv)</string>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QPushButton" name="pushButton">
-         <property name="text">
-          <string>Shapefile</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_3">
-         <property name="text">
-          <string>Dados</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="4" column="3">
-     <layout class="QHBoxLayout" name="horizontalLayout_11">
-      <item>
-       <widget class="QGroupBox" name="horizontalGroupBox_8">
-        <property name="title">
-         <string>Tipo de analise</string>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_10">
-         <item>
-          <widget class="QRadioButton" name="radioButton_6">
-           <property name="text">
-            <string>Espacial</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="radioButton_7">
-           <property name="text">
-            <string>Espaço-Temporal</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="3" column="3">
-     <layout class="QHBoxLayout" name="horizontalLayout_9">
-      <item alignment="Qt::AlignHCenter">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>De:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QDateEdit" name="dateEdit_2"/>
-      </item>
-      <item alignment="Qt::AlignHCenter">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Até:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QDateEdit" name="dateEdit_3"/>
-      </item>
-     </layout>
-    </item>
-    <item row="2" column="4">
-     <spacer name="horizontalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Preferred</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
     </item>
    </layout>
   </widget>
