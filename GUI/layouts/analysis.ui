@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Analises</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../imgs/analysis.png</normaloff>../imgs/analysis.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="4" column="3">
