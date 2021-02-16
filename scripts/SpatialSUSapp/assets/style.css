@@ -1,0 +1,115 @@
+*{
+    box-sizing: border-box;
+    font: inherit;
+    color: inherit;
+}
+
+body{
+  background-color: whitesmoke;
+}
+
+.container{
+  display: grid;
+  background-color: whitesmoke;
+  height:97vh;
+  /*grid-template-rows: auto auto 1fr auto auto auto;*/
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: auto auto 1fr auto;
+  gap: 24px;
+}
+
+.header{
+  /*Give to header  12 coluns in the first row*/
+  grid-column: 1 / span 12;
+  border: 1px solid tomato;
+  border-radius: 8px;
+  background-color: white;
+
+}
+
+.nav-bar{
+  /*Nav bar should start at third column and end at sixth*/
+  grid-column: 3 / span 6;
+  border: 1px solid tomato;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.main-body{
+  /*
+  Main body will start and end at same position as nav bar hover the 1fr
+  attributed at third row will allow it expand as much as it can
+  
+  */
+  grid-column: 3 / span 6;
+  border: 1px solid tomato;
+  border-radius: 8px;
+  background-color: whitesmoke;
+}
+
+.side-bar{
+  /*
+  Side bar will get two rows and two columns
+  
+  */
+  grid-row: 2 / 4;
+  grid-column: 1 / span 2;
+  border: 1px solid tomato;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.side-graph{
+  /*
+  Side graph will the same rows as side-menu and
+  the four last columns
+  
+  */
+  grid-column: 9 / span 4;
+  grid-row: 2 / 4;
+  border: 1px solid tomato;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.footer{
+  grid-column: 1 / span 12; 
+  border: 1px solid tomato;
+  border-radius: 8px;
+  background-color: white;
+}
+
+
+.wrapper{
+  display: grid;
+  grid-template-columns: repeat(12,1fr);
+  grid-template-rows: repeat(12,auto);
+  height: 100%;
+  gap: 6px;
+
+}
+
+.leaflet-map{
+  display: grid;
+  grid-column: 1 / span 7;
+  grid-row: 1/ span 7;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.table{
+  display: grid;
+  border: 1px solid rgb(0, 195, 255);
+  grid-column: 8 / span 5;
+  grid-row: 1/ span 7;
+  background-color: white;
+
+}
+
+.time-series{
+  display: grid;
+  border: 1px solid rgb(0, 195, 255);
+  grid-row: 8 / span 5;
+  grid-column: 1 / span 12;
+  background-color: white;
+}
