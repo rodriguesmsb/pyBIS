@@ -3,7 +3,6 @@ from os import path, system
 from threading import Thread
 import webbrowser
 from PyQt5.QtWidgets import QFileDialog
-import geopandas as gpd
 import fiona
 
 sys.path.append(path.join(path.dirname(__file__), 'SpatialSUSapp'))
