@@ -13,12 +13,17 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 from app import app
 from apps import spatio_temporal
+from aux.functions import functions
 import pandas as pd
+import json
 
+path_to_data = "scripts/SpatialSUSapp/data/data.csv"
+path_to_json =  "scripts/SpatialSUSapp/conf/conf.json"
 
+with open(path_to_json, 'r') as f:
+    conf_json = json.load(f)
 
-
-
+conf = functions(conf_file = conf_json, data = "data/data.csv")
 
 
 ###Add code to use external css
@@ -39,12 +44,11 @@ app.layout = html.Div([
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
 def display_page(pathname):
-    if pathname == "#":
-        return 404
-    elif pathname == "#":
-        return 404
-    else:
+    pathname = conf.set_pathname()
+    if pathname == "spatio_temporal":
         return spatio_temporal.layout
+    elif pathname == "temporal":
+        return 404
 
 if __name__ == '__main__':
     app.run_server(debug = True)
