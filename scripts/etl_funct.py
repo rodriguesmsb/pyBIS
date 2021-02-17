@@ -98,7 +98,10 @@ def apply_filter(combobox, line, panel):
     panel.table_export.setRowCount(10)
     panel.table_export.clear()
 
-    write_table(panel.table_export, panel.filtered)
+    try:
+        write_table(panel.table_export, panel.filtered)
+    except IndexError:
+        print("Erro de index")
 
 
 def export_file_csv(button, panel):
