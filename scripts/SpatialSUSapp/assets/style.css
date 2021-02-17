@@ -49,6 +49,23 @@ h2{
   background-color: whitesmoke;
 }
 
+
+.info-bar-cotainer{
+  display: grid;
+  grid-template-columns: repeat(3,auto);
+  gap: 6px;
+  background-color: whitesmoke;
+  border-radius: 8px;
+}
+
+
+.info-item{
+  display: grid;
+  background-color: white;
+  border-radius: 8px;
+  border: 3px solid tomato;
+}
+
 .main-body{
   /*
   Main body will start and end at same position as nav bar hover the 1fr
@@ -74,6 +91,23 @@ h2{
   background-color: white;
 }
 
+.side-bar-container{
+  display: grid;
+  grid-template-rows: repeat(12, auto);
+}
+
+.side-bar-item{
+  margin-top: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+
+}
+
+.side-bar-text{
+  font-weight: 600;
+  margin-left: 10px;
+}
+
 .side-graph{
   /*
   Side graph will the same rows as side-menu and
@@ -86,6 +120,14 @@ h2{
   border-radius: 8px;
   background-color: white;
 }
+
+.side-graph-container{
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  height: 100%;
+  gap: 6px;
+}
+
 
 .footer{
   grid-column: 1 / span 12; 
@@ -134,22 +176,6 @@ h2{
   border-radius: 8px;
   height: 99%;
   width: 99%;
-}
-
-.info-bar-div{
-  display: grid;
-  grid-template-columns: repeat(3,auto);
-  gap: 6px;
-  background-color: whitesmoke;
-  border-radius: 8px;
-  
-}
-
-.nav-item{
-  display: grid;
-  background-color: white;
-  border-radius: 8px;
-  border: 3px solid tomato;
 }
 
 .card-img{

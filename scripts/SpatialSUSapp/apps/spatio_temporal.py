@@ -37,7 +37,7 @@ cont = dbc.Card(
             className = "card-text"
         ),
     ],
-    className = "nav-item",
+    className = "info-item",
 )
 
 date_range = dbc.Card(
@@ -52,7 +52,7 @@ date_range = dbc.Card(
             className = "card-text"
         ),
     ],
-    className = "nav-item",
+    className = "info-item",
 )
 
 
@@ -68,7 +68,7 @@ time_unit = dbc.Card(
             className = "card-text"
         ),
     ],
-    className = "nav-item",
+    className = "info-item",
 )
 
 
@@ -96,7 +96,7 @@ layout = html.Div(
             className = "header"
         ),
 
-        ###Navigation menu
+        ###information menu
         html.Div(
             id = "nav-bar",
             children = [
@@ -106,7 +106,7 @@ layout = html.Div(
                         date_range,
                         time_unit
                     ],
-                    className = "info-bar-div"
+                    className = "info-bar-cotainer"
                 )
                 
             ],
@@ -164,15 +164,60 @@ layout = html.Div(
             ],
             className = "main-body"
         ),
-
+        
+        #Customize side-bar
         html.Div(
             id = "side-bar",
-            children = ["Side bar"],
+            children = [
+                html.Div(
+                    children = [
+                        html.Br(),
+                        html.Br(),
+                        html.Label(
+                            ["Selecione uma variável", 
+                             dcc.Dropdown(id = "var-select", className = "side-bar-item")],
+                            className = "side-bar-text"
+                             ),
+                        html.Br(),
+                        html.Br(),
+                        html.Label(
+                            ["Selecione o intervalo de tempo",
+                            dcc.RangeSlider(
+                                id = "range-select",
+                                min = 2010,
+                                max = 2019,
+                                step = 1,
+                                marks = {
+                                    2010: {'label': '2010', 'style': {'color': '#77b0b1'}},
+                                    2015: {'label': '2015', 'style': {'color': '#77b0b1'}},
+                                    2019: {'label': '2019', 'style': {'color': '#77b0b1'}}
+
+                                },
+                                value = [2010, 2019],
+                                className = "side-bar-item")
+                                ],
+                                className = "side-bar-text"
+                                )
+                    ],
+                    className = "side-bar-container"
+                )
+            ],
             className = "side-bar"
         ),
+
+        #customize side graph
         html.Div(
-            id = "sid-graph",
-            children = ["Side Graph"],
+            id = "side-graph",
+            children = [
+                html.Div(
+                    children = [
+                        dcc.Graph(id = "cov1", className = "side-graph-item"),
+                        dcc.Graph(id = "cov2", className = "side-graph-item")
+                    ],
+                    className = "side-graph-container"
+
+                )
+            ],
             className = "side-graph"
         ),
 
