@@ -190,7 +190,7 @@ layout = html.Div(
                                 marks = {
                                     2010: {'label': '2010', 'style': {'color': '#77b0b1'}},
                                     2015: {'label': '2015', 'style': {'color': '#77b0b1'}},
-                                    2019: {'label': '2019', 'style': {'color': '#77b0b1'}}"
+                                    2019: {'label': '2019', 'style': {'color': '#77b0b1'}}
 
                                 },
                                 value = [2010, 2019],
@@ -204,9 +204,20 @@ layout = html.Div(
             ],
             className = "side-bar"
         ),
+
+        #customize side graph
         html.Div(
-            id = "sid-graph",
-            children = ["Side Graph"],
+            id = "side-graph",
+            children = [
+                html.Div(
+                    children = [
+                        dcc.Graph(id = "cov1", className = "side-graph-item"),
+                        dcc.Graph(id = "cov2", className = "side-graph-item")
+                    ],
+                    className = "side-graph-container"
+
+                )
+            ],
             className = "side-graph"
         ),
 

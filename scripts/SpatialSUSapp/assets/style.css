@@ -121,6 +121,14 @@ h2{
   background-color: white;
 }
 
+.side-graph-container{
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  height: 100%;
+  gap: 6px;
+}
+
+
 .footer{
   grid-column: 1 / span 12; 
   border: 3px solid tomato;
