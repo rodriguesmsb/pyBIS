@@ -42,9 +42,10 @@ h2{
   margin-left: -100px;
 }
 
-.info-bar{
-  /*info bar should start at third column and end at sixth*/
-  grid-column: 1 / span 3;
+.nav-bar{
+  /*Nav bar should start at third column and end at sixth*/
+  grid-column: 4 / span 6;
+  border: 3px solid tomato;
   border-radius: 8px;
   background-color: whitesmoke;
 }
@@ -56,7 +57,6 @@ h2{
   
   */
   grid-column: 4 / span 6;
-  grid-row: 2 / 4;
   border: 3px solid tomato;
   border-radius: 8px;
   background-color: whitesmoke;
@@ -67,7 +67,7 @@ h2{
   Side bar will get two rows and two columns
   
   */
-  grid-row: 3 / 4;
+  grid-row: 2 / 4;
   grid-column: 1 / span 3;
   border: 3px solid tomato;
   border-radius: 8px;
@@ -136,20 +136,18 @@ h2{
   width: 99%;
 }
 
-.info-bar-div{
+.nav-bar-div{
   display: grid;
-  grid-template-columns: repeat(3,auto);
+  grid-template-columns: repeat(6,2fr);
   gap: 6px;
   background-color: whitesmoke;
   border-radius: 8px;
-  
 }
 
 .nav-item{
   display: grid;
   background-color: white;
   border-radius: 8px;
-  border: 3px solid tomato;
 }
 
 .card-img{

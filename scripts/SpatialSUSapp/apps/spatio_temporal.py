@@ -106,11 +106,11 @@ layout = html.Div(
                         date_range,
                         time_unit
                     ],
-                    className = "nav-bar-div"
+                    className = "info-bar-div"
                 )
                 
             ],
-            className = "nav-bar"
+            className = "info-bar"
         ),
 
         ###Main graphs
@@ -125,7 +125,7 @@ layout = html.Div(
                             children = [
                                 dl.Map(
                                     center = [-16, -52],
-                                    zoom = 3.45,
+                                    zoom = 4,
                                     children = [
                                         dl.TileLayer(),
                                         dl.GeoJSON(url = path_to_map)],
