@@ -9,7 +9,7 @@ from download_funct import write_table
 
 
 dir_dbc = path.expanduser('~/datasus_dbc/')
-dir_spatial = path.join(path.dirname(__file__), "SpatialSUSapp/conf/")
+dir_spatial = path.join(path.dirname(__file__), "SpatialSUSapp/")
 
 
 def verify_items(col):
@@ -81,9 +81,12 @@ def drop_list(col, data):
 def apply_filter(combobox, line, panel):
     panel.data = drop_list(panel.column_apply, panel.data)
 
-    _, expression = verify_items(panel.column_ext)
+    try:
+        _, expression = verify_items(panel.column_ext)
 
-    panel.filtered = panel.data.filter(' and '.join(expression))
+        panel.filtered = panel.data.filter(' and '.join(expression))
+    except:
+        panel.filtered = panel.data
 
     cols = []
     try:
@@ -101,6 +104,8 @@ def apply_filter(combobox, line, panel):
 
     try:
         write_table(panel.table_export, panel.filtered)
+        panel.filtered.toPandas().to_csv(dir_spatial + "data/"
+                                         + "data.csv", index=False)
     except IndexError:
         pass
         print("Erro de index")
