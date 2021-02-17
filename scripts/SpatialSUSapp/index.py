@@ -17,8 +17,12 @@ from aux.functions import functions
 import pandas as pd
 import json
 
-path_to_data = "scripts/SpatialSUSapp/data/data.csv"
-path_to_json =  "scripts/SpatialSUSapp/conf/conf.json"
+
+#path_to_data = "scripts/SpatialSUSapp/data/data.csv"
+#path_to_json =  "scripts/SpatialSUSapp/conf/conf.json"
+
+path_to_data = "data/data.csv"
+path_to_json =  "conf/conf.json"
 
 with open(path_to_json, 'r') as f:
     conf_json = json.load(f)

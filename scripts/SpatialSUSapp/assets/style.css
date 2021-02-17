@@ -31,6 +31,17 @@ h2{
 
 }
 
+.header-cotainer{
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+}
+
+.header-title{
+  display: grid;
+  grid-column: 2 / span 3;
+  margin-left: -100px;
+}
+
 .nav-bar{
   /*Nav bar should start at third column and end at sixth*/
   grid-column: 4 / span 6;
@@ -81,6 +92,7 @@ h2{
   border: 1px solid tomato;
   border-radius: 8px;
   background-color: white;
+  display: block;
 }
 
 
@@ -147,8 +159,18 @@ h2{
   margin-right: auto;
 }
 
+.header-img{
+  width: 50px;
+  height: 50px;
+  margin-left: 0;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
 .card-text{
   display: block;
   margin-left: auto;
   margin-right: auto;
 }
+
+

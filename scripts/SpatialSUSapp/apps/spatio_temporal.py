@@ -11,9 +11,17 @@ import dash_table as dt
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_leaflet as dl
-
-
 import pandas as pd
+import base64
+
+
+def encode_image(image_file):
+    ''' 
+    Function to encode a image in a format that allows its plot on html.Fig
+    '''
+    encode = base64.b64encode(open(image_file, "rb").read())
+    return "data:image/jpeg;base64,{}".format(encode.decode())
+
 
 
 cont = dbc.Card(
@@ -72,7 +80,18 @@ layout = html.Div(
         ###Header
         html.Div(
             id = "header",
-            children = ["header"],
+            children = [
+                html.Div(
+                    children = [
+                        html.Img(src = encode_image("assets/brazil.png"), className = "header-img"),
+                        html.H1(
+                            "Análise espaço temporal",
+                            className = "header-title"
+                        )
+                    ],
+                    className = "header-cotainer"
+                )
+            ],
             className = "header"
         ),
 
@@ -160,12 +179,14 @@ layout = html.Div(
                 html.A(
                     children = html.I(className="fa fa-github"),
                     href ="#"
-                )
+                ),
             ],
             className = "footer"
         )
     ],
     className = "container"
 )
+
+
 
 
