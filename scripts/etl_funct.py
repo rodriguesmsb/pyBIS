@@ -101,6 +101,7 @@ def apply_filter(combobox, line, panel):
     try:
         write_table(panel.table_export, panel.filtered)
     except IndexError:
+        pass
         print("Erro de index")
 
 
