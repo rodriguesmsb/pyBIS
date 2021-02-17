@@ -12,16 +12,17 @@ import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_leaflet as dl
 import pandas as pd
-import base64
+from aux.functions import functions
 
 
-def encode_image(image_file):
-    ''' 
-    Function to encode a image in a format that allows its plot on html.Fig
-    '''
-    encode = base64.b64encode(open(image_file, "rb").read())
-    return "data:image/jpeg;base64,{}".format(encode.decode())
 
+
+path_to_data = "data/data.csv"
+path_to_json =  "conf/conf.json"
+
+
+
+conf = functions(conf_file = path_to_json, data = "data/data.csv")
 
 
 cont = dbc.Card(
@@ -83,7 +84,7 @@ layout = html.Div(
             children = [
                 html.Div(
                     children = [
-                        html.Img(src = encode_image("assets/brazil.png"), className = "header-img"),
+                        html.Img(src = functions.encode_image("assets/brazil.png"), className = "header-img"),
                         html.H1(
                             "Análise espaço temporal",
                             className = "header-title"
@@ -123,9 +124,11 @@ layout = html.Div(
                             id = "map",
                             children = [
                                 dl.Map(
-                                    center = [-20, -54],
-                                    zoom = 3.2,
-                                    children = [dl.TileLayer()],
+                                    center = [-16, -52],
+                                    zoom = 3.45,
+                                    children = [
+                                        dl.TileLayer(),
+                                        dl.GeoJSON(url = "/assets/maps/brazil.json")],
                                     style = {"border-radius":"8px"})
                                 
                             ],

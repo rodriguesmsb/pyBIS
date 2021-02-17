@@ -15,7 +15,7 @@ from app import app
 from apps import spatio_temporal
 from aux.functions import functions
 import pandas as pd
-import json
+
 
 
 #path_to_data = "scripts/SpatialSUSapp/data/data.csv"
@@ -24,10 +24,7 @@ import json
 path_to_data = "data/data.csv"
 path_to_json =  "conf/conf.json"
 
-with open(path_to_json, 'r') as f:
-    conf_json = json.load(f)
-
-conf = functions(conf_file = conf_json, data = "data/data.csv")
+conf = functions(conf_file = path_to_json, data = path_to_data)
 
 
 ###Add code to use external css
