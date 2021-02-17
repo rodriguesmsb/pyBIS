@@ -20,10 +20,10 @@ from aux.functions import functions
 path_to_data = "data/data.csv"
 path_to_json =  "conf/conf.json"
 
+conf = functions(conf_file = path_to_json, data = path_to_data)
 
 
-conf = functions(conf_file = path_to_json, data = "data/data.csv")
-
+path_to_map = "assets/maps/geojs-" + conf.set_json_map() + "-mun.json"
 
 cont = dbc.Card(
     [
@@ -128,7 +128,7 @@ layout = html.Div(
                                     zoom = 3.45,
                                     children = [
                                         dl.TileLayer(),
-                                        dl.GeoJSON(url = "/assets/maps/brazil.json")],
+                                        dl.GeoJSON(url = path_to_map)],
                                     style = {"border-radius":"8px"})
                                 
                             ],
