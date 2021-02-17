@@ -81,7 +81,6 @@ def apply_filter(combobox, line, panel):
     panel.data = drop_list(panel.column_apply, panel.data)
 
     _, expression = verify_items(panel.column_ext)
-    print(expression)
 
     panel.filtered = panel.data.filter(' and '.join(expression))
 
