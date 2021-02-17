@@ -9,6 +9,7 @@ from download_funct import write_table
 
 
 dir_dbc = path.expanduser('~/datasus_dbc/')
+dir_spatial = path.join(path.dirname(__file__), "SpatialSUSapp/conf/")
 
 
 def verify_items(col):
@@ -110,11 +111,10 @@ def export_file_csv(button, panel):
         filename, _ = QFileDialog.getSaveFileName(panel, 'Salvar Arquivo',
                                                   f'{dir_dbc}',
                                                   'file csv (*.csv)')
-        if filename:
-            with open('{}.csv'.format(filename), 'w+') as csvfile:
-                data = csv.writer(csvfile)
-                data.writerow(panel.filtered.columns)
-                for row in panel.filtered:
-                    data.writerow(list(row))
+        if filename.endswith(".csv"):
+            panel.filtered.toPandas().to_csv(filename, index=False)
+        else:
+            panel.filtered.toPandas().to_csv(filename + '.csv', index=False)
+
     except NameError:
         pass
