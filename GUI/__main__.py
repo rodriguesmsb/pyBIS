@@ -40,5 +40,5 @@ if __name__ == '__main__':
     )
 
     manager = Manager(download, etl, merge, analysis, config)      
-    # manager.setWindowIcon(QIcon(icos + 'bis.png'))
+    manager.setWindowIcon(QIcon(icos + 'favicon.ico'))
     sys.exit(app.exec_())
