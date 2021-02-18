@@ -11,7 +11,8 @@ class functions:
         with open(conf_file, 'r') as f:
             self.conf_file = json.load(f)
         self.data = data
-        
+     
+
     def set_pathname(self):
         return self.conf_file["type"]
 
@@ -24,3 +25,18 @@ class functions:
 
     def set_json_map(self):
         return self.conf_file["area"]
+
+    def ibg6(json_map):
+        for i in range(len(json_map["features"])):
+            data = {"codmunres": str(json_map["features"][i]["properties"]["id"])[0:6]}
+            json_map["features"][i]['properties'].update(data)
+            return json_map
+
+
+
+    
+
+
+    
+
+    
