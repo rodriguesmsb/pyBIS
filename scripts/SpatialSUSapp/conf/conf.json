@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 {
   "type": "espatio_temporal",
   "area": "sul"
 }
+=======
+{"type": "spatio_temporal",
+ "area": "ba"}
+>>>>>>> 1493917ecedc252090c726f714df728b40dfc7bf

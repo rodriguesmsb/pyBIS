@@ -18,11 +18,11 @@ import pandas as pd
 
 
 
-#path_to_data = "scripts/SpatialSUSapp/data/data.csv"
-#path_to_json =  "scripts/SpatialSUSapp/conf/conf.json"
+path_to_data = "scripts/SpatialSUSapp/data/data.csv"
+path_to_json =  "scripts/SpatialSUSapp/conf/conf.json"
 
-path_to_data = "data/data.csv"
-path_to_json =  "conf/conf.json"
+#path_to_data = "data/data.csv"
+#path_to_json =  "conf/conf.json"
 
 conf = functions(conf_file = path_to_json, data = path_to_data)
 

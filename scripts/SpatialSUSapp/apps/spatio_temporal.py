@@ -13,17 +13,30 @@ import dash_html_components as html
 import dash_leaflet as dl
 import pandas as pd
 from aux.functions import functions
+import json
 
 
 
 
-path_to_data = "data/data.csv"
-path_to_json =  "conf/conf.json"
+path_to_data = "scripts/SpatialSUSapp/data/data.csv"
+path_to_json = "scripts/SpatialSUSapp/conf/conf.json"
 
 conf = functions(conf_file = path_to_json, data = path_to_data)
 
+json_map = "scripts/SpatialSUSapp/assets/maps/geojs-" + conf.set_json_map() + "-mun.json"
 
-path_to_map = "assets/maps/geojs-" + conf.set_json_map() + "-mun.json"
+
+######Add functions to json here
+with open(json_map, 'r') as f:
+    json_data = json.load(f)
+    json_data = functions.ibg6(json_data)
+    
+with open(json_map, 'w') as m:
+    json.dump(json_data, m, indent=4)
+
+##### load json to plot here
+json_map = "assets/maps/geojs-" + conf.set_json_map() + "-mun.json"
+
 
 cont = dbc.Card(
     [
@@ -84,7 +97,7 @@ layout = html.Div(
             children = [
                 html.Div(
                     children = [
-                        html.Img(src = functions.encode_image("assets/brazil.png"), className = "header-img"),
+                        html.Img(src = functions.encode_image("scripts/SpatialSUSapp/assets/brazil.png"), className = "header-img"),
                         html.H1(
                             "Análise espaço temporal",
                             className = "header-title"
@@ -128,7 +141,7 @@ layout = html.Div(
                                     zoom = 4,
                                     children = [
                                         dl.TileLayer(),
-                                        dl.GeoJSON(url = path_to_map)],
+                                        dl.GeoJSON(url = json_map)],
                                     style = {"border-radius":"8px"})
                                 
                             ],
@@ -148,7 +161,6 @@ layout = html.Div(
                             children = [
                                 dcc.Graph(
                                     id = "time-series-cases",
-                                    config = {"displayModeBar": False},
                                     className = "ts-graph"
                                 )
                             ],
