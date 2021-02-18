@@ -18,18 +18,17 @@ class Download(QMainWindow):
         self.database.addItem('SELECIONAR SISTEMA')
         self.database.addItems(dd.load_system())
         self.database.currentTextChanged.connect(
-                lambda: dd.load_base(self.base, self.database.currentText())
+            lambda: dd.load_base(self.base, self.database.currentText())
         )
 
         self.locale.addItem('SELECIONAR LOCAL')
         self.locale.addItems(dd.load_locales_())
         self.locale.currentTextChanged.connect(
-                lambda: dd.load_locales_choice(self.locale_,
-                                               self.locale.currentText())
+            lambda: dd.load_locales_choice(self.locale_,
+                                           self.locale.currentText())
         )
 
         self.load_data.clicked.connect(
-                lambda: dd.gen_csv(
-                    self.database, self.base, self.locale_, self.year,
-                    self.year_, self)
+            lambda: dd.gen_csv(self.database, self.base, self.locale_,
+                               self.year, self.year_, self)
         )

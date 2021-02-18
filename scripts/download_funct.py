@@ -121,9 +121,11 @@ def return_uf(select):
         for states in read_states():
             if select.currentText() == states.get('ESTADO'):
                 return [states.get('UF')]
+
             elif select.currentText() is not None:
                 if select.currentText() == states.get('REGIÃO'):
                     states_.append(states.get('UF'))
+
         return states_
 
 
@@ -156,7 +158,15 @@ def gen_csv(system, database, states, year, year_, program):
         system_, base_ = return_bases(system, database)
     except TypeError:
         ...
-    state_ = return_uf(states)
+
+    state_ = []
+    verify_states = return_uf(states)
+
+    if verify_states is None:
+        for ufs in read_states():
+            state_.append(ufs['UF'])
+    else:
+        state_ = verify_states
 
     try:
         if system_ == 'SIH':
