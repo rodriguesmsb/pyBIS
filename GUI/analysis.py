@@ -15,7 +15,7 @@ class AnalysisUI(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi(layout + 'analysis.ui', self)
-        self.spatial_analysis = None
+        self.analysis = None
 
         self.pushButton_2.clicked.connect(
             lambda: an.start_server(self)

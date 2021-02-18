@@ -1,5 +1,6 @@
 import sys
 from os import path, system
+import psutil
 from threading import Thread
 import webbrowser
 from PyQt5.QtWidgets import QFileDialog
@@ -50,7 +51,6 @@ def trade_frame(layout, parent, frame):
 def activate(checkbox):
     with open(dir_spatial + 'conf.json', 'r') as f:
         data = json.load(f)
-
     with open(dir_spatial + 'conf.json', 'w') as f:
         if checkbox.text() == 'Espaço-Temporal':
             data["type"] = 'espatio_temporal'
@@ -61,8 +61,15 @@ def activate(checkbox):
 
 def start_server(program):
     import index
-    program.analysis = Thread(target=index.app.run_server, daemon=True)
-    program.analysis.start()
+
+    if program.analysis == None:
+        program.analysis = Thread(target=index.app.run_server, daemon=True)
+        program.analysis.start()
+    elif program.analysis.is_alive():
+        process = psutil.Process(program.analysis)
+        process.kill()
+        program.analysis = None
+
     program.nav = Thread(target=webbrowser.open, args=('127.0.0.1:8050',),
                          daemon=True)
     program.nav.start()
