@@ -91,6 +91,7 @@ def load_locales_():
 def write_conf(choice):
     with open(dir_spatial_conf + 'conf.json', 'r') as f:
         data = json.load(f)
+
     with open(dir_spatial_conf + 'conf.json', 'w') as f:
         data['area'] = choice.lower()
         json.dump(data, f, indent=2)

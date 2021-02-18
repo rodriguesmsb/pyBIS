@@ -20,3 +20,11 @@ class AnalysisUI(QMainWindow):
         self.pushButton_2.clicked.connect(
             lambda: an.start_server(self)
         )
+
+        self.radioButton_6.clicked.connect(
+            lambda: an.activate(self.radioButton_6)
+        )
+
+        self.radioButton_7.clicked.connect(
+            lambda: an.activate(self.radioButton_7)
+        )

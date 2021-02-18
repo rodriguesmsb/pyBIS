@@ -3,9 +3,12 @@ from os import path, system
 from threading import Thread
 import webbrowser
 from PyQt5.QtWidgets import QFileDialog
-import fiona
+from PyQt5.QtCore import pyqtSlot
+import json
+
 
 sys.path.append(path.join(path.dirname(__file__), 'SpatialSUSapp'))
+dir_spatial = path.join(path.dirname(__file__), 'SpatialSUSapp/conf/')
 dir_dbc = path.expanduser('~/datasus_dbc/')
 
 
@@ -42,6 +45,18 @@ def get_csv(button, line):
 def trade_frame(layout, parent, frame):
     parent.setHidden(True)
     frame.setHidden(False)
+
+
+def activate(checkbox):
+    with open(dir_spatial + 'conf.json', 'r') as f:
+        data = json.load(f)
+
+    with open(dir_spatial + 'conf.json', 'w') as f:
+        if checkbox.text() == 'Espaço-Temporal':
+            data["type"] = 'espatio_temporal'
+        elif checkbox.text() == 'Espacial':
+            data["type"] = 'espatial'
+        json.dump(data, f, indent=2)
 
 
 def start_server(program):
