@@ -28,6 +28,8 @@ class Download(QMainWindow):
                                            self.locale.currentText())
         )
 
+        self.locale_.currentTextChanged.connect(dd.set_spatial_conf)
+
         self.load_data.clicked.connect(
             lambda: dd.gen_csv(self.database, self.base, self.locale_,
                                self.year, self.year_, self)
