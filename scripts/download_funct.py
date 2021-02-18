@@ -11,6 +11,8 @@ from f_spark import spark_conf, start_spark
 
 
 dir_json = os.path.join(os.path.dirname(__file__), '../json/')
+dir_spatial_conf = os.path.join(os.path.dirname(__file__),
+                                '../scripts/SpatialSUSapp/conf/')
 
 
 class _Loop(QThread):
@@ -86,6 +88,13 @@ def load_locales_():
                 keys.add(x)
     return keys
 
+def write_conf(choice):
+    with open(dir_spatial_conf + 'conf.json', 'r') as f:
+        data = json.load(f)
+    with open(dir_spatial_conf + 'conf.json', 'w') as f:
+        data['area'] = choice.lower()
+        json.dump(data, f, indent=2)
+
 
 def load_locales_choice(locale, choice):
     uf = set()
@@ -94,6 +103,11 @@ def load_locales_choice(locale, choice):
         uf.add(state.get(choice))
     uf = sorted(uf)
     locale.addItems(uf)
+
+
+@pyqtSlot(str)
+def set_spatial_conf(string):
+    write_conf(string)
 
 
 def return_year(year, year_):
@@ -122,7 +136,7 @@ def return_uf(select):
             if select.currentText() == states.get('ESTADO'):
                 return [states.get('UF')]
 
-            elif select.currentText() is not None:
+            elif select is not None:
                 if select.currentText() == states.get('REGIÃO'):
                     states_.append(states.get('UF'))
 
