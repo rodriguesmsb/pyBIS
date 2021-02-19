@@ -21,3 +21,11 @@ class AnalysisUI(QMainWindow):
         self.pushButton_2.clicked.connect(
             lambda: an.start_server(self)
         )
+
+        self.radioButton.toggled.connect(
+            lambda: an.activate('spatial', self)
+        )
+
+        self.radioButton_2.toggled.connect(
+            lambda: an.activate('spatio_temporal', self)
+        )

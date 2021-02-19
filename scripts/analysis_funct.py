@@ -69,17 +69,21 @@ def trade_frame(layout, parent, frame):
     frame.setHidden(False)
 
 
-def activate(checkbox):
-    with open(dir_spatial + 'conf.json', 'r') as f:
-        data = json.load(f)
-    with open(dir_spatial + 'conf.json', 'w') as f:
-        if checkbox.text() == 'Espaço-Temporal':
-            data["type"] = 'spatio_temporal'
-        elif checkbox.text() == 'Espacial':
-            data["type"] = 'spatial'
-        json.dump(data, f, indent=2)
+def activate(checkbox, program):
 
+    def write_conf(checkbox):
+        with open(dir_spatial + 'conf.json', 'r') as f:
+            data = json.load(f)
+        with open(dir_spatial + 'conf.json', 'w') as f:
+            data["type"] = checkbox
+            json.dump(data, f, indent=2)
 
+    if checkbox == "spatio_temporal":
+        program.comboBox_2.setEnabled(True)
+    elif checkbox == "spatial":
+        program.comboBox_2.setEnabled(False)
+
+    write_conf(checkbox)
 
 
 def start_server(program):
