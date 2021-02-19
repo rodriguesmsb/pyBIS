@@ -16,19 +16,21 @@ import pandas as pd
 from aux.functions import functions
 import json
 
+df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/solar.csv')
 
-path_to_data = "scripts/SpatialSUSapp/data/data.csv"
-path_to_json = "scripts/SpatialSUSapp/conf/conf.json"
-path_to_images = "scripts/SpatialSUSapp/assets/"
 
-# path_to_data = "data/data.csv"
-# path_to_json = "conf/conf.json"
-# path_to_images = "assets/"
+# path_to_data = "scripts/SpatialSUSapp/data/data.csv"
+# path_to_json = "scripts/SpatialSUSapp/conf/conf.json"
+# path_to_images = "scripts/SpatialSUSapp/assets/"
+
+path_to_data = "data/data.csv"
+path_to_json = "conf/conf.json"
+path_to_images = "assets/"
 
 conf = functions(conf_file = path_to_json, data = path_to_data)
 
-json_map = "scripts/SpatialSUSapp/assets/maps/geojs-" + conf.set_json_map() + "-mun.json"
-#json_map = "assets/maps/geojs-" + conf.set_json_map() + "-mun.json"
+#json_map = "scripts/SpatialSUSapp/assets/maps/geojs-" + conf.set_json_map() + "-mun.json"
+json_map = "assets/maps/geojs-" + conf.set_json_map() + "-mun.json"
 
 
 ######Add functions to json here
@@ -172,15 +174,12 @@ layout = html.Div(
                             ],
                             className ="leaflet-map"),
                         html.Div(
-                            children = [dt.DataTable(
+                            children = dt.DataTable(
                                 id = "data_table",
-                                columns = [
-                                    {"name": "Column {}".format(i),
-                                     "i": "Column {}".format(i),} for i in range(1,6)],
-                                     data = [{'column-{}'.format(i): (j + (i-1)*5) for i in range(1, 6)} for j in range(6)]
-                            )
-
-                            ],
+                                columns=[{"id": " ", "name": " "},
+                                         {"id": "count", "name": "Contagem"}],
+                                data = []
+                                ),
                             className = "table"
 
                         ),
