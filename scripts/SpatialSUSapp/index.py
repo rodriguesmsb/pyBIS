@@ -32,11 +32,11 @@ def get_id(feature = None):
     return int(str(feature["properties"]["id"][0:6]))
 
 
-path_to_data = "scripts/SpatialSUSapp/data/data.csv"
-path_to_json =  "scripts/SpatialSUSapp/conf/conf.json"
+# path_to_data = "scripts/SpatialSUSapp/data/data.csv"
+# path_to_json =  "scripts/SpatialSUSapp/conf/conf.json"
 
-# path_to_data = "data/data.csv"
-# path_to_json =  "conf/conf.json"
+path_to_data = "data/data.csv"
+path_to_json =  "conf/conf.json"
 
 conf = functions(conf_file = path_to_json, data = path_to_data)
 
@@ -94,14 +94,14 @@ def update_Graph(feature):
     return plotTs(df = filtered_df)
 
 
-@app.callback(Output(component_id = "data_table", component_property = "data"),
-              [Input(component_id = "geojson", component_property = "hover_feature")])
+@app.callback([Output(component_id = "data_table", component_property = "data")],
+               Input(component_id = "geojson", component_property = "hover_feature"))
 def update_table(feature):
     filtered_df = data[data["ID_MN_RESI"] == get_id(feature)]
     summary = filtered_df["count"].describe().reset_index()[1:]
-    summary = summary.rename(columns = {"index": " ", "count": "Casos"})
-    columns = [{"name": i, "id": i} for i in summary.columns],
-    return summary.to_dict("records")
+    summary = summary.rename(columns = {"index": " "})
+    print(summary)
+    return [summary.to_dict("records")]
 
 
 if __name__ == '__main__':

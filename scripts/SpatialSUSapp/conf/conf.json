@@ -2,5 +2,7 @@
   "type": "spatio_temporal",
   "area": "ro",
   "time_col": "DT_NOTIFIC",
-  "id_area": "ID_MN_RESI"
+  "id_area": "ID_MN_RESI",
+  "cov_cat": [],
+  "cov_num": []
 }
