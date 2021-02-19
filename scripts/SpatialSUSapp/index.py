@@ -11,11 +11,13 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
+import numpy as np
 from app import app
 from apps import spatio_temporal
 from aux.functions import functions
 import pandas as pd
 import plotly.graph_objects as go
+import plotly.express as px
 
 #### define function to hover on map
 def get_info(feature=None):
@@ -42,7 +44,8 @@ conf = functions(conf_file = path_to_json, data = path_to_data)
 
 data = conf.read_data()
 
-data = data.groupby([conf.return_area(), conf.return_time()]).size().reset_index(name = "count")
+ts = data.groupby([conf.return_area(), conf.return_time()]).size().reset_index(name = "count")
+
 
 
 def plotTs(df):
@@ -56,6 +59,8 @@ def plotTs(df):
     data = [cases_trace]
     layout = go.Layout(yaxis = {"title": "Incidência"})
     return {"data": data, "layout": layout}
+
+
 
 ###Create a instance of Dash class
 app = dash.Dash(__name__, 
@@ -90,18 +95,31 @@ def info_hover(feature):
 @app.callback(Output(component_id = "time-series-cases", component_property = "figure"),
               [Input(component_id = "geojson", component_property = "hover_feature")])
 def update_Graph(feature):
-    filtered_df = data[data["ID_MN_RESI"] == get_id(feature)]
+    filtered_df = ts[ts[conf.return_area()] == get_id(feature)]
     return plotTs(df = filtered_df)
 
 
-# @app.callback([Output(component_id = "data_table", component_property = "data")],
-#                Input(component_id = "geojson", component_property = "hover_feature"))
-# def update_table(feature):
-#     filtered_df = data[data["ID_MN_RESI"] == get_id(feature)]
-#     summary = filtered_df["count"].describe().reset_index()[1:]
-#     summary = summary.rename(columns = {"index": " "})
-#     print(summary)
-#     return [summary.to_dict("records")]
+@app.callback([Output(component_id = "data_table", component_property = "data")],
+               Input(component_id = "geojson", component_property = "hover_feature"))
+def update_table(feature):
+    filtered_df = ts[ts[conf.return_area()] == get_id(feature)]
+    summary = filtered_df["count"].describe().reset_index()[1:]
+    summary["count"] = np.round(summary["count"], 2)
+
+    summary = summary.rename(columns = {"index": " "})
+    return [summary.to_dict("records")]
+
+
+
+@app.callback(Output(component_id = "donut_plot", component_property = "figure"),
+              Input(component_id = "var_cat", component_property = "value"))
+def update_Graph(selected_var):
+    filtered_df = data[data[conf.return_area()] == 110001] 
+    filtered_df = filtered_df.groupby([selected_var]).size().reset_index(name = "count")
+    filtered_df["area"] = filtered_df["count"]/np.sum(filtered_df["count"])
+    
+
+    return px.pie(filtered_df, label = selected_var, area = "count")
 
 
 if __name__ == '__main__':

@@ -12,7 +12,6 @@ class functions:
             self.conf_file = json.load(f)
         self.data = data
      
-
     def set_pathname(self):
         return self.conf_file["type"]
 
@@ -44,6 +43,12 @@ class functions:
 
     def return_area(self):
         return self.conf_file["id_area"]
+
+    def return_cat(self):
+        return self.conf_file["cov_cat"]
+
+    def return_num(self):
+        return self.conf_file["cov_num"]
 
     
 

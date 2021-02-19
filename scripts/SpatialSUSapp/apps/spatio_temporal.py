@@ -177,7 +177,9 @@ layout = html.Div(
                             children = dt.DataTable(
                                 id = "data_table",
                                 columns=[{"id": " ", "name": " "},
-                                         {"id": "count", "name": "Contagem"}],
+                                         {"id": "count", "name": "Observado"},
+                                         {"id": "expected", "name": "Esperado"},
+                                         {"id": "rr", "name": "RR"}],
                                 data = []
                                 ),
                             className = "table"
@@ -215,7 +217,7 @@ layout = html.Div(
                         html.Label(
                             ["Selecione uma variável", 
                              dcc.Dropdown(id = "var-select", className = "side-bar-item")],
-                            className = "side-bar-text"
+                             className = "side-bar-text"
                              ),
                         html.Br(),
                         html.Br(),
@@ -236,7 +238,38 @@ layout = html.Div(
                                 className = "side-bar-item")
                                 ],
                                 className = "side-bar-text"
-                                )
+                                ),
+                        html.Br(),
+                        html.Br(),
+                        html.Label(
+                            ["Selecionar covariável 1",
+                            dcc.Dropdown(
+                                id = "var_cat",
+                                options = [
+                                    {"label": conf.return_cat()[0], "value": conf.return_cat()[0]},
+                                    {"label": conf.return_cat()[1], "value": conf.return_cat()[1]}
+                                ],
+                                value = None
+                            ),
+                            ],
+                            className = "side-bar-text"
+                        ),
+                        html.Br(),
+                        html.Br(),
+                        html.Label(
+                            ["Selecionar covariável 2",
+                            dcc.Dropdown(
+                                id = "var_num",
+                                options = [
+                                    {"label": conf.return_num()[0], "value": conf.return_num()[0]},
+                                    {"label": conf.return_num()[1], "value": conf.return_num()[1]}
+                                ],
+                                value = None
+                            ),
+                            ],
+                            className = "side-bar-text"
+                        )
+                        
                     ],
                     className = "side-bar-container"
                 )
@@ -250,7 +283,9 @@ layout = html.Div(
             children = [
                 html.Div(
                     children = [
-                        dcc.Graph(id = "cov1", className = "side-graph-item"),
+                        dcc.Graph(
+                            id = "donut_plot", 
+                            className = "side-graph-item"),
                         dcc.Graph(id = "cov2", className = "side-graph-item")
                     ],
                     className = "side-graph-container"

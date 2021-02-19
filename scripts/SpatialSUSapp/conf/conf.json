@@ -1,12 +1,14 @@
 {
   "type": "spatio_temporal",
   "area": "ro",
-  "var_cat": [
-    "DTNASC",
-    "SEXO"
+  "cov_num": [
+    "NU_IDADE_N",
+    ""
   ],
-  "var_num": [
-    "QTDFILMORT",
-    "SEXO"
+  "time_col": "DT_NOTIFIC",
+  "id_area": "ID_MN_RESI",
+  "cov_cat": [
+    "CS_SEXO",
+    "CS_RACA"
   ]
 }
