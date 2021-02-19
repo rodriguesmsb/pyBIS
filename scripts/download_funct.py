@@ -108,7 +108,13 @@ def load_locales_choice(locale, choice):
 
 @pyqtSlot(str)
 def set_spatial_conf(string):
-    write_conf(string)
+    for key in read_states():
+        if key['ESTADO'] == string:
+            write_conf(key['UF'])
+        elif key['BRASIL'] == string:
+            write_conf('brasil')
+        elif key['REGIÃO'] == string:
+            write_conf(key['REGIÃO'])
 
 
 def return_year(year, year_):

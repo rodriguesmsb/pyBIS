@@ -22,7 +22,7 @@ class Download(QMainWindow):
         )
 
         self.locale.addItem('SELECIONAR LOCAL')
-        self.locale.addItems(dd.load_locales_())
+        self.locale.addItems(['BRASIL', 'REGIÃO', 'ESTADO'])
         self.locale.currentTextChanged.connect(
             lambda: dd.load_locales_choice(self.locale_,
                                            self.locale.currentText())
