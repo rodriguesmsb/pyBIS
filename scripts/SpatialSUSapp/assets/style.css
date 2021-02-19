@@ -20,6 +20,7 @@ h2{
   grid-template-columns: repeat(12, 1fr);
   grid-template-rows: auto auto 1fr auto;
   gap: 24px;
+  max-width: 100%
 }
 
 .header{
@@ -36,11 +37,30 @@ h2{
   grid-template-columns: repeat(12, 1fr);
 }
 
+.header-logo{
+  width: 100px;
+  height: 100px;
+  margin-left: 0;
+  margin-top: auto;
+  margin-bottom: auto;
+  grid-column: 13 / span 1;
+}
+
+.header-img{
+  width: 50px;
+  height: 50px;
+  margin-left: 0;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
 .header-title{
   display: grid;
   grid-column: 2 / span 3;
   margin-left: -100px;
 }
+
+
 
 .info-bar{
   /*info bar should start at third column and end at sixth*/
@@ -185,14 +205,6 @@ h2{
   margin-top: 10px;
   margin-left: auto;
   margin-right: auto;
-}
-
-.header-img{
-  width: 50px;
-  height: 50px;
-  margin-left: 0;
-  margin-top: auto;
-  margin-bottom: auto;
 }
 
 .card-text{

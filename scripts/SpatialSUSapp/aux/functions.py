@@ -28,9 +28,25 @@ class functions:
 
     def ibg6(json_map):
         for i in range(len(json_map["features"])):
-            data = {"codmunres": str(json_map["features"][i]["properties"]["id"])[0:6]}
+            data = {"codmunres": int(str(json_map["features"][i]["properties"]["id"])[0:6])}
             json_map["features"][i]['properties'].update(data)
             return json_map
+        
+        
+    def read_data(self):
+        self.data = pd.read_csv(self.data)
+        return self.data
+
+
+    def return_time(self):
+        return self.conf_file["time_col"]
+    
+
+    def return_area(self):
+        return self.conf_file["id_area"]
+
+    
+
 
 
 

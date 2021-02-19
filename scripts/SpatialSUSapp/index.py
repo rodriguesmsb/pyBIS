@@ -15,19 +15,47 @@ from app import app
 from apps import spatio_temporal
 from aux.functions import functions
 import pandas as pd
+import plotly.graph_objects as go
+
+#### define function to hover on map
+def get_info(feature=None):
+    header = [html.H4("Municipio")]
+    if not feature:
+        return header + ["Hoover over a state"]
+    return header + [html.B(feature["properties"]["name"]), html.Br()]
+#"{:} people / mi".format(feature["properties"]["codmunres"]), html.Sup("2")
 
 
+def get_id(feature = None):
+    if not feature:
+        return ["Selecione um municipio"]
+    return int(str(feature["properties"]["id"][0:6]))
 
-path_to_data = "scripts/SpatialSUSapp/data/data.csv"
+
+##path_to_data = "scripts/SpatialSUSapp/data/data.csv"
 path_to_json =  "scripts/SpatialSUSapp/conf/conf.json"
 
-#path_to_data = "data/data.csv"
-#path_to_json =  "conf/conf.json"
+path_to_data = "data/data.csv"
+path_to_json =  "conf/conf.json"
 
 conf = functions(conf_file = path_to_json, data = path_to_data)
 
+data = conf.read_data()
 
-###Add code to use external css
+data = data.groupby([conf.return_area(), conf.return_time()]).size().reset_index(name = "count")
+print(data)
+
+def plotTs(df):
+    cases_trace = go.Scatter(
+        x  = df[conf.return_time()],
+        y =  df["count"],
+        mode ='markers',
+        name = "Fitted",
+        line = {"color": "#d73027"}
+    )
+    data = [cases_trace]
+    layout = go.Layout(yaxis = {"title": "Incidência"})
+    return {"data": data, "layout": layout}
 
 ###Create a instance of Dash class
 app = dash.Dash(__name__, 
@@ -41,6 +69,9 @@ app.layout = html.Div([
     html.Div(id = 'page-content')
 ])
 
+
+
+
 #define all calllback that will be used
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
@@ -50,6 +81,20 @@ def display_page(pathname):
         return spatio_temporal.layout
     elif pathname == "temporal":
         return 404
+
+@app.callback(Output("info", "children"), [Input("geojson", "hover_feature")])
+def info_hover(feature):
+    return get_info(feature)
+
+
+@app.callback(Output(component_id = "time-series-cases", component_property = "figure"),
+              [Input(component_id = "geojson", component_property = "hover_feature")])
+def update_Graph(feature):
+    print(get_id(feature))
+    filtered_df = data[data["ID_MN_RESI"] == get_id(feature)]
+    print(filtered_df)
+    return plotTs(df = filtered_df)
+
 
 if __name__ == '__main__':
     app.run_server(debug = True)

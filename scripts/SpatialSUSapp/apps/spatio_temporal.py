@@ -16,14 +16,18 @@ from aux.functions import functions
 import json
 
 
+#path_to_data = "scripts/SpatialSUSapp/data/data.csv"
+#path_to_json = "scripts/SpatialSUSapp/conf/conf.json"
 
 
-path_to_data = "scripts/SpatialSUSapp/data/data.csv"
-path_to_json = "scripts/SpatialSUSapp/conf/conf.json"
+path_to_data = "data/data.csv"
+path_to_json = "conf/conf.json"
+path_to_images = "assets/"
 
 conf = functions(conf_file = path_to_json, data = path_to_data)
 
-json_map = "scripts/SpatialSUSapp/assets/maps/geojs-" + conf.set_json_map() + "-mun.json"
+#json_map = "scripts/SpatialSUSapp/assets/maps/geojs-" + conf.set_json_map() + "-mun.json"
+json_map = "assets/maps/geojs-" + conf.set_json_map() + "-mun.json"
 
 
 ######Add functions to json here
@@ -32,10 +36,19 @@ with open(json_map, 'r') as f:
     json_data = functions.ibg6(json_data)
     
 with open(json_map, 'w') as m:
-    json.dump(json_data, m, indent=4)
+    json.dump(json_data, m, indent = 4)
 
 ##### load json to plot here
 json_map = "assets/maps/geojs-" + conf.set_json_map() + "-mun.json"
+
+#### define function to hover on map
+def get_info(feature = None):
+    header = [html.H4("Municipio")]
+    if not feature:
+        return header + ["Hoover over a state"]
+    return header + [html.B(feature["properties"]["name"]), html.Br()]
+#"{:} people / mi".format(feature["properties"]["codmunres"]), html.Sup("2")
+
 
 
 cont = dbc.Card(
@@ -97,10 +110,16 @@ layout = html.Div(
             children = [
                 html.Div(
                     children = [
-                        html.Img(src = functions.encode_image("scripts/SpatialSUSapp/assets/brazil.png"), className = "header-img"),
+                        html.Img(
+                            src = functions.encode_image(path_to_images + "brazil.png"), className = "header-img"),
                         html.H1(
                             "Análise espaço temporal",
                             className = "header-title"
+                        ),
+                        html.A(html.Img(
+                            src = functions.encode_image(path_to_images + "cidacs.jpg"), className = "header-logo"),
+                            href = "https://cidacs.bahia.fiocruz.br/",
+                            style ={"grid-column":"12 / span 1", "display":"grid"}
                         )
                     ],
                     className = "header-cotainer"
@@ -141,7 +160,14 @@ layout = html.Div(
                                     zoom = 4,
                                     children = [
                                         dl.TileLayer(),
-                                        dl.GeoJSON(url = json_map)],
+                                        dl.GeoJSON(
+                                            url = json_map,
+                                            id = "geojson",
+                                            zoomToBoundsOnClick = False),
+                                        html.Div(
+                                            children = get_info(), 
+                                            id = "info", className = "info",
+                                            style = {"position": "absolute", "top": "10px", "right": "10px", "z-index": "1000"})],
                                     style = {"border-radius":"8px"})
                                 
                             ],
