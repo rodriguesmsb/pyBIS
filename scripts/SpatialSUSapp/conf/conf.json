@@ -1,6 +1,6 @@
 {
   "type": "spatio_temporal",
-  "area": "ac",
+  "area": "ro",
   "time_col": "DT_NOTIFIC",
   "id_area": "ID_MN_RESI"
 }
