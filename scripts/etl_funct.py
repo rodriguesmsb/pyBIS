@@ -117,11 +117,12 @@ def export_file_csv(button, panel):
                                                   f'{dir_dbc}',
                                                   'file csv (*.csv)')
         if filename.endswith(".csv"):
-            panel.filtered.coalesce(1).write.option("header", "true").csv(filename)
-            # panel.filtered.toPandas().to_csv(filename, index=False)
+            panel.filtered.coalesce(1).write.option("header",
+                                                    "true").csv(filename)
         else:
-            panel.filtered.coalesce(1).write.option("header", "true").csv(filename + '.csv')
-            # panel.filtered.toPandas().to_csv(filename + '.csv', index=False)
+            panel.filtered.coalesce(1).write.option("header",
+                                                    "true").csv(filename
+                                                                + '.csv')
 
     except NameError:
         pass

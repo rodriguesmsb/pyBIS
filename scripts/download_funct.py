@@ -248,8 +248,11 @@ def finder_csv(system, regex):
 
 def read_file(files, cores, mem):
     spark = active_spark(cores, mem)
-    df = spark.read.csv(files, header=True)
-    return df
+    try:
+        df = spark.read.csv(files, header=True)
+        return df
+    except:
+        print("A vida não é tão bela")
 
 
 def arranges_columns(df):
