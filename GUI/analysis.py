@@ -29,3 +29,8 @@ class AnalysisUI(QMainWindow):
         self.radioButton_2.toggled.connect(
             lambda: an.activate('spatio_temporal', self)
         )
+
+        self.comboBox_7.currentTextChanged.connect(an.write_conf_cat)
+        self.comboBox_8.currentTextChanged.connect(an.write_conf_cat_1)
+        self.comboBox_9.currentTextChanged.connect(an.write_conf_num)
+        self.comboBox_10.currentTextChanged.connect(an.write_conf_num_1)

@@ -86,6 +86,39 @@ def activate(checkbox, program):
     write_conf(checkbox)
 
 
+def write_conf_cat(combobox):
+    print(combobox)
+    with open(dir_spatial + 'conf.json', 'r') as f:
+        data = json.load(f)
+    with open(dir_spatial + 'conf.json', 'w') as f:
+        data["var_cat"][0] = combobox
+        json.dump(data, f, indent=2)
+
+
+def write_conf_cat_1(combobox):
+    with open(dir_spatial + 'conf.json', 'r') as f:
+        data = json.load(f)
+    with open(dir_spatial + 'conf.json', 'w') as f:
+        data["var_cat"][1] = combobox
+        json.dump(data, f, indent=2)
+
+
+def write_conf_num(combobox):
+    with open(dir_spatial + 'conf.json', 'r') as f:
+        data = json.load(f)
+    with open(dir_spatial + 'conf.json', 'w') as f:
+        data["var_num"][0] = combobox
+        json.dump(data, f, indent=2)
+
+
+def write_conf_num_1(combobox):
+    with open(dir_spatial + 'conf.json', 'r') as f:
+        data = json.load(f)
+    with open(dir_spatial + 'conf.json', 'w') as f:
+        data["var_num"][1] = combobox
+        json.dump(data, f, indent=2)
+
+
 def start_server(program):
     import index
 

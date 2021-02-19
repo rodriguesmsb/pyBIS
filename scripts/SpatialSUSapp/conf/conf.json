@@ -1,4 +1,12 @@
 {
   "type": "spatial",
-  "area": "ac"
+  "area": "ac",
+  "var_cat": [
+    "TIPOBITO",
+    "SEXO"
+  ],
+  "var_num": [
+    "TPOBITOCOR",
+    "SEXO"
+  ]
 }
