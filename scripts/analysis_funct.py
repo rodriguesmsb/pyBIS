@@ -1,16 +1,37 @@
 import sys
 from os import path, system
 import psutil
-from threading import Thread
 import webbrowser
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, QThread
 import json
 
 
 sys.path.append(path.join(path.dirname(__file__), 'SpatialSUSapp'))
 dir_spatial = path.join(path.dirname(__file__), 'SpatialSUSapp/conf/')
 dir_dbc = path.expanduser('~/datasus_dbc/')
+
+
+class MyThread(QThread):
+
+    totsignal = pyqtSignal(int)
+    cnt = pyqtSignal(int)
+
+    def __init__(self, func, *args):
+        super().__init__()
+        self.threadactive = True
+        self.func = func
+        self.args = args
+
+    def stop(self):
+        self.threadactive = False
+        self.kill()
+
+    def run(self):
+        try:
+            self.func(self.args)
+        except TypeError:
+            self.func()
 
 
 def load_items(filename, frame):
@@ -63,12 +84,12 @@ def start_server(program):
     import index
 
     if program.analysis == None:
-        program.analysis = Thread(target=index.app.run_server, daemon=True)
+        program.analysis = MyThread(index.app.run_server)
         program.analysis.start()
-    elif program.analysis.is_alive():
-        process = psutil.Process(program.analysis)
-        process.kill()
-        program.analysis = None
+    elif program.analysis != None
+        program.analysis.terminate()
+        program.analysis = MyThread(index.app.run_server)
+        program.analysis.start()
 
     program.nav = Thread(target=webbrowser.open, args=('127.0.0.1:8050',),
                          daemon=True)
