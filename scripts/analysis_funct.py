@@ -5,6 +5,7 @@ import webbrowser
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtCore import pyqtSlot, QThread, pyqtSignal
 import json
+from threading import Thread
 
 
 sys.path.append(path.join(path.dirname(__file__), 'SpatialSUSapp'))
@@ -74,9 +75,9 @@ def activate(checkbox):
         data = json.load(f)
     with open(dir_spatial + 'conf.json', 'w') as f:
         if checkbox.text() == 'Espaço-Temporal':
-            data["type"] = 'espatio_temporal'
+            data["type"] = 'spatio_temporal'
         elif checkbox.text() == 'Espacial':
-            data["type"] = 'espatial'
+            data["type"] = 'spatial'
         json.dump(data, f, indent=2)
 
 

@@ -1,6 +1,10 @@
 {
   "type": "spatio_temporal",
+<<<<<<< HEAD
   "area": "al",
+=======
+  "area": "ro",
+>>>>>>> e2f7a9f798995145e8012da7df320175faac8749
   "time_col": "DT_NOTIFIC",
   "id_area": "ID_MN_RESI"
 }
