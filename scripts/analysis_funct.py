@@ -86,7 +86,7 @@ def start_server(program):
     if program.analysis == None:
         program.analysis = MyThread(index.app.run_server)
         program.analysis.start()
-    elif program.analysis != None
+    elif program.analysis != None:
         program.analysis.terminate()
         program.analysis = MyThread(index.app.run_server)
         program.analysis.start()
