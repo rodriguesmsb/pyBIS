@@ -15,16 +15,10 @@ class AnalysisUI(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi(layout + 'analysis.ui', self)
+        self.super_thread = None
         self.analysis = None
+        self.nav = None
 
         self.pushButton_2.clicked.connect(
             lambda: an.start_server(self)
-        )
-
-        self.radioButton_6.clicked.connect(
-            lambda: an.activate(self.radioButton_6)
-        )
-
-        self.radioButton_7.clicked.connect(
-            lambda: an.activate(self.radioButton_7)
         )

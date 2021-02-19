@@ -1,8 +1,9 @@
 import os
+import sys
 import json
 import re
 from time import sleep
-from PyQt5.QtWidgets import QTableWidgetItem, QApplication
+from PyQt5.QtWidgets import QTableWidgetItem, QApplication, QMessageBox
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot, QTimer
 
@@ -241,18 +242,14 @@ def finder_csv(system, regex):
         if re.search(bases, file_csv):
             files.append(
                 os.path.expanduser(
-                    '~/datasus_dbc/' + system + '/' + file_csv)
-            )
+                    '~/datasus_dbc/' + system + '/' + file_csv))
     return files
 
 
 def read_file(files, cores, mem):
     spark = active_spark(cores, mem)
-    try:
-        df = spark.read.csv(files, header=True)
-        return df
-    except:
-        print("A vida não é tão bela")
+    df = spark.read.csv(files, header=True)
+    return df
 
 
 def arranges_columns(df):
@@ -327,23 +324,32 @@ def gen_sample(system, base, state, year, year_p, table, cores, mem,
     year = return_year(year, year_p)
     state = return_uf(state)
 
-    if system.currentText() == 'SIH':
-        data = read_file(finder_csv('SIHSUS', create_regex(system_, base,
-                                                           state, year)),
-                         cores, mem)
-        write_table(table, data)
-        send_data_to_etl_column(data, column_add)
-        send_data_to_combobox(data, combobox)
-        send_(data, panel)
-    else:
-        data = read_file(
-            finder_csv(system.currentText(), create_regex(system_, base,
-                                                          state, year)),
-            cores, mem)
-        write_table(table, data)
-        send_data_to_etl_column(data, column_add)
-        send_data_to_combobox(data, combobox)
-        send_(data, panel)
+    try:
+        if system.currentText() == 'SIH':
+            data = read_file(finder_csv('SIHSUS', create_regex(system_, base,
+                                                               state, year)),
+                             cores, mem)
+            write_table(table, data)
+            send_data_to_etl_column(data, column_add)
+            send_data_to_combobox(data, combobox)
+            send_(data, panel)
+
+        else:
+            data = read_file(
+                finder_csv(system.currentText(), create_regex(system_, base,
+                                                              state, year)),
+                cores, mem)
+            write_table(table, data)
+            send_data_to_etl_column(data, column_add)
+            send_data_to_combobox(data, combobox)
+            send_(data, panel)
+    except:
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Critical)
+        msg.setText("Error")
+        msg.setInformativeText('More information')
+        msg.setWindowTitle("Error")
+        msg.exec_()
 
 
 def thread_gen_sample(system, base, state, year, year_p, table, cores, mem,

@@ -5,7 +5,6 @@ import webbrowser
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtCore import pyqtSlot, QThread, pyqtSignal
 import json
-from threading import Thread
 
 
 sys.path.append(path.join(path.dirname(__file__), 'SpatialSUSapp'))
@@ -30,7 +29,7 @@ class MyThread(QThread):
 
     def run(self):
         try:
-            self.func(self.args)
+            self.func(*self.args)
         except TypeError:
             self.func()
 
@@ -81,17 +80,21 @@ def activate(checkbox):
         json.dump(data, f, indent=2)
 
 
+
+
 def start_server(program):
     import index
 
-    if program.analysis == None:
-        program.analysis = MyThread(index.app.run_server)
-        program.analysis.start()
-    elif program.analysis != None:
-        program.analysis.terminate()
-        program.analysis = MyThread(index.app.run_server)
-        program.analysis.start()
+    def restart_server(thread):
+        if thread:
+            thread.terminate()
+            thread.start()
+        else:
+            thread.start()
 
-    program.nav = Thread(target=webbrowser.open, args=('127.0.0.1:8050',),
-                         daemon=True)
-    program.nav.start()
+    program.analysis = MyThread(index.app.run_server)
+    program.nav = MyThread(webbrowser.open, '127.0.0.1:8050')
+    program.nav.moveToThread(program.analysis)
+    program.analysis.started.connect(program.nav.run)
+
+    restart_server(program.analysis)
