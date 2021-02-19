@@ -94,14 +94,14 @@ def update_Graph(feature):
     return plotTs(df = filtered_df)
 
 
-@app.callback([Output(component_id = "data_table", component_property = "data")],
-               Input(component_id = "geojson", component_property = "hover_feature"))
-def update_table(feature):
-    filtered_df = data[data["ID_MN_RESI"] == get_id(feature)]
-    summary = filtered_df["count"].describe().reset_index()[1:]
-    summary = summary.rename(columns = {"index": " "})
-    print(summary)
-    return [summary.to_dict("records")]
+# @app.callback([Output(component_id = "data_table", component_property = "data")],
+#                Input(component_id = "geojson", component_property = "hover_feature"))
+# def update_table(feature):
+#     filtered_df = data[data["ID_MN_RESI"] == get_id(feature)]
+#     summary = filtered_df["count"].describe().reset_index()[1:]
+#     summary = summary.rename(columns = {"index": " "})
+#     print(summary)
+#     return [summary.to_dict("records")]
 
 
 if __name__ == '__main__':
