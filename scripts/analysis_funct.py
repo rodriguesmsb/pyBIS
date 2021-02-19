@@ -3,7 +3,7 @@ from os import path, system
 import psutil
 import webbrowser
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtCore import pyqtSlot, QThread
+from PyQt5.QtCore import pyqtSlot, QThread, pyqtSignal
 import json
 
 
