@@ -1,12 +1,12 @@
 {
-  "type": "spatial",
-  "area": "ac",
+  "type": "spatio_temporal",
+  "area": "ro",
   "var_cat": [
-    "TIPOBITO",
+    "DTNASC",
     "SEXO"
   ],
   "var_num": [
-    "TPOBITOCOR",
+    "QTDFILMORT",
     "SEXO"
   ]
 }
