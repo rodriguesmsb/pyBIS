@@ -15,6 +15,7 @@ from merge import Merge
 from analysis import AnalysisUI
 from config import Config
 import download_funct as dd
+import etl_funct as et
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../scripts'))
@@ -36,7 +37,12 @@ if __name__ == '__main__':
                                      download.year_, download.sample,
                                      download.cores, download.memory,
                                      etl.column_add, etl.column_apply,
-                                     etl.line_select, download, etl, analysis)
+                                     etl.line_select, download, etl)
+    )
+
+    etl.apply_filter.clicked.connect(
+        lambda: et.apply_filter(
+            etl.line_select, etl.line_edit, etl, analysis)
     )
 
     manager = Manager(download, etl, merge, analysis, config)      

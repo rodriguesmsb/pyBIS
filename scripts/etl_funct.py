@@ -78,7 +78,7 @@ def drop_list(col, data):
         return data
 
 
-def apply_filter(combobox, line, panel):
+def apply_filter(combobox, line, panel, analysis):
     panel.data_drop = drop_list(panel.column_apply, panel.data)
 
     try:
@@ -97,7 +97,10 @@ def apply_filter(combobox, line, panel):
     except IndexError:
         pass
     cols.sort()
-
+    analysis.comboBox_7.addItems(cols)
+    analysis.comboBox_8.addItems(cols)
+    analysis.comboBox_9.addItems(cols)
+    analysis.comboBox_10.addItems(cols)
     panel.table_export.setColumnCount(len(cols))
     panel.table_export.setRowCount(10)
     panel.table_export.clear()

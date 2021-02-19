@@ -42,9 +42,9 @@ class Etl(QMainWindow):
         model_ext = QStandardItemModel()
         self.column_ext.setModel(model_ext)
 
-        self.apply_filter.clicked.connect(
-            lambda: et.apply_filter(self.line_select, self.line_edit, self)
-        )
+        # self.apply_filter.clicked.connect(
+        #     lambda: et.apply_filter(self.line_select, self.line_edit, self)
+        # )
 
         self.gen_filter.clicked.connect(
             lambda: et.add_list_filter(
