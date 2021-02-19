@@ -79,14 +79,14 @@ def drop_list(col, data):
 
 
 def apply_filter(combobox, line, panel):
-    panel.data = drop_list(panel.column_apply, panel.data)
+    panel.data_drop = drop_list(panel.column_apply, panel.data)
 
     try:
         _, expression = verify_items(panel.column_ext)
 
-        panel.filtered = panel.data.filter(' and '.join(expression))
+        panel.filtered = panel.data_drop.filter(' and '.join(expression))
     except:
-        panel.filtered = panel.data
+        panel.filtered = panel.data_drop
 
     cols = []
     try:
@@ -107,8 +107,8 @@ def apply_filter(combobox, line, panel):
         panel.filtered.toPandas().to_csv(dir_spatial + "data/"
                                          + "data.csv", index=False)
     except IndexError:
-        pass
         print("Erro de index")
+        pass
 
 
 def export_file_csv(button, panel):

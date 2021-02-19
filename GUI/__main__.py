@@ -36,7 +36,7 @@ if __name__ == '__main__':
                                      download.year_, download.sample,
                                      download.cores, download.memory,
                                      etl.column_add, etl.column_apply,
-                                     etl.line_select, download, etl)    
+                                     etl.line_select, download, etl, analysis)
     )
 
     manager = Manager(download, etl, merge, analysis, config)      

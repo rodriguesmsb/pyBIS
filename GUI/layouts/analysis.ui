@@ -120,18 +120,40 @@
           <layout class="QHBoxLayout" name="horizontalLayout_6">
            <item>
             <widget class="QComboBox" name="comboBox_7">
+             <property name="editable">
+              <bool>true</bool>
+             </property>
              <item>
               <property name="text">
-               <string>covariavel 1</string>
+               <string>categórica 1</string>
               </property>
              </item>
             </widget>
            </item>
            <item>
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Preferred</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <widget class="QComboBox" name="comboBox_8">
+             <property name="editable">
+              <bool>true</bool>
+             </property>
              <item>
               <property name="text">
-               <string>covariavel 2</string>
+               <string>categórica 2</string>
               </property>
              </item>
             </widget>
@@ -149,18 +171,40 @@
           <layout class="QHBoxLayout" name="horizontalLayout_7">
            <item>
             <widget class="QComboBox" name="comboBox_9">
+             <property name="editable">
+              <bool>true</bool>
+             </property>
              <item>
               <property name="text">
-               <string>covariavel 3</string>
+               <string>numérica 1</string>
               </property>
              </item>
             </widget>
            </item>
            <item>
+            <spacer name="horizontalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Preferred</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <widget class="QComboBox" name="comboBox_10">
+             <property name="editable">
+              <bool>true</bool>
+             </property>
              <item>
               <property name="text">
-               <string>covariavel 4</string>
+               <string>numérica 2</string>
               </property>
              </item>
             </widget>

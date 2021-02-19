@@ -315,7 +315,7 @@ def send_(data, panel):
 
 
 def gen_sample(system, base, state, year, year_p, table, cores, mem,
-               column_add, column_apply, combobox, panel):
+               column_add, column_apply, combobox, panel, analysis):
     table.clear()
     model = QStandardItemModel()
     column_apply.setModel(model)
@@ -332,6 +332,10 @@ def gen_sample(system, base, state, year, year_p, table, cores, mem,
             write_table(table, data)
             send_data_to_etl_column(data, column_add)
             send_data_to_combobox(data, combobox)
+            send_data_to_combobox(data, analysis.comboBox_7)
+            send_data_to_combobox(data, analysis.comboBox_8)
+            send_data_to_combobox(data, analysis.comboBox_9)
+            send_data_to_combobox(data, analysis.comboBox_10)
             send_(data, panel)
 
         else:
@@ -342,6 +346,10 @@ def gen_sample(system, base, state, year, year_p, table, cores, mem,
             write_table(table, data)
             send_data_to_etl_column(data, column_add)
             send_data_to_combobox(data, combobox)
+            send_data_to_combobox(data, analysis.comboBox_7)
+            send_data_to_combobox(data, analysis.comboBox_8)
+            send_data_to_combobox(data, analysis.comboBox_9)
+            send_data_to_combobox(data, analysis.comboBox_10)
             send_(data, panel)
     except:
         msg = QMessageBox()
@@ -353,11 +361,12 @@ def gen_sample(system, base, state, year, year_p, table, cores, mem,
 
 
 def thread_gen_sample(system, base, state, year, year_p, table, cores, mem,
-                      column_add, column_apply, combobox, program, panel):
+                      column_add, column_apply, combobox, program, panel,
+                      analysis):
 
     program.thread_sample = _Thread(gen_sample, *[system, base, state, year,
                                     year_p, table, cores, mem, column_add,
-                                    column_apply, combobox, panel])
+                                    column_apply, combobox, panel, analysis])
     program.loop = _Loop(program.thread_sample)
     global pbar
     pbar = program.progressBar
