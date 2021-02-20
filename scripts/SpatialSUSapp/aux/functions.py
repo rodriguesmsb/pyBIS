@@ -5,7 +5,6 @@ import json
 
 
 
-
 class functions:
     def __init__(self, conf_file, data):
         with open(conf_file, 'r') as f:
@@ -30,7 +29,6 @@ class functions:
             data = {"codmunres": int(str(json_map["features"][i]["properties"]["id"])[0:6])}
             json_map["features"][i]['properties'].update(data)
             return json_map
-        
         
     def read_data(self):
         self.data = pd.read_csv(self.data)

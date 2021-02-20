@@ -177,8 +177,6 @@ h2{
 
 .table{
   display: grid;
-  border: 1px solid rgb(0, 195, 255);
-  grid-column: 8 / span 5;
   grid-row: 1/ span 7;
   background-color: white;
 
@@ -198,6 +196,7 @@ h2{
   width: 99%;
 }
 
+
 .card-img{
   display: block;
   width: 45px;
@@ -206,6 +205,7 @@ h2{
   margin-left: auto;
   margin-right: auto;
 }
+
 
 .card-text{
   display: block;

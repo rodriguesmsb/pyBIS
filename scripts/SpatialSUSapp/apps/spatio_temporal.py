@@ -216,7 +216,7 @@ layout = html.Div(
                         html.Br(),
                         html.Label(
                             ["Selecione uma variável", 
-                             dcc.Dropdown(id = "var-select", className = "side-bar-item")],
+                             dcc.Dropdown(id = "var-select", className = "side-bar-item", multi = False)],
                              className = "side-bar-text"
                              ),
                         html.Br(),
@@ -249,7 +249,8 @@ layout = html.Div(
                                     {"label": conf.return_cat()[0], "value": conf.return_cat()[0]},
                                     {"label": conf.return_cat()[1], "value": conf.return_cat()[1]}
                                 ],
-                                value = None
+                                value = None,
+                                multi = False
                             ),
                             ],
                             className = "side-bar-text"
@@ -264,7 +265,8 @@ layout = html.Div(
                                     {"label": conf.return_num()[0], "value": conf.return_num()[0]},
                                     {"label": conf.return_num()[1], "value": conf.return_num()[1]}
                                 ],
-                                value = None
+                                value = None,
+                                multi = False
                             ),
                             ],
                             className = "side-bar-text"

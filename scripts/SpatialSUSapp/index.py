@@ -87,20 +87,20 @@ def display_page(pathname):
     elif pathname == "temporal":
         return 404
 
-@app.callback(Output("info", "children"), [Input("geojson", "hover_feature")])
+@app.callback(Output("info", "children"), [Input("geojson", "click_feature")])
 def info_hover(feature):
     return get_info(feature)
 
 
 @app.callback(Output(component_id = "time-series-cases", component_property = "figure"),
-              [Input(component_id = "geojson", component_property = "hover_feature")])
+              [Input(component_id = "geojson", component_property = "click_feature")])
 def update_Graph(feature):
     filtered_df = ts[ts[conf.return_area()] == get_id(feature)]
     return plotTs(df = filtered_df)
 
 
 @app.callback([Output(component_id = "data_table", component_property = "data")],
-               Input(component_id = "geojson", component_property = "hover_feature"))
+             [Input(component_id = "geojson", component_property = "click_feature")])
 def update_table(feature):
     filtered_df = ts[ts[conf.return_area()] == get_id(feature)]
     summary = filtered_df["count"].describe().reset_index()[1:]
@@ -112,15 +112,17 @@ def update_table(feature):
 
 
 @app.callback(Output(component_id = "donut_plot", component_property = "figure"),
-              Input(component_id = "var_cat", component_property = "value"))
-def update_Graph(selected_var):
-    filtered_df = data[data[conf.return_area()] == 110001] 
+              [Input(component_id = "geojson", component_property = "click_feature"),
+               Input(component_id = "var_cat", component_property = "value")])
+def update_donut(feature, selected_var):
+    filtered_df = data[data[conf.return_area()] == get_id(feature)]
     filtered_df = filtered_df.groupby([selected_var]).size().reset_index(name = "count")
-    filtered_df["area"] = filtered_df["count"]/np.sum(filtered_df["count"])
+    filtered_df["prop"] = np.round(filtered_df["count"] / np.sum(filtered_df["count"]),2)
+    donut = px.pie(data_frame = filtered_df, names = filtered_df[selected_var], values = filtered_df["prop"], hole = .4)
+    return donut
     
-
-    return px.pie(filtered_df, label = selected_var, area = "count")
+  
 
 
 if __name__ == '__main__':
-    app.run_server(debug = True)
+    app.run_server()
