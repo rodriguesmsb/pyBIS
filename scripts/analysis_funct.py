@@ -87,7 +87,6 @@ def activate(checkbox, program):
 
 
 def write_conf_cat(combobox):
-    print(combobox)
     with open(dir_spatial + 'conf.json', 'r') as f:
         data = json.load(f)
     with open(dir_spatial + 'conf.json', 'w') as f:
