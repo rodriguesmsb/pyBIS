@@ -1,14 +1,13 @@
 {
-  "type": "spatio_temporal",
+  "type": "spatial",
+  "id_area": 110020,
   "area": "ro",
-  "cov_num": [
-    "NU_IDADE_N",
-    ""
+  "var_cat": [
+    "RACACOR",
+    "TIPOBITO"
   ],
-  "time_col": "DT_NOTIFIC",
-  "id_area": "ID_MN_RESI",
-  "cov_cat": [
-    "CS_SEXO",
-    "CS_RACA"
+  "var_num": [
+    "SEXO",
+    ""
   ]
 }

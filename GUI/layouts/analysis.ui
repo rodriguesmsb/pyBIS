@@ -83,21 +83,6 @@
                 <string>Selecionar variavel de tempo</string>
                </property>
               </item>
-              <item>
-               <property name="text">
-                <string>Ano</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Mês</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Dia</string>
-               </property>
-              </item>
              </widget>
             </item>
            </layout>

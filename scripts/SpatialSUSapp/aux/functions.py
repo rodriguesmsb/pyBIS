@@ -1,15 +1,20 @@
-
+import os
 import pandas as pd
 import base64
 import json
 
 
-
 class functions:
     def __init__(self, conf_file, data):
+        # conf_file = os.path.join(os.path.dirname(__file__), conf_file)
+
+        '''parte do codigo original'''
+        # with open(conf_file, 'r') as f:
+        ''' '''
+        conf_file = os.path.join(os.path.dirname(__file__), "../conf/conf.json") 
         with open(conf_file, 'r') as f:
             self.conf_file = json.load(f)
-        self.data = data
+        self.data = os.path.join(os.path.dirname(__file__), "../data/data.csv")
      
     def set_pathname(self):
         return self.conf_file["type"]
@@ -43,19 +48,7 @@ class functions:
         return self.conf_file["id_area"]
 
     def return_cat(self):
-        return self.conf_file["cov_cat"]
+        return self.conf_file["var_cat"]
 
     def return_num(self):
-        return self.conf_file["cov_num"]
-
-    
-
-
-
-
-    
-
-
-    
-
-    
+        return self.conf_file["var_num"]

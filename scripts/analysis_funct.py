@@ -121,9 +121,13 @@ def write_conf_num_1(combobox):
 def start_server(program):
     import index
 
-    def restart_server(thread):
+    def restart_server(thread, var_cat, var_cat_2, var_num, var_num_2):
         if thread:
             thread.terminate()
+            write_conf_cat(var_cat)
+            write_conf_cat_1(var_cat_2)
+            write_conf_num(var_num)
+            write_conf_num_1(var_num_2)
             thread.start()
         else:
             thread.start()
@@ -133,4 +137,7 @@ def start_server(program):
     program.nav.moveToThread(program.analysis)
     program.analysis.started.connect(program.nav.run)
 
-    restart_server(program.analysis)
+    restart_server(program.analysis, program.comboBox_7.currentText(),
+        program.comboBox_8.currentText(), program.comboBox_9.currentText(),
+        program.comboBox_10.currentText()
+    )

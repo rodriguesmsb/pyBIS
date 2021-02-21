@@ -97,6 +97,7 @@ def apply_filter(combobox, line, panel, analysis):
     except IndexError:
         pass
     cols.sort()
+    analysis.comboBox_2.addItems(cols)
     analysis.comboBox_7.addItems(cols)
     analysis.comboBox_8.addItems(cols)
     analysis.comboBox_9.addItems(cols)

@@ -6,6 +6,8 @@ Created on Tue Jan 26 2021
 @author: Moreno rodrigues rodriguesmsb@gmail.com
 """
 
+import os
+
 import dash_core_components as dcc
 import dash_table as dt
 import dash_bootstrap_components as dbc
@@ -23,14 +25,16 @@ df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/solar
 # path_to_json = "scripts/SpatialSUSapp/conf/conf.json"
 # path_to_images = "scripts/SpatialSUSapp/assets/"
 
-path_to_data = "data/data.csv"
-path_to_json = "conf/conf.json"
-path_to_images = "assets/"
+path_to_data = "../data/data.csv"
+# path_to_json = os.path.join(os.path.dirname(__file__), "../conf/conf.json")
+path_to_json = "../conf/conf.json"
+path_to_images = os.path.join(os.path.dirname(__file__), "../assets/")
 
-conf = functions(conf_file = path_to_json, data = path_to_data)
+# conf = functions(conf_file = path_to_json, data = path_to_data)
+conf = functions(path_to_json, path_to_data)
 
 #json_map = "scripts/SpatialSUSapp/assets/maps/geojs-" + conf.set_json_map() + "-mun.json"
-json_map = "assets/maps/geojs-" + conf.set_json_map() + "-mun.json"
+json_map = path_to_images + "maps/geojs-" + conf.set_json_map() + "-mun.json"
 
 
 ######Add functions to json here
@@ -42,7 +46,7 @@ with open(json_map, 'w') as m:
     json.dump(json_data, m, indent = 4)
 
 ##### load json to plot here
-json_map = "assets/maps/geojs-" + conf.set_json_map() + "-mun.json"
+# json_map = "assets/maps/geojs-" + conf.set_json_map() + "-mun.json"
 
 #### define function to hover on map
 def get_info(feature = None):
@@ -310,7 +314,3 @@ layout = html.Div(
     ],
     className = "container"
 )
-
-
-
-
