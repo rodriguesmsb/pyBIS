@@ -1,15 +1,15 @@
 {
-    "name": "Zika virus",
-    "type": "spatio_temporal",
-    "id_area": "ID_MN_RESI",
-    "time_col": "DT_NOTIFIC",
-    "area": "ro",
-    "var_cat": [
-        "CS_GESTANT",
-        "CS_SEXO"
-    ],
-    "var_num": [
-        "num\u00e9rica 1",
-        "num\u00e9rica 2"
-    ]
+  "name": "Zika virus",
+  "type": "spatio_temporal",
+  "id_area": "ID_MN_RESI",
+  "time_col": "DT_NOTIFIC",
+  "area": "ba",
+  "var_cat": [
+    "PESO",
+    "TIPOBITO"
+  ],
+  "var_num": [
+    "RACACOR",
+    "num\u00e9rica 2"
+  ]
 }
