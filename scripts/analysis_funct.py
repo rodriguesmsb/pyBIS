@@ -138,10 +138,9 @@ def start_server(program):
             write_conf_num(var_num)
             write_conf_num_1(var_num_2)
             write_conf_id_area(var_id)
-            with open(dir_spatial + 'conf.json') as f:
+            with open(dir_spatial + 'conf.json', 'r') as f:
                 data = json.load(f)
-
-            with open(dir_spatial + 'conf.json') as f:
+            with open(dir_spatial + 'conf.json', 'w') as f:
                 data['name'] = program.lineEdit.text()
                 json.dump(data, f, indent=4)
 
@@ -150,10 +149,9 @@ def start_server(program):
             thread.start()
 
 
-    with open(dir_spatial + 'conf.json') as f:
+    with open(dir_spatial + 'conf.json', 'r') as f:
         data = json.load(f)
-
-    with open(dir_spatial + 'conf.json') as f:
+    with open(dir_spatial + 'conf.json', 'w') as f:
         data['name'] = program.lineEdit.text()
         json.dump(data, f, indent=4)
 
