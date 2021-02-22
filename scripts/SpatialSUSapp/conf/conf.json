@@ -1,12 +1,12 @@
 {
-    "name": "Zika virus",
+    "name": "Zika",
     "type": "spatio_temporal",
     "id_area": "ID_MN_RESI",
     "time_col": "DT_NOTIFIC",
     "area": "ro",
     "var_cat": [
-        "CS_GESTANT",
-        "CS_SEXO"
+        "CS_SEXO",
+        "CS_GESTANT"
     ],
     "var_num": [
         "num\u00e9rica 1",
