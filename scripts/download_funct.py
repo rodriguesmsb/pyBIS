@@ -262,7 +262,7 @@ def arranges_columns(df):
 
 def write_header(table, df):
     cols = arranges_columns(df)
-    table.setRowCount(10)
+    table.setRowCount(20)
     table.setColumnCount(len(cols))
     cols.sort()
 
@@ -279,7 +279,7 @@ def write_body(table, df):
     row_n = 0
 
     for line in cols:
-        for r in range(1, 11):
+        for r in range(1, 21):
             table.setItem(row_n, col_n, QTableWidgetItem(
                 str(df.select(df[line]).take(r)[r - 1][0])))
 

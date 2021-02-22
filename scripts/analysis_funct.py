@@ -125,6 +125,20 @@ def write_conf_num_1(combobox):
         data["var_num"][1] = combobox
         json.dump(data, f, indent=4)
 
+def write_id_area(combobox):
+    with open(dir_spatial + 'conf.json', 'r') as f:
+        data = json.load(f)
+    with open(dir_spatial + 'conf.json', 'w') as f:
+        data["id_area"] = combobox
+        json.dump(data, f, indent=4)
+
+def write_time_col(combobox):
+    with open(dir_spatial + 'conf.json', 'r') as f:
+        data = json.load(f)
+    with open(dir_spatial + 'conf.json', 'w') as f:
+        data["time_col"] = combobox
+        json.dump(data, f, indent=4)
+
 
 def start_server(program):
     import index
@@ -138,6 +152,8 @@ def start_server(program):
             write_conf_num(var_num)
             write_conf_num_1(var_num_2)
             write_conf_id_area(var_id)
+            write_id_area(program.comboBox.currentText())
+            write_time_col(program.comboBox_2.currentText())
             with open(dir_spatial + 'conf.json', 'r') as f:
                 data = json.load(f)
             with open(dir_spatial + 'conf.json', 'w') as f:
@@ -147,7 +163,6 @@ def start_server(program):
             thread.start()
         else:
             thread.start()
-
 
     with open(dir_spatial + 'conf.json', 'r') as f:
         data = json.load(f)
