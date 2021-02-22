@@ -7,7 +7,6 @@ Created on Tue Jan 26 2021
 """
 
 import os
-
 import dash_core_components as dcc
 import dash_table as dt
 import dash_bootstrap_components as dbc
@@ -18,17 +17,15 @@ import pandas as pd
 from aux.functions import functions
 import json
 
-df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/solar.csv')
-
 
 # path_to_data = "scripts/SpatialSUSapp/data/data.csv"
 # path_to_json = "scripts/SpatialSUSapp/conf/conf.json"
 # path_to_images = "scripts/SpatialSUSapp/assets/"
 
-path_to_data = "../data/data.csv"
-# path_to_json = os.path.join(os.path.dirname(__file__), "../conf/conf.json")
-path_to_json = "../conf/conf.json"
-path_to_images = os.path.join(os.path.dirname(__file__), "../assets/")
+path_to_data = "data/data.csv"
+path_to_json = "conf/conf.json"
+path_to_images = "assets/"
+
 
 # conf = functions(conf_file = path_to_json, data = path_to_data)
 conf = functions(path_to_json, path_to_data)

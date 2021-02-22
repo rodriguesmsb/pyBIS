@@ -43,7 +43,7 @@ path_to_json =  "conf/conf.json"
 conf = functions(conf_file = path_to_json, data = path_to_data)
 
 data = conf.read_data()
-
+print(data.head())
 ts = data.groupby([conf.return_area(), conf.return_time()]).size().reset_index(name = "count")
 
 
@@ -73,7 +73,6 @@ app.layout = html.Div([
     dcc.Location(id = 'url', refresh = False),
     html.Div(id = 'page-content')
 ])
-
 
 
 
@@ -122,7 +121,6 @@ def update_donut(feature, selected_var):
     return donut
     
   
-
 
 if __name__ == '__main__':
     app.run_server()

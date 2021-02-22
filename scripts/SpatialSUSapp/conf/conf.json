@@ -1,13 +1,15 @@
 {
-  "type": "spatial",
-  "id_area": 110020,
-  "area": "ro",
-  "var_cat": [
-    "RACACOR",
-    "TIPOBITO"
-  ],
-  "var_num": [
-    "SEXO",
-    ""
-  ]
+    "name": "Zika virus",
+    "type": "spatio_temporal",
+    "id_area": "ID_MN_RESI",
+    "time_col": "DT_NOTIFIC",
+    "area": "ro",
+    "var_cat": [
+        "CS_GESTANT",
+        "CS_SEXO"
+    ],
+    "var_num": [
+        "num\u00e9rica 1",
+        "num\u00e9rica 2"
+    ]
 }
