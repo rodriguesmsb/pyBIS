@@ -29,7 +29,7 @@ json_map = path_to_images + "maps/geojs-" + conf.set_json_map() + "-mun.json"
 
 min_time = conf.return_time_range()[0]
 max_time = conf.return_time_range()[1]
-
+title  = conf.return_title()
 
 
 
@@ -112,7 +112,7 @@ layout = html.Div(
                         html.Img(
                             src = functions.encode_image(path_to_images + "brazil.png"), className = "header-img"),
                         html.H1(
-                            conf.return_title(),
+                            title,
                             className = "header-title"
                         ),
                         html.A(html.Img(
@@ -283,9 +283,9 @@ layout = html.Div(
                 html.Div(
                     children = [
                         dcc.Graph(
-                            id = "donut_plot", 
+                            id = "hor_bar", 
                             className = "side-graph-item"),
-                        dcc.Graph(id = "cov2", className = "side-graph-item")
+                        dcc.Graph(id = "donut_plot", className = "side-graph-item")
                     ],
                     className = "side-graph-container"
 
