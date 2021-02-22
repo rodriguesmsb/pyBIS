@@ -22,22 +22,20 @@ path_to_data = "scripts/SpatialSUSapp/data/data.csv"
 path_to_json = "scripts/SpatialSUSapp/conf/conf.json"
 path_to_images = "scripts/SpatialSUSapp/assets/"
 
-# path_to_data = "data/data.csv"
-# path_to_json = "conf/conf.json"
-# path_to_images = "assets/"
+
 
 
 conf = functions(conf_file = path_to_json, data = path_to_data)
-#conf = functions(path_to_json, path_to_data)
 
-#json_map = "scripts/SpatialSUSapp/assets/maps/geojs-" + conf.set_json_map() + "-mun.json"
+
+
 json_map = path_to_images + "maps/geojs-" + conf.set_json_map() + "-mun.json"
 
 
 ######Add functions to json here
 with open(json_map, 'r') as f:
     json_data = json.load(f)
-    #json_data = functions.ibg6(json_data)
+
     
 with open(json_map, 'w') as m:
     json.dump(json_data, m, indent = 4)
