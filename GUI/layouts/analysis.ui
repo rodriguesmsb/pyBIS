@@ -44,6 +44,24 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
+          <widget class="QGroupBox" name="groupBox_2">
+           <property name="title">
+            <string>Selecionar variavel de espaço</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="QComboBox" name="comboBox">
+              <item>
+               <property name="text">
+                <string>Variavel identificadora de area</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
           <widget class="QGroupBox" name="horizontalGroupBox_7">
            <property name="enabled">
             <bool>true</bool>
@@ -80,7 +98,7 @@
               </property>
               <item>
                <property name="text">
-                <string>Selecionar variavel de tempo</string>
+                <string>Variavel de tempo</string>
                </property>
               </item>
              </widget>

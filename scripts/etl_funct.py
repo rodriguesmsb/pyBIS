@@ -102,6 +102,7 @@ def apply_filter(combobox, line, panel, analysis):
     analysis.comboBox_8.addItems(cols)
     analysis.comboBox_9.addItems(cols)
     analysis.comboBox_10.addItems(cols)
+    analysis.comboBox.addItems(cols)
     panel.table_export.setColumnCount(len(cols))
     panel.table_export.setRowCount(10)
     panel.table_export.clear()

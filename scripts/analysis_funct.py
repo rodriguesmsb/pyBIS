@@ -86,12 +86,20 @@ def activate(checkbox, program):
     write_conf(checkbox)
 
 
+def write_conf_id_area(combobox):
+    with open(dir_spatial + 'conf.json', 'r') as f:
+        data = json.load(f)
+    with open(dir_spatial + 'conf.json', 'w') as f:
+        data['id_area'] = combobox
+        json.dump(data, f, indent=4)
+
+
 def write_conf_cat(combobox):
     with open(dir_spatial + 'conf.json', 'r') as f:
         data = json.load(f)
     with open(dir_spatial + 'conf.json', 'w') as f:
         data["var_cat"][0] = combobox
-        json.dump(data, f, indent=2)
+        json.dump(data, f, indent=4)
 
 
 def write_conf_cat_1(combobox):
@@ -99,7 +107,7 @@ def write_conf_cat_1(combobox):
         data = json.load(f)
     with open(dir_spatial + 'conf.json', 'w') as f:
         data["var_cat"][1] = combobox
-        json.dump(data, f, indent=2)
+        json.dump(data, f, indent=4)
 
 
 def write_conf_num(combobox):
@@ -107,7 +115,7 @@ def write_conf_num(combobox):
         data = json.load(f)
     with open(dir_spatial + 'conf.json', 'w') as f:
         data["var_num"][0] = combobox
-        json.dump(data, f, indent=2)
+        json.dump(data, f, indent=4)
 
 
 def write_conf_num_1(combobox):
@@ -115,22 +123,39 @@ def write_conf_num_1(combobox):
         data = json.load(f)
     with open(dir_spatial + 'conf.json', 'w') as f:
         data["var_num"][1] = combobox
-        json.dump(data, f, indent=2)
+        json.dump(data, f, indent=4)
 
 
 def start_server(program):
     import index
 
-    def restart_server(thread, var_cat, var_cat_2, var_num, var_num_2):
+    def restart_server(thread, var_cat, var_cat_2, var_num, var_num_2,
+                       var_id):
         if thread:
             thread.terminate()
             write_conf_cat(var_cat)
             write_conf_cat_1(var_cat_2)
             write_conf_num(var_num)
             write_conf_num_1(var_num_2)
+            write_conf_id_area(var_id)
+            with open(dir_spatial + 'conf.json') as f:
+                data = json.load(f)
+
+            with open(dir_spatial + 'conf.json') as f:
+                data['name'] = program.lineEdit.text()
+                json.dump(data, f, indent=4)
+
             thread.start()
         else:
             thread.start()
+
+
+    with open(dir_spatial + 'conf.json') as f:
+        data = json.load(f)
+
+    with open(dir_spatial + 'conf.json') as f:
+        data['name'] = program.lineEdit.text()
+        json.dump(data, f, indent=4)
 
     program.analysis = MyThread(index.app.run_server)
     program.nav = MyThread(webbrowser.open, '127.0.0.1:8050')
@@ -139,5 +164,5 @@ def start_server(program):
 
     restart_server(program.analysis, program.comboBox_7.currentText(),
         program.comboBox_8.currentText(), program.comboBox_9.currentText(),
-        program.comboBox_10.currentText()
+        program.comboBox_10.currentText(), program.comboBox.currentText()
     )
