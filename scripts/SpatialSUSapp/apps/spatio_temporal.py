@@ -23,13 +23,14 @@ path_to_json = "scripts/SpatialSUSapp/conf/conf.json"
 path_to_images = "scripts/SpatialSUSapp/assets/"
 
 
-
-
 conf = functions(conf_file = path_to_json, data = path_to_data)
-
-
-
 json_map = path_to_images + "maps/geojs-" + conf.set_json_map() + "-mun.json"
+
+
+min_time = conf.return_time_range()[0]
+max_time = conf.return_time_range()[1]
+
+
 
 
 ######Add functions to json here
@@ -57,7 +58,7 @@ cont = dbc.Card(
         dbc.CardBody(
             [
                 html.P(
-                    "Contagem"
+                    "Casos: " + str(conf.return_data_size())
                 )
             ],
             className = "card-text"
@@ -97,8 +98,6 @@ time_unit = dbc.Card(
     className = "info-item",
 )
 
-
-
 layout = html.Div(
 
     id = "container",
@@ -113,7 +112,7 @@ layout = html.Div(
                         html.Img(
                             src = functions.encode_image(path_to_images + "brazil.png"), className = "header-img"),
                         html.H1(
-                            "Análise espaço temporal",
+                            conf.return_title(),
                             className = "header-title"
                         ),
                         html.A(html.Img(
@@ -224,16 +223,15 @@ layout = html.Div(
                             ["Selecione o intervalo de tempo",
                             dcc.RangeSlider(
                                 id = "range-select",
-                                min = 2010,
-                                max = 2019,
+                                min = min_time,
+                                max = max_time,
                                 step = 1,
                                 marks = {
-                                    2010: {'label': '2010', 'style': {'color': '#77b0b1'}},
-                                    2015: {'label': '2015', 'style': {'color': '#77b0b1'}},
-                                    2019: {'label': '2019', 'style': {'color': '#77b0b1'}}
+                                    min_time: {'label': str(min_time), 'style': {'color': '#77b0b1'}},
+                                    max_time: {'label': str(max_time), 'style': {'color': '#77b0b1'}}
 
                                 },
-                                value = [2010, 2019],
+                                value = [min_time, max_time],
                                 className = "side-bar-item")
                                 ],
                                 className = "side-bar-text"
