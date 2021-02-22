@@ -19,6 +19,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 
+
 #### define function to hover on map
 def get_info(feature=None):
     header = [html.H4("Municipio")]
@@ -34,16 +35,16 @@ def get_id(feature = None):
     return int(str(feature["properties"]["id"][0:6]))
 
 
-# path_to_data = "scripts/SpatialSUSapp/data/data.csv"
-# path_to_json =  "scripts/SpatialSUSapp/conf/conf.json"
+path_to_data = "scripts/SpatialSUSapp/data/data.csv"
+path_to_json =  "scripts/SpatialSUSapp/conf/conf.json"
 
-path_to_data = "data/data.csv"
-path_to_json =  "conf/conf.json"
+# path_to_data = "data/data.csv"
+# path_to_json =  "conf/conf.json"
 
 conf = functions(conf_file = path_to_json, data = path_to_data)
 
 data = conf.read_data()
-print(data.head())
+
 ts = data.groupby([conf.return_area(), conf.return_time()]).size().reset_index(name = "count")
 
 
