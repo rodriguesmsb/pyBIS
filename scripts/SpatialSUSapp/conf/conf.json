@@ -1,5 +1,5 @@
 {
-    "name": "Zika em RO",
+    "name": "D",
     "type": "spatio_temporal",
     "id_area": "ID_MN_RESI",
     "time_col": "DT_NOTIFIC",
@@ -15,6 +15,6 @@
     "time_unit": "",
     "time_range": [
         2015,
-        2017
+        2019
     ]
 }

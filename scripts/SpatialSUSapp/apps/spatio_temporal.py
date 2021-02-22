@@ -16,6 +16,7 @@ from dash_leaflet import express as dlx
 import pandas as pd
 from aux.functions import functions
 import json
+import plotly.express as px
 
 
 path_to_data = "scripts/SpatialSUSapp/data/data.csv"
@@ -32,6 +33,16 @@ max_time = conf.return_time_range()[1]
 title  = conf.return_title()
 
 
+data_hor_bar = conf.read_data()
+data_hor_bar = data_hor_bar.groupby([conf.return_area()]).size().reset_index(name = "count")
+data_hor_bar = data_hor_bar.sort_values(by = ["count"], ascending = False)
+data_hor_bar = data_hor_bar.head()
+
+
+def plot_hor_bar():
+    data_hor_bar[conf.return_area()] = data_hor_bar[conf.return_area()].astype("str") 
+    fig =  px.bar(data_hor_bar, x = "count", y = data_hor_bar[conf.return_area()], orientation='h')
+    return fig
 
 ######Add functions to json here
 with open(json_map, 'r') as f:
@@ -283,7 +294,8 @@ layout = html.Div(
                 html.Div(
                     children = [
                         dcc.Graph(
-                            id = "hor_bar", 
+                            id = "hor_bar",
+                            figure = plot_hor_bar(),
                             className = "side-graph-item"),
                         dcc.Graph(id = "donut_plot", className = "side-graph-item")
                     ],
