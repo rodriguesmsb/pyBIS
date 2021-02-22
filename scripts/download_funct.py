@@ -364,3 +364,19 @@ def thread_gen_sample(system, base, state, year, year_p, table, cores, mem,
     program.loop.sinal.connect(update_progressbar)
     program.thread_sample.start()
     program.loop.start()
+
+
+def set_data_init(val):
+    with open(dir_spatial_conf + "conf.json", "r") as f:
+        data = json.load(f)
+    with open(dir_spatial_conf + "conf.json", "w") as f:
+        data["time_range"][0] = int(val)
+        json.dump(data, f, indent=4)
+
+
+def set_data_end(val):
+    with open(dir_spatial_conf + "conf.json", "r") as f:
+        data = json.load(f)
+    with open(dir_spatial_conf + "conf.json", "w") as f:
+        data["time_range"][1] = int(val)
+        json.dump(data, f, indent=4)

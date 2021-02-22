@@ -34,3 +34,6 @@ class Download(QMainWindow):
             lambda: dd.gen_csv(self.database, self.base, self.locale_,
                                self.year, self.year_, self)
         )
+
+        self.year.valueChanged.connect(dd.set_data_init)
+        self.year_.valueChanged.connect(dd.set_data_end)

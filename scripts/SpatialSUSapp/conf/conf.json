@@ -11,5 +11,10 @@
     "var_num": [
         "num\u00e9rica 1",
         "num\u00e9rica 2"
+    ],
+    "time_unit": "",
+    "time_range": [
+        2015,
+        2018
     ]
 }
