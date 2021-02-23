@@ -80,10 +80,10 @@ def activate(checkbox, program):
 
     if checkbox == "spatio_temporal":
         program.comboBox_2.setEnabled(True)
-        program.comboBox_3.setEnalbed(True)
+        program.comboBox_3.setEnabled(True)
     elif checkbox == "spatial":
         program.comboBox_2.setEnabled(False)
-        program.comboBox_3.setEnalbed(False)
+        program.comboBox_3.setEnabled(False)
 
     write_conf(checkbox)
 
