@@ -179,7 +179,7 @@ h2{
   display: grid;
   grid-row: 1/ span 7;
   background-color: white;
-
+  border: 0;
 }
 
 .time-series{
@@ -208,9 +208,7 @@ h2{
 
 
 .card-text{
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+  display: block;table
 }
 
 
