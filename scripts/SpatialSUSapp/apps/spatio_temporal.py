@@ -311,8 +311,7 @@ layout = html.Div(
             children = [
                 html.A(
                     children = html.I(className="fa fa-github"),
-                    href ="#"
-                ),
+                    href ="#")
             ],
             className = "footer"
         )

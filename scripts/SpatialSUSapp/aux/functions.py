@@ -53,6 +53,9 @@ class functions:
 
     def return_num(self):
         return self.conf_file["var_num"]
+    
+    def return_time_unit(self):
+        return self.conf_file["time_unit"]
 
     
 
