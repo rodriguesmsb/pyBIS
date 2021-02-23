@@ -103,6 +103,33 @@
               </item>
              </widget>
             </item>
+            <item>
+             <widget class="QComboBox" name="comboBox_3">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <item>
+               <property name="text">
+                <string>Dia</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Semana</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Mês</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Ano</string>
+               </property>
+              </item>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>

@@ -80,10 +80,20 @@ def activate(checkbox, program):
 
     if checkbox == "spatio_temporal":
         program.comboBox_2.setEnabled(True)
+        program.comboBox_3.setEnalbed(True)
     elif checkbox == "spatial":
         program.comboBox_2.setEnabled(False)
+        program.comboBox_3.setEnalbed(False)
 
     write_conf(checkbox)
+
+
+def write_conf_time_unit(combobox):
+    with open(dir_spatial + 'conf.json', 'r') as f:
+        data = json.load(f)
+    with open(dir_spatial + 'conf.json', 'w') as f:
+        data['time_unit'] = combobox
+        json.dump(data, f, indent=4)
 
 
 def write_conf_id_area(combobox):
