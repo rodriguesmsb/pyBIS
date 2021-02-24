@@ -4,13 +4,18 @@ import pathlib
 import time
 from os import path, mkdir, remove, system
 import ftplib as ftp
+from PyQt5.QtCore import QObject, pyqtSignal
 
 from convert_dbf_to_csv import ReadDbf
 
 
-class PyDatasus:
+class PyDatasus(QObject):
+
+    download_signal = pyqtSignal(int)
+    label_signal = pyqtSignal(str)
 
     def __init__(self):
+        super().__init__()
         self.__none = None
         self.__page = ftp.FTP('ftp.datasus.gov.br')
         self.__page.login()
@@ -18,11 +23,13 @@ class PyDatasus:
         self.__blast = path.join(path.dirname(__file__), './blast-dbf')
         self.__path_table = path.expanduser('~/datasus_tabelas/')
         self.__path_dbc = path.expanduser('~/datasus_dbc/')
+        self.label_signal.emit("Iniciando conexão")
 
 
     def get_table_csv(self, database: str, base: [str, list],
             state: [str, list], date: [str, list]):
 
+        self.label_signal.emit("Criando tabela")
         date = self.__adjust_date(database, date)
         pattern = self.__generate_pattern(database, base, state, date)
         self.__create_folder(database, base, table_or_dbc='table')
@@ -53,6 +60,7 @@ class PyDatasus:
 
 
     def __convert_dbc(self, db):
+        self.label_signal.emit("Convertendo banco")
         if db.endswith('.csv'):
             pass
 
@@ -108,6 +116,7 @@ class PyDatasus:
 
 
     def __get_data_table(self, database, pattern):
+        self.label_signal.emit("Buscando em {}".format(database))
         branch = []
 
         self.__page.cwd(database)
@@ -129,6 +138,18 @@ class PyDatasus:
 
         self.__page.cwd('..')
 
+    def __create_file_write(self, base, select):
+        self.__file_base = open(self.__path_dbc + "/" + base
+                                + "/" + select, "wb")
+        self.__file_base_size = self.__page.size(select)
+
+    def __write(self, base):
+        self.__file_base.write(base)
+        self.__pbar += len(base)
+        ratio = round((float(self.__pbar / self.__file_base_size)
+                       * 100 - 6), 1)
+        percentage = round(100 * ratio / (100 - 6), 1)
+        self.download_signal.emit(int(percentage))
 
     def __get_data_dbc(self, database):
         if path.isfile(self.__path_table + database + '.csv'):
@@ -141,16 +162,61 @@ class PyDatasus:
                                    + line.split(',')[1].split('.')[0]
                                    + '.csv'):
 
-                    self.__page.retrbinary(
-                        'RETR ' + line.split(',')[1],
-                        open(self.__path_dbc + database + '/'
-                             + line.split(',')[1], 'wb').write)
+                    print(database, line.split(",")[0])
 
-                    self.__convert_dbc(self.__path_dbc + database + '/'
-                                       + line.split(',')[1])
+                    if (database == "SIHSUS" and
+                            "MHJ_14_16" not in line.split(',')[0]):
+                        self.__pbar = 0
+                        self.download_signal.emit(self.__pbar)
+                        self.__create_file_write(
+                            database, line.split(',')[1]
+                        )
+
+                        self.label_signal.emit(
+                            "Baixando {}".format(line.split(',')[1])
+                        )
+                        self.__page.retrbinary('RETR ' + line.split(',')[1],
+                                               self.__write)
+
+                        self.label_signal.emit(
+                            "Convertendo: {}".format(line.split(',')[1])
+                        )
+                        self.__convert_dbc(self.__path_dbc + database + '/'
+                                           + line.split(',')[1])
+                        self.label_signal.emit(
+                            "{} convertido com sucesso!".format(
+                                line.split(',')[1]
+                            )
+                        )
+                    else:
+                        self.__pbar = 0
+                        self.download_signal.emit(self.__pbar)
+                        self.__create_file_write(
+                            database, line.split(',')[1]
+                        )
+
+                        self.label_signal.emit(
+                            "Baixando {}".format(line.split(',')[1])
+                        )
+                        self.__page.retrbinary('RETR ' + line.split(',')[1],
+                                               self.__write)
+
+                        self.label_signal.emit(
+                            "Convertendo: {}".format(line.split(',')[1])
+                        )
+                        self.__convert_dbc(self.__path_dbc + database + '/'
+                                           + line.split(',')[1])
+                        self.label_signal.emit(
+                            "{} convertido com sucesso!".format(
+                                line.split(',')[1]
+                            )
+                        )
 
                 else:
                     pass
+
+            self.label_signal.emit("Concluido com sucesso")
+            self.download_signal.emit(0)
 
 
 

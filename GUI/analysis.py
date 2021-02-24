@@ -32,7 +32,6 @@ class AnalysisUI(QMainWindow):
 
         self.comboBox.currentTextChanged.connect(an.write_id_area)
         self.comboBox_2.currentTextChanged.connect(an.write_time_col)
-        self.comboBox_3.currentTextChanged.connect(an.write_conf_time_unit)
         self.comboBox_7.currentTextChanged.connect(an.write_conf_cat)
         self.comboBox_8.currentTextChanged.connect(an.write_conf_cat_1)
         self.comboBox_9.currentTextChanged.connect(an.write_conf_num)

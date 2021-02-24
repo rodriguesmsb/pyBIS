@@ -1,9 +1,14 @@
 import sys
+import os
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QTabBar, QTabWidget,
                              QStyle, QStyleOptionTab, QStylePainter)
 from PyQt5.QtCore import QRect, QPoint, Qt
 from PyQt5.QtGui import QIcon, QFont
+import json
 
+
+dir_spatial = os.path.join(os.path.dirname(__file__),
+                                           "../scripts/SpatialSUSapp/conf/")
 
 class TabBar(QTabBar):
     def tabSizeHint(self, index):
@@ -54,7 +59,6 @@ class Manager(QMainWindow):
             self.tab_manager.addTab(tab, QIcon(tab.windowIcon()), '')
 
         self.setCentralWidget(self.tab_manager)
-
         self.show()
 
 

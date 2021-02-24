@@ -6,7 +6,7 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QLabel,
                              QStyleFactory)
 from PyQt5.QtGui import QIcon, QMovie, QFont
-from PyQt5.QtCore import Qt, pyqtSlot
+from PyQt5.QtCore import Qt, pyqtSlot, QObject
 
 from manager import Manager
 from download import Download
@@ -22,6 +22,11 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../scripts'))
 icos = os.path.join(os.path.dirname(__file__), 'imgs/')
 
 
+def keyPresseEvent(e):
+    if e.key():
+        print("uiuiui")
+
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setApplicationName('pyBis')
@@ -30,7 +35,7 @@ if __name__ == '__main__':
     merge = Merge()
     analysis = AnalysisUI()
     config = Config()
-
+    manager = Manager(download, etl, merge, analysis, config)      
     download.view_data.clicked.connect(
         lambda: dd.thread_gen_sample(download.database, download.base,
                                      download.locale_, download.year,
@@ -45,6 +50,5 @@ if __name__ == '__main__':
             etl.line_select, etl.line_edit, etl, analysis)
     )
 
-    manager = Manager(download, etl, merge, analysis, config)      
     manager.setWindowIcon(QIcon(icos + 'favicon.ico'))
     sys.exit(app.exec_())
