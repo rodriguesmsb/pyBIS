@@ -70,7 +70,6 @@ def trade_frame(layout, parent, frame):
 
 
 def activate(checkbox, program):
-
     def write_conf(checkbox):
         with open(dir_spatial + 'conf.json', 'r') as f:
             data = json.load(f)
@@ -80,20 +79,10 @@ def activate(checkbox, program):
 
     if checkbox == "spatio_temporal":
         program.comboBox_2.setEnabled(True)
-        program.comboBox_3.setEnabled(True)
     elif checkbox == "spatial":
         program.comboBox_2.setEnabled(False)
-        program.comboBox_3.setEnabled(False)
 
     write_conf(checkbox)
-
-
-def write_conf_time_unit(combobox):
-    with open(dir_spatial + 'conf.json', 'r') as f:
-        data = json.load(f)
-    with open(dir_spatial + 'conf.json', 'w') as f:
-        data['time_unit'] = combobox
-        json.dump(data, f, indent=4)
 
 
 def write_conf_id_area(combobox):
@@ -135,6 +124,7 @@ def write_conf_num_1(combobox):
         data["var_num"][1] = combobox
         json.dump(data, f, indent=4)
 
+
 def write_id_area(combobox):
     with open(dir_spatial + 'conf.json', 'r') as f:
         data = json.load(f)
@@ -142,11 +132,20 @@ def write_id_area(combobox):
         data["id_area"] = combobox
         json.dump(data, f, indent=4)
 
+
 def write_time_col(combobox):
     with open(dir_spatial + 'conf.json', 'r') as f:
         data = json.load(f)
     with open(dir_spatial + 'conf.json', 'w') as f:
         data["time_col"] = combobox
+        json.dump(data, f, indent=4)
+
+
+def write_line_edit(line):
+    with open(dir_spatial + "conf.json", "r") as f:
+        data = json.load(f)
+    with open(dir_spatial + "conf.json", "w") as f:
+        data["name"] = line.text()
         json.dump(data, f, indent=4)
 
 
@@ -164,21 +163,11 @@ def start_server(program):
             write_conf_id_area(var_id)
             write_id_area(program.comboBox.currentText())
             write_time_col(program.comboBox_2.currentText())
-            with open(dir_spatial + 'conf.json', 'r') as f:
-                data = json.load(f)
-            with open(dir_spatial + 'conf.json', 'w') as f:
-                data['name'] = program.lineEdit.text()
-                json.dump(data, f, indent=4)
+            write_line_edit(program.lineEdit)
 
             thread.start()
         else:
             thread.start()
-
-    with open(dir_spatial + 'conf.json', 'r') as f:
-        data = json.load(f)
-    with open(dir_spatial + 'conf.json', 'w') as f:
-        data['name'] = program.lineEdit.text()
-        json.dump(data, f, indent=4)
 
     program.analysis = MyThread(index.app.run_server)
     program.nav = MyThread(webbrowser.open, '127.0.0.1:8050')

@@ -157,14 +157,6 @@ h2{
   display: block;
 }
 
-.footer-container{
-  display: grid;
-  grid-template-columns: repeat(12,1fr);
-}
-
-.shutdown-button{
-  grid-column: 13/ span 1;
-}
 
 .wrapper{
   display: grid;
@@ -187,7 +179,7 @@ h2{
   display: grid;
   grid-row: 1/ span 7;
   background-color: white;
-  border: 0;
+
 }
 
 .time-series{
@@ -216,5 +208,9 @@ h2{
 
 
 .card-text{
-  display: block;table
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
+
+

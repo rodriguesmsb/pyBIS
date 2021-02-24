@@ -29,7 +29,6 @@ def get_info(feature=None):
 #"{:} people / mi".format(feature["properties"]["codmunres"]), html.Sup("2")
 
 
-
 def get_id(feature = None):
     if not feature:
         return ["Selecione um municipio"]
@@ -39,11 +38,15 @@ def get_id(feature = None):
 path_to_data = "scripts/SpatialSUSapp/data/data.csv"
 path_to_json =  "scripts/SpatialSUSapp/conf/conf.json"
 
+# path_to_data = "data/data.csv"
+# path_to_json =  "conf/conf.json"
+
 conf = functions(conf_file = path_to_json, data = path_to_data)
 
 data = conf.read_data()
 
 ts = data.groupby([conf.return_area(), conf.return_time()]).size().reset_index(name = "count")
+
 
 
 def plotTs(df):
@@ -118,6 +121,7 @@ def update_donut(feature, selected_var):
     donut = px.pie(data_frame = filtered_df, names = filtered_df[selected_var], values = filtered_df["prop"], hole = .4)
     return donut
     
-    
+  
+
 if __name__ == '__main__':
     app.run_server()

@@ -1,20 +1,20 @@
 {
-    "name": "dasds",
-    "type": "spatio_temporal",
-    "id_area": "ID_MN_RESI",
-    "time_col": "DT_NOTIFIC",
-    "area": "ro",
-    "var_cat": [
-        "categ\u00f3rica 1",
-        "categ\u00f3rica 2"
-    ],
-    "var_num": [
-        "num\u00e9rica 1",
-        "num\u00e9rica 2"
-    ],
-    "time_unit": "Ano",
-    "time_range": [
-        2015,
-        2017
-    ]
+  "name": "testando",
+  "type": "spatio_temporal",
+  "id_area": "ID_MN_RESI",
+  "time_col": "DT_NOTIFIC",
+  "area": "ac",
+  "var_cat": [
+    "CS_RACA",
+    "CS_SEXO"
+  ],
+  "var_num": [
+    "num\u00e9rica 1",
+    "num\u00e9rica 2"
+  ],
+  "time_unit": "",
+  "time_range": [
+    2014,
+    2020
+  ]
 }

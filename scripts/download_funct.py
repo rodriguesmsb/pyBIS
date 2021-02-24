@@ -16,38 +16,15 @@ dir_spatial_conf = os.path.join(os.path.dirname(__file__),
                                 '../scripts/SpatialSUSapp/conf/')
 
 
-class _Loop(QThread):
-    sinal = pyqtSignal(int)
-
-    def __init__(self, thread):
-        super().__init__()
-        self.thread = thread
-
-    def run(self):
-        n = 0
-
-        while self.thread.isRunning():
-            n += 1
-            if n == 100:
-                n = 0
-
-            sleep(0.3)
-            QApplication.processEvents()
-            self.sinal.emit(n)
-        self.sinal.emit(100)
-
-
 class _Thread(QThread):
-
-    def __init__(self, fn, *arg, **kw):
+    
+    def __init__(self, fn, *arg):
         super().__init__()
         self.fn = fn
         self.arg = arg
-        self.kw = kw
 
-    @pyqtSlot()
     def run(self):
-        self.fn(*self.arg, **self.kw)
+        self.fn(*self.arg)
 
 
 def read_database():
@@ -143,10 +120,10 @@ def return_uf(select):
         for states in read_states():
             if select.currentText() == states.get('ESTADO'):
                 return [states.get('UF')]
-            elif select.currentText() == 'BRASIL':
-                states_.append(states.get('UF'))
-            elif select.currentText() == states.get('REGIÃO'):
-                states_.append(states.get('UF'))
+
+            elif select is not None:
+                if select.currentText() == states.get('REGIÃO'):
+                    states_.append(states.get('UF'))
 
         return states_
 
@@ -200,13 +177,11 @@ def gen_csv(system, database, states, year, year_, program):
     except UnboundLocalError:
         ...
 
-    program.datasus = _Thread(PyDatasus().get_data, *download)
-    program.loop = _Loop(program.datasus)
-    global pbar
-    pbar = program.progressBar
-    program.loop.sinal.connect(update_progressbar)
+    pydatasus = PyDatasus()
+    pydatasus.download_signal.connect(program.progressBar.setValue)
+    pydatasus.label_signal.connect(program.label_5.setText)
+    program.datasus = _Thread(pydatasus.get_data, *download)
     program.datasus.start()
-    program.loop.start()
 
 
 def active_spark(cores, mem):
@@ -358,12 +333,9 @@ def thread_gen_sample(system, base, state, year, year_p, table, cores, mem,
     program.thread_sample = _Thread(gen_sample, *[system, base, state, year,
                                     year_p, table, cores, mem, column_add,
                                     column_apply, combobox, panel])
-    program.loop = _Loop(program.thread_sample)
     global pbar
     pbar = program.progressBar
-    program.loop.sinal.connect(update_progressbar)
     program.thread_sample.start()
-    program.loop.start()
 
 
 def set_data_init(val):

@@ -8,7 +8,7 @@ class functions:
     def __init__(self, conf_file, data):
         with open(conf_file, 'r') as f:
             self.conf_file = json.load(f)
-        self.data = pd.read_csv(data)
+        self.data = data
      
     def set_pathname(self):
         return self.conf_file["type"]
@@ -33,7 +33,7 @@ class functions:
         return self.conf_file["name"]
         
     def read_data(self):
-        #self.data = pd.read_csv(self.data)
+        self.data = pd.read_csv(self.data)
         return self.data
 
     def return_time(self):
@@ -43,7 +43,7 @@ class functions:
         return self.conf_file["time_range"]
 
     def return_data_size(self):
-        return self.data.shape[0]
+        return self.data.shape()[1]
 
     def return_area(self):
         return self.conf_file["id_area"]
@@ -53,9 +53,6 @@ class functions:
 
     def return_num(self):
         return self.conf_file["var_num"]
-    
-    def return_time_unit(self):
-        return self.conf_file["time_unit"]
 
     
 
