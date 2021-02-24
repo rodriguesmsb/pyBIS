@@ -157,6 +157,14 @@ h2{
   display: block;
 }
 
+.footer-container{
+  display: grid;
+  grid-template-columns: repeat(12,1fr);
+}
+
+.shutdown-button{
+  grid-column: 13/ span 1;
+}
 
 .wrapper{
   display: grid;
@@ -210,5 +218,3 @@ h2{
 .card-text{
   display: block;table
 }
-
-

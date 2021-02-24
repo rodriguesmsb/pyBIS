@@ -1,0 +1,19 @@
+{
+    "TP_NOT": {"Negativa": 1, "Individual": 2, "Surto": 3, "Agregado": 4},
+
+    "CS_SEXO": {"M": "Masculino", "F": "Feminino", "I": "Ignorado"},
+
+    "CS_GESTANTE":{"1º Trimestre": 1, "2º Trimestre": 2, "3º Trimestre": 3, "Idade gestacional ignorada": 4, "Não": 5, "Não se aplica": 6, "Ignorado": 9},
+
+    "CS_RACA": {"branca": 1, "preta": 2, "amarela": 3, "parda": 4, "indígena": 5},
+
+    "CS_ESCOL_N": {},
+
+    "CS_ZONA": {"urbana": 1, "rural": 2, "periurbana": 3, "ignorado": 9},
+
+    "TPAUTOCTO": {"Sim": 1, "Não": 2, "Indeterminado": 3},
+
+    "DOENCA_TRA": {"Sim": 1, "Não": 2, "Ignorado": 9},
+
+    "CS_FLXRET": {"Não": 0, "habilitado para envio": 1, "enviado": 2}
+}

@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "Animais peconhentos",
   "type": "spatio_temporal",
   "id_area": "ID_MN_RESI",
@@ -17,4 +18,24 @@
     2015,
     2019
   ]
+=======
+    "name": "dasds",
+    "type": "spatio_temporal",
+    "id_area": "ID_MN_RESI",
+    "time_col": "DT_NOTIFIC",
+    "area": "ro",
+    "var_cat": [
+        "categ\u00f3rica 1",
+        "categ\u00f3rica 2"
+    ],
+    "var_num": [
+        "num\u00e9rica 1",
+        "num\u00e9rica 2"
+    ],
+    "time_unit": "Ano",
+    "time_range": [
+        2015,
+        2017
+    ]
+>>>>>>> 173eb09e26a7c4fecb8b7b4a00d74bfaedbf1320
 }
