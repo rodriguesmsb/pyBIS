@@ -143,10 +143,10 @@ def return_uf(select):
         for states in read_states():
             if select.currentText() == states.get('ESTADO'):
                 return [states.get('UF')]
-
-            elif select is not None:
-                if select.currentText() == states.get('REGIÃO'):
-                    states_.append(states.get('UF'))
+            elif select.currentText() == 'BRASIL':
+                states_.append(states.get('UF'))
+            elif select.currentText() == states.get('REGIÃO'):
+                states_.append(states.get('UF'))
 
         return states_
 

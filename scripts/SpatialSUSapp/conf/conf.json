@@ -1,20 +1,20 @@
 {
-    "name": "Animais peconhentos",
-    "type": "spatio_temporal",
-    "id_area": "ID_MN_RESI",
-    "time_col": "DT_NOTIFIC",
-    "area": "ro",
-    "var_cat": [
-        "CS_RACA",
-        "CS_GESTANT"
-    ],
-    "var_num": [
-        "num\u00e9rica 1",
-        "num\u00e9rica 2"
-    ],
-    "time_unit": "",
-    "time_range": [
-        2015,
-        2019
-    ]
+  "name": "Animais peconhentos",
+  "type": "spatio_temporal",
+  "id_area": "ID_MN_RESI",
+  "time_col": "DT_NOTIFIC",
+  "area": "brasil",
+  "var_cat": [
+    "CS_RACA",
+    "CS_GESTANT"
+  ],
+  "var_num": [
+    "num\u00e9rica 1",
+    "num\u00e9rica 2"
+  ],
+  "time_unit": "Ano",
+  "time_range": [
+    2015,
+    2019
+  ]
 }
