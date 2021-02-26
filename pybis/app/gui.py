@@ -7,7 +7,7 @@ import re
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QMessageBox,
         QPushButton, QTableWidgetItem)
 from PyQt5.QtGui import QFont
-from PyQt5.QtCore import QThread, pyqtSlot, pyqtSignal, QObject, QMetaType, QObject
+from PyQt5.QtCore import QThread, pyqtSlot, pyqtSignal, QObject, QMetaType
 from PyQt5 import uic
 import json
 
