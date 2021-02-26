@@ -1,0 +1,45 @@
+{
+    "estados": [
+        {"BRASIL": "BRASIL", "ESTADO": "Acre", "UF": "AC", "REGIÃO": "Norte"},
+        {"BRASIL": "BRASIL", "ESTADO": "Amapá", "UF": "AP", "REGIÃO": "Norte"},
+        {"BRASIL": "BRASIL", "ESTADO": "Amazonas", "UF": "AM", "REGIÃO": "Norte"},
+        {"BRASIL": "BRASIL", "ESTADO": "Pará", "UF": "PA", "REGIÃO": "Norte"},
+        {"BRASIL": "BRASIL", "ESTADO": "Rondônia", "UF": "RO", "REGIÃO": "Norte"},
+        {"BRASIL": "BRASIL", "ESTADO": "Roraima", "UF": "RR", "REGIÃO": "Norte"},
+        {"BRASIL": "BRASIL", "ESTADO": "Tocantins", "UF": "TO", "REGIÃO": "Norte"},
+
+        {"BRASIL": "BRASIL", "ESTADO": "Alagoas", "UF": "AL", "REGIÃO": "Nordeste"},
+        {"BRASIL": "BRASIL", "ESTADO": "Bahia", "UF": "BA", "REGIÃO": "Nordeste"},
+        {"BRASIL": "BRASIL", "ESTADO": "Ceará", "UF": "CE", "REGIÃO": "Nordeste"},
+        {"BRASIL": "BRASIL", "ESTADO": "Maranhão", "UF": "MA", "REGIÃO": "Nordeste"},
+        {"BRASIL": "BRASIL", "ESTADO": "Paraíba", "UF": "PB", "REGIÃO": "Nordeste"},
+        {"BRASIL": "BRASIL", "ESTADO": "Pernambuco", "UF": "PE",
+            "REGIÃO": "Nordeste"},
+        {"BRASIL": "BRASIL", "ESTADO": "Piauí", "UF": "PI", "REGIÃO": "Nordeste"},
+        {"BRASIL": "BRASIL", "ESTADO": "Rio Grande do Norte", "UF": "RN",
+            "REGIÃO": "Nordeste"},
+        {"BRASIL": "BRASIL", "ESTADO": "Sergipe", "UF": "SE", "REGIÃO": "Nordeste"},
+
+        {"BRASIL": "BRASIL", "ESTADO": "Distrito Federal", "UF": "DF",
+            "REGIÃO": "Centro-Oeste"},
+        {"BRASIL": "BRASIL", "ESTADO": "Goiás", "UF": "GO",
+            "REGIÃO": "Centro-Oeste"},
+        {"BRASIL": "BRASIL", "ESTADO": "Mato Grosso", "UF": "MT",
+            "REGIÃO": "Centro-Oeste"},
+        {"BRASIL": "BRASIL", "ESTADO": "Mato Grosso do Sul", "UF": "MS",
+            "REGIÃO": "Centro-Oeste"},
+
+        {"BRASIL": "BRASIL", "ESTADO": "Espírito Santo", "UF": "ES",
+            "REGIÃO": "Sudeste"},
+        {"BRASIL": "BRASIL", "ESTADO": "Minas Gerais", "UF": "MG",
+            "REGIÃO": "Sudeste"},
+        {"BRASIL": "BRASIL", "ESTADO": "Rio de Janeiro", "UF": "RJ",
+            "REGIÃO": "Sudeste"},
+        {"BRASIL": "BRASIL", "ESTADO": "São Paulo", "UF": "SP", "REGIÃO": "Sudeste"},
+
+        {"BRASIL": "BRASIL", "ESTADO": "Paraná", "UF": "PR", "REGIÃO": "Sul"},
+        {"BRASIL": "BRASIL", "ESTADO": "Rio Grande do Sul", "UF": "RS",
+            "REGIÃO": "Sul"},
+        {"BRASIL": "BRASIL", "ESTADO": "Santa Catarina", "UF": "SC", "REGIÃO": "Sul"}
+    ]
+}
