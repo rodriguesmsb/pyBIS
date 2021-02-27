@@ -298,10 +298,6 @@ class DownloadUi:
             error.exec_()
         else:
             self.database, self.base, self.limit, self.date = self.load_conf()
-            [btn.setEnabled(False)
-                    for btn in self.ui.all_buttons
-                    if btn.text().lower() != "encerrar"
-            ]
 
     # def transform_date(self):
             if self.database == 'SINAN':
@@ -315,13 +311,15 @@ class DownloadUi:
                 elif isinstance(self.date, str):
                     self.date = self.date[2:4] + r'\d{2}'
 
-    # def create_regex(self):
-        # self.regex = ""
             if isinstance(self.limit, str) and isinstance(self.date, str):
                 self.regex = [ self.base + self.limit + self.date + '.csv' ]
             elif isinstance(self.limit, str) and isinstance(self.date, list):
                 self.regex = [
-                    self.base + self.limit + date + '.csv' for date in self.date 
+                    self.base
+                    + self.limit
+                    + date
+                    + '.csv' for
+                    date in self.date 
                 ]
             elif isinstance(self.limit, list) and isinstance(self.date, str):
                 self.regex =  [
@@ -335,24 +333,29 @@ class DownloadUi:
                     for date in self.date
                 ]
 
-    # def finder_csv(self):
             bases = re.compile("|".join(self.regex))
             files = []
             if self.database.lower() == "sih":
                 self.database = "SIHSUS"
+            dir_database = os.path.expanduser("~/datasus_dbc/"
+                                          + self.database
+                                          + "/")
             try:
-                for file_csv in os.listdir(
-                    os.path.expanduser("~/datasus_dbc/" + self.database + "/")
-                ):
+                folder_csv = os.listdir(dir_database)
+                for file_csv in folder_csv:
                     if re.search(bases, file_csv):
                         files.append(os.path.expanduser(
                             "~/datasus_dbc/" + self.database + "/" + file_csv)
                         )
+
                 self.files = files
 
                 self.thread_table = Thread(self.read_file)
                 self.thread_table.start()
-
+                [btn.setEnabled(False)
+                        for btn in self.ui.all_buttons
+                        if btn.text().lower() != "encerrar"
+                ]
             except FileNotFoundError:
                 error = QMessageBox()
                 error.setFont(QFont("Arial", 15))
@@ -361,8 +364,6 @@ class DownloadUi:
                 error.setInformativeText("A pasta {}".format(self.database))
                 error.setWindowTitle("Erro!")
                 error.exec_()
-                raise
-
 
     def read_file(self):
         with open(conf + "config.json", "r") as f:
