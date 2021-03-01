@@ -20,7 +20,11 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>pyBIS</string>
+   <string>Download</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../assets/download.png</normaloff>../assets/download.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">font: 12pt &quot;Noto Sans&quot;;</string>

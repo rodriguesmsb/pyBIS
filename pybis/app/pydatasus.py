@@ -1,4 +1,5 @@
 import sys
+import platform
 import re
 import pathlib
 import time
@@ -22,7 +23,11 @@ class PyDatasus(QObject):
         self.__page = ftp.FTP('ftp.datasus.gov.br')
         self.__page.login()
         self.__page.cwd('/dissemin/publicos/')
-        self.__blast = path.join(path.dirname(__file__), './blast-dbf')
+        if platform.system().lower() == "linux":
+            self.__blast = path.join(path.dirname(__file__), './blast-dbf')
+        elif platform.system().lower() == "windows":
+            self.__blast = path.join(path.dirname(__file__),
+                                     './blast-dbf.exe')
         self.__path_table = path.expanduser('~/datasus_tabelas/')
         self.__path_dbc = path.expanduser('~/datasus_dbc/')
         self.label_signal.emit("Iniciando conexão")
@@ -166,8 +171,6 @@ class PyDatasus(QObject):
                                    + line.split(',')[1].split('.')[0]
                                    + '.csv'):
 
-                    # if (database == "SIHSUS" and
-                    #         "MHJ_14_16" not in line.split(',')[0]):
                     self.__pbar = 0
                     self.download_signal.emit(self.__pbar)
                     self.__create_file_write(

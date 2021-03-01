@@ -5,25 +5,84 @@ import time
 import os
 import re
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QMessageBox,
-        QPushButton, QTableWidgetItem)
-from PyQt5.QtGui import QFont
-from PyQt5.QtCore import QThread, pyqtSlot, pyqtSignal, QObject, QMetaType
+        QPushButton, QTableWidgetItem, QTabBar, QTabWidget, QStyle,
+        QStyleOptionTab, QStylePainter)
+from PyQt5.QtGui import QFont, QIcon, QStandardItemModel, QStandardItem
+from PyQt5.QtCore import (QThread, pyqtSignal, QObject, QMetaType, QRect,
+        QPoint, pyqtSlot)
 from PyQt5 import uic
 import json
 
 from pydatasus import PyDatasus
 from f_spark import spark_conf, start_spark
 
-downloadui = os.path.join(os.path.dirname(__file__), "../layouts/download.ui")
+dir_ui = os.path.join(os.path.dirname(__file__), "../layouts/")
+dir_ico = os.path.join(os.path.dirname(__file__), "../assets/")
 conf = os.path.join(os.path.dirname(__file__), "../conf/")
 
+
+class TabBar(QTabBar):
+    def tabSizeHint(self, index):
+        s = QTabBar.tabSizeHint(self, index)
+        s.transpose()
+        return s
+
+    def paintEvent(self, event):
+        painter = QStylePainter(self)
+        opt = QStyleOptionTab()
+
+        for i in range(self.count()):
+            self.initStyleOption(opt, i)
+            painter.drawControl(QStyle.CE_TabBarTabShape, opt)
+            painter.save()
+
+            s = opt.rect.size()
+            s.transpose()
+            r = QRect(QPoint(), s)
+            r.moveCenter(opt.rect.center())
+            opt.rect = r
+
+            c = self.tabRect(i).center()
+            painter.translate(c)
+            painter.rotate(90)
+            painter.translate(-c)
+            painter.drawControl(QStyle.CE_TabBarTabLabel, opt)
+            painter.restore()
+
+
+class TabWidget(QTabWidget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setTabBar(TabBar(self))
+        self.setTabPosition(QTabWidget.West)
+
+
+class Manager(QMainWindow):
+    def __init__(self, *tabs):
+        super().__init__()
+
+        self.setWindowTitle("pyBiss")
+        self.setFont(QFont("Arial", 12))
+        self.tab_manager = TabWidget()
+
+        for tab in tabs:
+            self.tab_manager.addTab(tab, QIcon(tab.windowIcon()), '')
+
+        self.setCentralWidget(self.tab_manager)
+        self.show()
 
 class Update(QObject):
 
     signal = pyqtSignal(int)
-    signal_txt = pyqtSignal(str)
+    signal_clear_add = pyqtSignal(int)
     signal_finished = pyqtSignal(int)
-    signal_column = pyqtSignal(QMetaType)
+    signal_txt = pyqtSignal(str)
+    signal_col_etl = pyqtSignal(str)
+    signal_column = pyqtSignal(list)
+    signal_column_export = pyqtSignal(list)
+    signal_trim_data = pyqtSignal(list)
+    signal_export_count = pyqtSignal(int)
+    signal_etl_el = pyqtSignal(list)
 
     def __init__(self):
         super().__init__()
@@ -46,29 +105,28 @@ class Thread(QThread):
         self.func(*self.args, **self.kwargs)
 
 
-class DownloadUi:
+class DownloadUi(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.threadid = QThread.currentThread()
+        uic.loadUi(dir_ui + "download.ui", self)
         self.reset()
-        self.ui = uic.loadUi(downloadui)
-        self.ui.show()
 
-        self.ui.comboBox.currentTextChanged.connect(self.load_database)
-        self.ui.comboBox.currentTextChanged.connect(self.write_database)
-        self.ui.comboBox_2.currentTextChanged.connect(self.return_code_base)
-        self.ui.comboBox_3.currentTextChanged.connect(self.load_limit)
-        self.ui.comboBox_4.currentTextChanged.connect(self.return_uf)
-        self.ui.pushButton.clicked.connect(self.process_download)
-        self.ui.pushButton_2.clicked.connect(self.load_data_table)
-        self.ui.pushButton_3.clicked.connect(self.stop_thread)
-        self.ui.horizontalSlider.valueChanged.connect(self.return_date)
-        self.ui.horizontalSlider_2.valueChanged.connect(self.return_date_)
-        self.ui.spinBox.valueChanged.connect(self.mem)
-        self.ui.spinBox_2.valueChanged.connect(self.cpu)
+        self.signal = Update()
+        self.comboBox.currentTextChanged.connect(self.load_database)
+        self.comboBox.currentTextChanged.connect(self.write_database)
+        self.comboBox_2.currentTextChanged.connect(self.return_code_base)
+        self.comboBox_3.currentTextChanged.connect(self.load_limit)
+        self.comboBox_4.currentTextChanged.connect(self.return_uf)
+        self.pushButton.clicked.connect(self.process_download)
+        self.pushButton_2.clicked.connect(self.load_data_table)
+        self.pushButton_3.clicked.connect(self.stop_thread)
+        self.horizontalSlider.valueChanged.connect(self.return_date)
+        self.horizontalSlider_2.valueChanged.connect(self.return_date_)
+        self.spinBox.valueChanged.connect(self.mem)
+        self.spinBox_2.valueChanged.connect(self.cpu)
 
-        self.ui.all_buttons = self.ui.findChildren(QPushButton)
+        self.all_buttons = self.findChildren(QPushButton)
 
     def reset(self):
         with open(conf + "search.json", "r") as f:
@@ -103,7 +161,7 @@ class DownloadUi:
 
     def read_json_database(self, choice: str) -> list:
         values = []
-        self.ui.comboBox_2.setEnabled(True)
+        self.comboBox_2.setEnabled(True)
         with open(conf + "database.json", "r") as f:
             database = json.load(f)
             database = database["database"]
@@ -113,15 +171,15 @@ class DownloadUi:
             return sorted(values)
 
     def return_code_base(self, choice: str) -> str:
-            if self.ui.comboBox.currentText().lower() == "sihsus":
+            if self.comboBox.currentText().lower() == "sihsus":
                 self.write_base("RD")
-            elif (self.ui.comboBox.currentText().lower() 
+            elif (self.comboBox.currentText().lower() 
                     != "selecionar sistema de dados"):
                 with open(conf + "database.json", "r") as f:
                     database_json = json.load(f)
                     database_json = database_json["database"]
                     for base in database_json:
-                        for val in base.get(self.ui.comboBox.currentText()):
+                        for val in base.get(self.comboBox.currentText()):
                             if choice == list(val.values())[0]:
                                 self.write_base(list(val.values())[1])
             else:
@@ -149,7 +207,7 @@ class DownloadUi:
     def load_json_locales(self, choice: str) -> list:
         stts = []
         region = set()
-        self.ui.comboBox_4.setEnabled(True)
+        self.comboBox_4.setEnabled(True)
         with open(conf + "locales.json", "r") as f:
             locales = json.load(f)
             locales = locales["estados"]
@@ -203,30 +261,30 @@ class DownloadUi:
             self.write_date([str(date)])
 
     def load_database(self, database: str):
-        self.ui.comboBox_2.clear()
+        self.comboBox_2.clear()
         if (database.lower() != "selecionar sistema de dados"
                 and database.lower() != "sihsus"):
-            self.ui.comboBox_2.addItems(self.read_json_database(database))
+            self.comboBox_2.addItems(self.read_json_database(database))
         elif database.lower() == "sihsus":
-            self.ui.comboBox_2.addItems(self.read_json_database("SIH"))
+            self.comboBox_2.addItems(self.read_json_database("SIH"))
         else:
-            self.ui.comboBox_2.setEnabled(False)
+            self.comboBox_2.setEnabled(False)
 
     def load_limit(self, limit: str):
-        self.ui.comboBox_4.clear()
+        self.comboBox_4.clear()
         if limit.lower() != "selecionar local":
-            self.ui.comboBox_4.addItems(self.load_json_locales(limit))
+            self.comboBox_4.addItems(self.load_json_locales(limit))
         else:
-            self.ui.comboBox_4.setEnabled(False)
+            self.comboBox_4.setEnabled(False)
 
     def return_limit_list(self, limit: str) -> list:
         pass
 
     def return_date(self, date: int) -> list:
-        self.return_list_date(date, self.ui.horizontalSlider_2.value())
+        self.return_list_date(date, self.horizontalSlider_2.value())
 
     def return_date_(self, date_: int) -> list:
-        self.return_list_date(date_, self.ui.horizontalSlider.value())
+        self.return_list_date(date_, self.horizontalSlider.value())
 
     def load_conf(self):
         with open(conf + "search.json") as f:
@@ -250,12 +308,12 @@ class DownloadUi:
             error.exec_()
         else:
             pydatasus = PyDatasus()
-            pydatasus.download_signal.connect(self.ui.progressBar.setValue)
-            pydatasus.label_signal.connect(self.ui.label_5.setText)
-            pydatasus.lcd_signal.connect(self.ui.lcdNumber_3.display)
+            pydatasus.download_signal.connect(self.progressBar.setValue)
+            pydatasus.label_signal.connect(self.label_5.setText)
+            pydatasus.lcd_signal.connect(self.lcdNumber_3.display)
             pydatasus.finished.connect(self.finished)
             [btn.setEnabled(False)
-                    for btn in self.ui.all_buttons
+                    for btn in self.all_buttons
                     if btn.text().lower() != "encerrar"
             ]
             self.thread_download = Thread(pydatasus.get_data,
@@ -265,15 +323,15 @@ class DownloadUi:
             # QApplication.processEvents()
 
     def finished(self, val):
-        [btn.setEnabled(True) for btn in self.ui.all_buttons]
+        [btn.setEnabled(True) for btn in self.all_buttons]
 
     def stop_thread(self):
-        [btn.setEnabled(True) for btn in self.ui.all_buttons]
-        self.ui.progressBar.setValue(0)
-        self.ui.tableWidget.clear()
+        [btn.setEnabled(True) for btn in self.all_buttons]
+        self.progressBar.setValue(0)
+        self.tableWidget.clear()
         try:
-            self.ui.lcdNumer_3.display(0)
-            self.ui.label_5.setText("")
+            self.lcdNumer_3.display(0)
+            self.label_5.setText("")
         except AttributeError:
             pass
         try:
@@ -299,7 +357,6 @@ class DownloadUi:
         else:
             self.database, self.base, self.limit, self.date = self.load_conf()
 
-    # def transform_date(self):
             if self.database == 'SINAN':
                 if isinstance(self.date, list):
                     self.date = [x[2:4] for x in self.date]
@@ -353,7 +410,7 @@ class DownloadUi:
                 self.thread_table = Thread(self.read_file)
                 self.thread_table.start()
                 [btn.setEnabled(False)
-                        for btn in self.ui.all_buttons
+                        for btn in self.all_buttons
                         if btn.text().lower() != "encerrar"
                 ]
             except FileNotFoundError:
@@ -375,61 +432,239 @@ class DownloadUi:
             self.df = self.spark.read.csv(self.files, header=True)
             self.write_table()
 
+    def ant_bug_column(self, col):
+        self.tableWidget.setHorizontalHeaderItem(col[0], col[1])
+
     def write_header(self):
-        self.signal = Update()
         self.signal.signal_finished.connect(self.finished)
 
-        self.ui.tableWidget.clear()
+        self.tableWidget.clear()
         if self.df.columns[0] == "_c0":
             self.cols = [col for col in self.df.columns[1:]]
         else:
             self.cols = [col for col in self.df.columns]
 
         self.cols.sort()
-        self.ui.tableWidget.setColumnCount(len(self.cols))
+        self.tableWidget.setColumnCount(len(self.cols))
+        self.signal.signal_clear_add.emit(1)
         for i, col in enumerate(self.cols):
+            self.signal.signal_col_etl.emit(col)
             column = QTableWidgetItem(col)
-            self.signal.signal_column.connect(
-                self.ui.tableWidget.setHorizontalHeaderItem
-            )
-            self.ui.tableWidget.setHorizontalHeaderItem(i, column)
+            self.signal.signal_column.connect(self.ant_bug_column)
+            self.signal.signal_column.emit([i, column])
             i += 1
 
     def write_body(self):
-        self.ui.tableWidget.setRowCount(20)
+        self.tableWidget.setRowCount(20)
         col_n = 0
         row_n = 0
-
         val = 0
+
         self.percentage = 0
-        self.signal.signal_txt.connect(self.ui.label_5.setText)
+        self.signal.signal_txt.connect(self.label_5.setText)
         self.signal.signal_txt.emit("Escrevendo seus dados")
-        for col in self.cols:
-            val += 1
-            for r in range(1, 21):
-                ratio = round((float(val / len(self.cols)) * 100 - 6), 1)
-                percentage = int(round(100 * ratio / (100 - 6), 1))
-                self.signal.signal.connect(self.ui.progressBar.setValue)
-                self.signal.signal.emit(percentage)
-
-                self.ui.tableWidget.setItem(
-                    row_n, col_n, QTableWidgetItem(
-                        str(self.df.select(self.df[col]).take(r)[r - 1][0])))
-                row_n += 1
-            row_n = 0
-            col_n += 1
-        self.signal.signal_txt.emit("Os dados foram escritos com sucesso")
-        self.signal.signal_finished.emit(1)
-
+        try:
+            for col in self.cols:
+                val += 1
+                for r in range(1, 21):
+                    ratio = round((float(val / len(self.cols)) * 100 - 6), 1)
+                    percentage = int(round(100 * ratio / (100 - 6), 1))
+                    self.signal.signal.connect(self.progressBar.setValue)
+                    self.signal.signal.emit(percentage)
+                    self.tableWidget.setItem(
+                        row_n, col_n, QTableWidgetItem(
+                            str(self.df.select(
+                                self.df[col]).take(r)[r - 1][0])))
+                    row_n += 1
+                row_n = 0
+                col_n += 1
+            self.signal.signal_txt.emit("Os dados foram escritos com sucesso")
+            self.signal.signal_finished.emit(1)
+        except IndexError:
+            self.signal.signal_txt.emit("Não há nada aqui")
+            self.signal.signal_finished.emit(1)
 
     def write_table(self):
         self.write_header()
         self.write_body()
 
+    def trim_data(self, params):
+        drop_list = []
+        if params[0] != None:
+            for itm in self.df.columns:
+                if itm not in params[0]:
+                    drop_list.append(itm)
+            self.data_drop = self.df.drop(*drop_list)
+
+            if params[1] != None:
+                try:
+                    self.data_filtered = self.data_drop.filter(' and '.join(
+                                                               params[1])
+                    )
+                except:
+                    pass
+            elif params[1] == None:
+                self.data_filtered = self.data_drop
+
+        elif params[0] == None:
+            self.data_drop = self.df
+            if params[1] != None:
+                try:
+                    self.data_filtered = self.data_drop.filter(' and '.join(
+                                                               params[1])
+                    )
+                except:
+                    pass
+            elif params[1] == None:
+                self.data_filtered = self.data_drop
+
+        self.signal.signal_export_count.emit(len(self.data_filtered.columns))
+
+        for i, col in enumerate(self.data_filtered.columns):
+            column = QTableWidgetItem(col)
+            self.signal.signal_column_export.emit([i, column])
+            i += 1
+
+        col_n = 0
+        row_n = 0
+
+        for col in self.data_filtered.columns:
+            for r in range(1, 21):
+                self.signal.signal_etl_el.emit(
+                    [row_n, col_n, QTableWidgetItem(str(
+                        self.data_filtered.select(
+                    self.data_filtered[col]).take(r)[r - 1][0]))])
+                row_n += 1
+            row_n = 0
+            col_n += 1
+
+
+class EtlUi(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi(dir_ui + "etl.ui", self)
+
+        self.signal = Update()
+
+        self.model_col_add = QStandardItemModel()
+        self.model_col_apply = QStandardItemModel()
+        self.model_col_ext = QStandardItemModel()
+
+        self.column_add.setModel(self.model_col_add)
+        self.column_apply.setModel(self.model_col_apply)
+        self.column_ext.setModel(self.model_col_ext)
+
+        self.button_add.clicked.connect(self.add_col_apply)
+        self.button_rm.clicked.connect(self.remove_col_apply)
+
+        self.button_lt.clicked.connect(self.send_op)
+        self.button_gt.clicked.connect(self.send_op)
+        self.button_lte.clicked.connect(self.send_op)
+        self.button_gte.clicked.connect(self.send_op)
+        self.button_dif.clicked.connect(self.send_op)
+        self.button_equal.clicked.connect(self.send_op)
+        self.button_and.clicked.connect(self.send_op)
+        self.button_or.clicked.connect(self.send_op)
+        self.button_not.clicked.connect(self.send_op)
+        self.button_in.clicked.connect(self.send_op)
+
+        self.gen_filter.clicked.connect(self.add_filter_to_list)
+        self.rm_filter.clicked.connect(self.rm_el_list_filter)
+        self.apply_filter.clicked.connect(self.apply_all_filters)
+    def convert_model(self, col):
+        itm = QStandardItem(col)
+        self.model_col_add.appendRow(itm)
+
+    def clear_models(self, val):
+        self.model_col_add.clear()
+        self.model_col_apply.clear()
+        self.model_col_ext.clear()
+        self.line_select.clear()
+
+    def add_col_apply(self):
+        apply_itms = [
+            self.model_col_apply.item(index).text()
+            for index in range(self.model_col_apply.rowCount())
+        ]
+        add_itms = self.column_add.selectedIndexes()
+
+        for itm in add_itms:
+            lines = []
+            if itm.data() not in apply_itms:
+                lines.append(QStandardItem(itm.data()))
+                self.model_col_apply.appendRow(lines)
+
+    def remove_col_apply(self):
+        itms = self.column_apply.selectedIndexes()
+        for itm in itms:
+            self.model_col_apply.takeRow(itm.row())
+
+    def send_op(self):
+        ops = [
+            "menor", "maior", "menor igual", "maior igual", "diferente",
+            "igual", "e", "ou", "não", "em"
+        ]
+        ops_t = [
+                "<", ">", "<=", ">=", "!=", "==", "and", "or", "not", "in"
+        ]
+
+        if self.sender().text().lower() in ops:
+            self.op = ops_t[ops.index(self.sender().text().lower())]
+        self.line_edit.setText(self.op + " ")
+
+    def add_filter_to_list(self):
+        self.model_col_ext.appendRow(QStandardItem(
+            self.line_select.currentText() + " " + self.line_edit.text()))
+
+    def rm_el_list_filter(self):
+        itms = self.column_ext.selectedIndexes()
+        for itm in itms:
+            self.model_col_ext.takeRow(itm.row())
+
+    def apply_all_filters(self):
+
+        self.drop_list = None
+        self.filter_list = None
+
+        if len(range(self.model_col_apply.rowCount())):
+           self.drop_list = []
+           for n, idx in enumerate(range(self.model_col_apply.rowCount())):
+               self.drop_list.append(self.model_col_apply.item(idx).text())
+           self.table_export.setRowCount(20)
+
+        if len(range(self.model_col_ext.rowCount())):
+           self.filter_list = []
+           for idx in range(self.model_col_ext.rowCount()):
+               self.filter_list.append(self.model_col_ext.item(idx).text())
+
+        self.signal.signal_trim_data.emit([self.drop_list,
+                                            self.filter_list])
+
+
+    def header_etl(self, col):
+        self.table_export.setHorizontalHeaderItem(col[0], col[1])
+
+    def header_etl_count(self, n):
+        self.table_export.setColumnCount(n)
+
+    def build_table(self, params):
+        self.table_export.setItem(params[0], params[1], params[2])
+
 
 def main():
     app = QApplication(sys.argv)
+    app.setApplicationName("pyBIS")
     download = DownloadUi()
+    etl = EtlUi()
+    download.signal.signal_col_etl.connect(etl.convert_model)
+    download.signal.signal_col_etl.connect(etl.line_select.addItem)
+    download.signal.signal_clear_add.connect(etl.clear_models)
+    download.signal.signal_export_count.connect(etl.header_etl_count)
+    download.signal.signal_column_export.connect(etl.header_etl)
+    download.signal.signal_etl_el.connect(etl.build_table)
+    etl.signal.signal_trim_data.connect(download.trim_data)
+    manager = Manager(download, etl)
+    manager.setWindowIcon(QIcon(dir_ico + "favicon.ico"))
     sys.exit(app.exec_())
 
 
