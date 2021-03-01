@@ -1,9 +1,7 @@
 {
-    "database": "SIM",
-    "base": "DO",
-    "limit": [
-        "AC"
-    ],
+    "database": "SINAN",
+    "base": "ANIM",
+    "limit": "",
     "date_range": [
         "2010"
     ]
