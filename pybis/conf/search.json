@@ -1,8 +1,12 @@
 {
-    "database": "SINAN",
-    "base": "ANIM",
-    "limit": "",
+    "database": "SIM",
+    "base": "DO",
+    "limit": [
+        "BA"
+    ],
     "date_range": [
-        "2010"
+        "2013",
+        "2014",
+        "2015"
     ]
 }

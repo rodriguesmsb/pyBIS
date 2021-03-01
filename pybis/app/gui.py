@@ -6,12 +6,13 @@ import os
 import re
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QMessageBox,
         QPushButton, QTableWidgetItem, QTabBar, QTabWidget, QStyle,
-        QStyleOptionTab, QStylePainter)
+        QStyleOptionTab, QStylePainter, QFileDialog)
 from PyQt5.QtGui import QFont, QIcon, QStandardItemModel, QStandardItem
 from PyQt5.QtCore import (QThread, pyqtSignal, QObject, QMetaType, QRect,
         QPoint, pyqtSlot)
 from PyQt5 import uic
 import json
+import pandas as pd
 
 from pydatasus import PyDatasus
 from f_spark import spark_conf, start_spark
@@ -19,6 +20,7 @@ from f_spark import spark_conf, start_spark
 dir_ui = os.path.join(os.path.dirname(__file__), "../layouts/")
 dir_ico = os.path.join(os.path.dirname(__file__), "../assets/")
 conf = os.path.join(os.path.dirname(__file__), "../conf/")
+dir_dbc = os.path.expanduser("~/datasus_dbc/")
 
 
 class TabBar(QTabBar):
@@ -83,6 +85,7 @@ class Update(QObject):
     signal_trim_data = pyqtSignal(list)
     signal_export_count = pyqtSignal(int)
     signal_etl_el = pyqtSignal(list)
+    signal_save = pyqtSignal(list)
 
     def __init__(self):
         super().__init__()
@@ -538,6 +541,10 @@ class DownloadUi(QMainWindow):
             row_n = 0
             col_n += 1
 
+    def save_file(self, params):
+        self.data_filtered.coalesce(1).write.option(params[0],
+                                                    params[1]).csv(params[2])
+
 
 class EtlUi(QMainWindow):
     def __init__(self):
@@ -571,6 +578,7 @@ class EtlUi(QMainWindow):
         self.gen_filter.clicked.connect(self.add_filter_to_list)
         self.rm_filter.clicked.connect(self.rm_el_list_filter)
         self.apply_filter.clicked.connect(self.apply_all_filters)
+        self.pushButton.clicked.connect(self.export_file_csv)
     def convert_model(self, col):
         itm = QStandardItem(col)
         self.model_col_add.appendRow(itm)
@@ -622,7 +630,6 @@ class EtlUi(QMainWindow):
             self.model_col_ext.takeRow(itm.row())
 
     def apply_all_filters(self):
-
         self.drop_list = None
         self.filter_list = None
 
@@ -646,9 +653,182 @@ class EtlUi(QMainWindow):
 
     def header_etl_count(self, n):
         self.table_export.setColumnCount(n)
+        self.table_export.setRowCount(20)
 
     def build_table(self, params):
         self.table_export.setItem(params[0], params[1], params[2])
+
+    def export_file_csv(self):
+        try:
+            filename, _ = QFileDialog.getSaveFileName(self.pushButton,
+                                                      "Salvar Arquivo",
+                                                      f"{dir_dbc}",
+                                                      "Arquivo csv (*.csv)")
+            if filename.endswith(".csv"):
+                self.signal.signal_save.emit(["header", "true", filename])
+            else:
+                self.signal.signal_save.emit(["header", "true",
+                                              filename + ".csv"])
+        except NameError:
+            pass
+
+
+class MergeUi(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi(dir_ui + "merge.ui", self)
+
+        self.tables = []
+        self.select_file1.clicked.connect(self.select_file)
+        self.select_file2.clicked.connect(self.select_file)
+        self.button_add.clicked.connect(self.add_col)
+        self.pushButton.clicked.connect(self.remove)
+        self.button_apply.clicked.connect(self.merge_data)
+        self.model_add = QStandardItemModel()
+        self.table3.setModel(self.model_add)
+
+    def select_file(self):
+        try:
+            filename, _ = QFileDialog.getOpenFileName(self,
+                                                      "Carregar Arquivo",
+                                                      f"{dir_dbc}",
+                                                      "Arquivo csv (*.csv)")
+
+            if self.sender().objectName() == "select_file1":
+                self.df_1 = self.verify_column(pd.read_csv(filename,
+                                               low_memory=False,
+                                               encoding="iso-8859-1"))
+                self.table1.clear()
+                self.table1.setRowCount(20)
+                self.table1.setColumnCount(len(self.df_1.columns))
+                for e, col in enumerate(self.df_1.columns):
+                    self.table1.setHorizontalHeaderItem(e,
+                                                        QTableWidgetItem(col))
+                    e += 1
+
+                col_n = 0
+                row_n = 0
+                for col in self.df_1.columns:
+                    for i in range(0, 21):
+                        try:
+                            self.table1.setItem(row_n, col_n,
+                                QTableWidgetItem(str(self.df_1[col][i])))
+                        except KeyError:
+                            pass
+                        row_n += 1
+                    row_n = 0
+                    col_n += 1
+
+                self.tables.append(self.df_1)
+
+            elif self.sender().objectName() == "select_file2":
+                self.df_2 = self.verify_column(pd.read_csv(filename,
+                                               low_memory=False,
+                                               encoding="iso-8859-1"))
+                self.table2.clear()
+                self.table2.setRowCount(20)
+                self.table2.setColumnCount(len(self.df_2.columns))
+                self.table2.setRowCount(20)
+                for e, col in enumerate(self.df_2.columns):
+                    self.table2.setHorizontalHeaderItem(e,
+                                                        QTableWidgetItem(col))
+                col_n = 0
+                row_n = 0
+                for col in self.df_2.columns:
+                    for i in range(0, 21):
+                        try:
+                            self.table2.setItem(row_n, col_n,
+                                QTableWidgetItem(str(self.df_2[col][i])))
+                        except KeyError:
+                            pass
+                        row_n += 1
+                    row_n = 0
+                    col_n += 1
+                    e += 1
+
+                self.tables.append(self.df_2)
+        except FileNotFoundError:
+            pass
+
+        if len(self.tables) > 1:
+            self.get_same_columns()
+
+    def get_same_columns(self):
+        self.add_line.clear()
+        result_index = []
+        for cols in self.df_1.columns:
+            if cols in self.df_2.columns:
+                result_index.append(cols)
+        self.add_line.addItems(result_index)
+        self.tables.clear()
+
+    def year_month(self, date):
+        def correct_state(x):
+            x = str(x)
+            if len(x) < 8:
+                x = "0" + x
+            return x
+        
+        date = date.apply(lambda x: correct_state(x))
+        date = pd.to_datetime(date.astype(str), format="%d%m%Y")
+        year, month = date.dt.year, date.dt.month
+
+        return (year, month)
+
+    def verify_column(self, data):
+        if "TIPOBITO" in data.columns:
+            year, month = self.year_month(data["DTOBITO"])
+            data["YEAR"] = year
+            data["MONTH"] = month
+        elif "DTNASC" in data.columns and "TPOBITO" not in data.columns:
+            year, month = year_month(data["DTNASC"])
+            data["YEAR"] = year
+            data["MONTH"] = month
+
+        return data
+
+    def add_col(self):
+        self.model_add.appendRow(QStandardItem(self.add_line.currentText()))
+
+    def remove(self):
+        itms = self.table3.selectedIndexes()
+        for itm in itms:
+            self.model_add.takeRow(itm.row())
+
+    def merge_data(self):
+        columns = []
+
+        for index in range(self.model_add.rowCount()):
+            columns.append(self.model_add.item(index).text())
+
+        df_1 = self.df_1[columns].groupby(columns).size().reset_index(
+                name="b1_count")
+
+        df_2 = self.df_2[columns].groupby(columns).size().reset_index(
+                name="b2_count"
+        )
+
+        self.df_reduce = pd.merge(df_1, df_2, on=columns)
+
+        i = 0
+        self.table4.setColumnCount(len(self.df_reduce.columns))
+        self.table4.setRowCount(20)
+        for col in self.df_reduce.columns:
+            self.table4.setHorizontalHeaderItem(i, QTableWidgetItem(col))
+            i += 1
+
+        col_n = 0
+        row_n = 0
+        for col in self.df_reduce.columns:
+            for r in range(0, 21):
+                try:
+                    self.table4.setItem(row_n, col_n,
+                        QTableWidgetItem(str(self.df_reduce[col][r])))
+                except KeyError:
+                    pass
+                row_n += 1
+            row_n = 0
+            col_n += 1
 
 
 def main():
@@ -656,6 +836,7 @@ def main():
     app.setApplicationName("pyBIS")
     download = DownloadUi()
     etl = EtlUi()
+    merge = MergeUi()
     download.signal.signal_col_etl.connect(etl.convert_model)
     download.signal.signal_col_etl.connect(etl.line_select.addItem)
     download.signal.signal_clear_add.connect(etl.clear_models)
@@ -663,7 +844,8 @@ def main():
     download.signal.signal_column_export.connect(etl.header_etl)
     download.signal.signal_etl_el.connect(etl.build_table)
     etl.signal.signal_trim_data.connect(download.trim_data)
-    manager = Manager(download, etl)
+    etl.signal.signal_save.connect(download.save_file)
+    manager = Manager(download, etl, merge)
     manager.setWindowIcon(QIcon(dir_ico + "favicon.ico"))
     sys.exit(app.exec_())
 
