@@ -1,20 +1,22 @@
 {
-    "name": "ro",
+    "name": "Meu rabico 4",
     "type": "spatio_temporal",
-    "id_area": "CODMUNNASC",
-    "time_col": "DTCADASTRO",
+    "id_area": "ID_MN_RESI",
+    "time_col": "DT_NOTIFIC",
     "area": "ro",
     "var_cat": [
-        "CODMUNNASC",
-        "CODMUNNASC"
+        "CS_SEXO",
+        "CS_RACA"
     ],
     "var_num": [
-        "CODMUNNASC",
-        "CODMUNNASC"
+        "DT_NOTIFIC",
+        "DT_NOTIFIC"
     ],
     "time_unit": "",
     "time_range": [
         "2015",
-        "2016"
+        "2016",
+        "2017",
+        "2018"
     ]
 }

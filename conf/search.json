@@ -23,13 +23,15 @@
         "2019",
         "2020"
     ],
-    "database": "SINASC",
-    "base": "DN",
+    "database": "SINAN",
+    "base": "ZIKA",
     "limit": [
         "RO"
     ],
     "date_range": [
         "2015",
-        "2016"
+        "2016",
+        "2017",
+        "2018"
     ]
 }
