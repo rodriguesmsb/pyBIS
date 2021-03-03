@@ -2,6 +2,7 @@
 
 import sys
 import time
+import subprocess
 import os
 import re
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QMessageBox,
@@ -9,7 +10,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QMessageBox,
         QStyleOptionTab, QStylePainter, QFileDialog)
 from PyQt5.QtGui import QFont, QIcon, QStandardItemModel, QStandardItem
 from PyQt5.QtCore import (QThread, pyqtSignal, QObject, QMetaType, QRect,
-        QPoint, pyqtSlot)
+        QPoint, pyqtSlot, Qt)
 from PyQt5 import uic
 import json
 import pandas as pd
@@ -17,10 +18,15 @@ import pandas as pd
 from pydatasus import PyDatasus
 from f_spark import spark_conf, start_spark
 
+sys.path.append(os.path.join(os.path.dirname(__file__),
+                "../scripts/SpatialSUSapp/"))
+
 dir_ui = os.path.join(os.path.dirname(__file__), "../layouts/")
 dir_ico = os.path.join(os.path.dirname(__file__), "../assets/")
 conf = os.path.join(os.path.dirname(__file__), "../conf/")
 dir_dbc = os.path.expanduser("~/datasus_dbc/")
+dir_sus_conf = os.path.join(os.path.dirname(__file__),
+                            "../scripts/SpatialSUSapp/conf/")
 
 
 class TabBar(QTabBar):
@@ -73,6 +79,7 @@ class Manager(QMainWindow):
         self.setCentralWidget(self.tab_manager)
         self.show()
 
+
 class Update(QObject):
 
     signal = pyqtSignal(int)
@@ -86,6 +93,9 @@ class Update(QObject):
     signal_export_count = pyqtSignal(int)
     signal_etl_el = pyqtSignal(list)
     signal_save = pyqtSignal(list)
+    signal_text = pyqtSignal(int)
+    signal_cols_analysis = pyqtSignal(str)
+    signal_clear_items = pyqtSignal(int)
 
     def __init__(self):
         super().__init__()
@@ -207,6 +217,20 @@ class DownloadUi(QMainWindow):
             data["limit"] = list(ufs)
             json.dump(data, f, indent=4)
 
+        with open(dir_sus_conf + "conf.json", "r") as f:
+            data = json.load(f)
+        with open(dir_sus_conf + "conf.json", "w") as f:
+            if limit == "BRASIL":
+                data["area"] = limit.lower()
+            elif limit in ["Centro-Oeste", "Nordeste",
+                           "Norte", "Sudeste", "Sul"]:
+                data["area"] = limit.lower()
+            else:
+                data["area"] = ''.join(list(ufs)).lower()
+
+            json.dump(data, f, indent=4)
+
+
     def load_json_locales(self, choice: str) -> list:
         stts = []
         region = set()
@@ -255,6 +279,12 @@ class DownloadUi(QMainWindow):
             data["date_range"] = date
             json.dump(data, f, indent=4)
 
+        with open(dir_sus_conf + "conf.json", "r") as f:
+            data = json.load(f)
+        with open(dir_sus_conf + "conf.json", "w") as f:
+            data["time_range"] = date
+            json.dump(data, f, indent=4)
+
     def return_list_date(self, date: int, date_: int) -> list:
         if date < date_:
             self.write_date([str(dt) for dt in range(date, date_ + 1)])
@@ -279,9 +309,6 @@ class DownloadUi(QMainWindow):
             self.comboBox_4.addItems(self.load_json_locales(limit))
         else:
             self.comboBox_4.setEnabled(False)
-
-    def return_limit_list(self, limit: str) -> list:
-        pass
 
     def return_date(self, date: int) -> list:
         self.return_list_date(date, self.horizontalSlider_2.value())
@@ -450,6 +477,7 @@ class DownloadUi(QMainWindow):
         self.cols.sort()
         self.tableWidget.setColumnCount(len(self.cols))
         self.signal.signal_clear_add.emit(1)
+        self.signal.signal_clear_items.emit(1)
         for i, col in enumerate(self.cols):
             self.signal.signal_col_etl.emit(col)
             column = QTableWidgetItem(col)
@@ -523,7 +551,10 @@ class DownloadUi(QMainWindow):
 
         self.signal.signal_export_count.emit(len(self.data_filtered.columns))
 
+        self.signal.signal_clear_items.emit(1)
+
         for i, col in enumerate(self.data_filtered.columns):
+            self.signal.signal_cols_analysis.emit(col)
             column = QTableWidgetItem(col)
             self.signal.signal_column_export.emit([i, column])
             i += 1
@@ -579,6 +610,7 @@ class EtlUi(QMainWindow):
         self.rm_filter.clicked.connect(self.rm_el_list_filter)
         self.apply_filter.clicked.connect(self.apply_all_filters)
         self.pushButton.clicked.connect(self.export_file_csv)
+
     def convert_model(self, col):
         itm = QStandardItem(col)
         self.model_col_add.appendRow(itm)
@@ -647,6 +679,29 @@ class EtlUi(QMainWindow):
         self.signal.signal_trim_data.emit([self.drop_list,
                                             self.filter_list])
 
+        try:
+            os.system("rm -r {}".format(
+                os.path.join(os.path.dirname(__file__),
+                "../scripts/SpatialSUSapp/data/"))
+            )
+        except:
+            pass
+
+        self.signal.signal_save.emit(
+            ["header", "true", os.path.join(os.path.dirname(__file__),
+             "../scripts/SpatialSUSapp/data/")
+             ]
+        )
+
+        try:
+            os.system("mv {} {}".format(
+                os.path.join(os.path.dirname(__file__),
+                    "../scripts/SpatialSUSapp/data/*.csv"),
+                os.path.join(os.path.dirname(__file__),
+                    "../scripts/SpatialSUSapp/data/data.csv"))
+            )
+        except:
+            pass
 
     def header_etl(self, col):
         self.table_export.setHorizontalHeaderItem(col[0], col[1])
@@ -831,21 +886,182 @@ class MergeUi(QMainWindow):
             col_n += 1
 
 
+class AnalysisUi(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi(dir_ui + "analysis.ui", self)
+
+        self.signal = Update()
+
+        self.radioButton.toggled.connect(self.configure_combobox)
+        self.radioButton_2.toggled.connect(self.configure_combobox)
+        self.radioButton_3.toggled.connect(self.configure_combobox)
+
+        self.comboBox.currentTextChanged.connect(self.write_column_var)
+        self.comboBox_2.currentTextChanged.connect(self.write_column_var)
+
+        self.comboBox_7.currentTextChanged.connect(self.write_column_var)
+        self.comboBox_8.currentTextChanged.connect(self.write_column_var)
+        self.comboBox_9.currentTextChanged.connect(self.write_column_var)
+        self.comboBox_10.currentTextChanged.connect(self.write_column_var)
+
+        self.lineEdit.textChanged.connect(self.write_text)
+
+        self.pushButton.clicked.connect(self.terminate)
+        self.pushButton_2.clicked.connect(self.start_server)
+
+    def configure_combobox(self):
+        radiobutton = self.sender()
+        if radiobutton.isChecked():
+            if radiobutton.text() == "Espacial":
+               self.comboBox.setEnabled(True)
+               self.comboBox_2.setEnabled(False)
+               self.write_chocie_json("spatial")
+            elif radiobutton.text() == "Espaço temporal":
+                self.comboBox.setEnabled(True)
+                self.comboBox_2.setEnabled(True)
+                self.write_chocie_json("spatio_temporal")
+            elif radiobutton.text() == "Temporal":
+                self.comboBox.setEnabled(False)
+                self.comboBox_2.setEnabled(True)
+                self.write_chocie_json("temporal")
+
+    def write_chocie_json(self, e):
+        with open(dir_sus_conf + "conf.json", "r") as f:
+            data = json.load(f)
+        with open(dir_sus_conf + "conf.json", "w") as f:
+            data["type"] = e
+            json.dump(data, f, indent=4)
+
+    def write_text(self, e):
+        with open(dir_sus_conf + "conf.json", "r") as f:
+            data = json.load(f)
+        with open(dir_sus_conf + "conf.json", "w") as f:
+            data["name"] = e
+            json.dump(data, f, indent=4)
+
+    def write_column_var(self, e):
+        if self.sender().objectName() == "comboBox":
+            self.id_area(self.sender().currentText())
+
+        elif self.sender().objectName() == "comboBox_2":
+            self.time_col(self.sender().currentText())
+
+        elif self.sender().objectName() == "comboBox_7":
+            self.var_cat_0(self.sender().currentText())
+
+        elif self.sender().objectName() == "comboBox_8":
+            self.var_cat_1(self.sender().currentText())
+
+        elif self.sender().objectName() == "comboBox_9":
+            self.var_num_0(self.sender().currentText())
+
+        elif self.sender().objectName() == "comboBox_10":
+            self.var_num_1(self.sender().currentText())
+
+    def id_area(self, var):
+        with open(dir_sus_conf + "conf.json", "r") as f:
+            data = json.load(f)
+        with open(dir_sus_conf + "conf.json", "w") as f:
+            data["id_area"] = var
+            json.dump(data, f, indent=4)
+
+    def time_col(self, var):
+        with open(dir_sus_conf + "conf.json", "r") as f:
+            data = json.load(f)
+        with open(dir_sus_conf + "conf.json", "w") as f:
+            data["time_col"] = var
+            json.dump(data, f, indent=4)
+
+    def var_cat_0(self, var):
+        with open(dir_sus_conf + "conf.json", "r") as f:
+            data = json.load(f)
+        with open(dir_sus_conf + "conf.json", "w") as f:
+            data["var_cat"][0] = var
+            json.dump(data, f, indent=4)
+
+    def var_cat_1(self, var):
+        with open(dir_sus_conf + "conf.json", "r") as f:
+            data = json.load(f)
+        with open(dir_sus_conf + "conf.json", "w") as f:
+            data["var_cat"][1] = var
+            json.dump(data, f, indent=4)
+
+    def var_num_0(self, var):
+        with open(dir_sus_conf + "conf.json", "r") as f:
+            data = json.load(f)
+        with open(dir_sus_conf + "conf.json", "w") as f:
+            data["var_num"][0] = var
+            json.dump(data, f, indent=4)
+
+    def var_num_1(self, var):
+        with open(dir_sus_conf + "conf.json", "r") as f:
+            data = json.load(f)
+        with open(dir_sus_conf + "conf.json", "w") as f:
+            data["var_num"][1] = var
+            json.dump(data, f, indent=4)
+
+    def var_area(self, e):
+        pass
+        # print(e)
+
+    def var_time(self, e):
+        pass
+        # print(e)
+
+    def start_server(self):
+        # import index
+        
+        self.servidor = subprocess.Popen(
+            ["python3", os.path.join(os.path.dirname(__file__),
+            "../scripts/SpatialSUSapp/index.py")
+            ]
+        )
+        # self.servidor = Thread(index.app.run_server)
+        # self.servidor.start()
+
+    def terminate(self):
+        try:
+            self.servidor.kill()
+        except AttributeError:
+            print("Não existe")
+
+    def clear_items(self, val):
+        self.comboBox.clear()
+        self.comboBox_2.clear()
+        self.comboBox_7.clear()
+        self.comboBox_8.clear()
+        self.comboBox_9.clear()
+        self.comboBox_10.clear()
+
+    def update_items(self, cols):
+        self.comboBox.addItem(cols)
+        self.comboBox_2.addItem(cols)
+        self.comboBox_7.addItem(cols)
+        self.comboBox_8.addItem(cols)
+        self.comboBox_9.addItem(cols)
+        self.comboBox_10.addItem(cols)
+
+
 def main():
     app = QApplication(sys.argv)
     app.setApplicationName("pyBIS")
     download = DownloadUi()
     etl = EtlUi()
     merge = MergeUi()
+    analysis = AnalysisUi()
     download.signal.signal_col_etl.connect(etl.convert_model)
     download.signal.signal_col_etl.connect(etl.line_select.addItem)
     download.signal.signal_clear_add.connect(etl.clear_models)
     download.signal.signal_export_count.connect(etl.header_etl_count)
     download.signal.signal_column_export.connect(etl.header_etl)
     download.signal.signal_etl_el.connect(etl.build_table)
+    download.signal.signal_col_etl.connect(analysis.update_items)
+    download.signal.signal_cols_analysis.connect(analysis.update_items)
+    download.signal.signal_clear_items.connect(analysis.clear_items)
     etl.signal.signal_trim_data.connect(download.trim_data)
     etl.signal.signal_save.connect(download.save_file)
-    manager = Manager(download, etl, merge)
+    manager = Manager(download, etl, merge, analysis)
     manager.setWindowIcon(QIcon(dir_ico + "favicon.ico"))
     sys.exit(app.exec_())
 

@@ -1,0 +1,20 @@
+{
+    "name": "ro",
+    "type": "spatio_temporal",
+    "id_area": "CODMUNNASC",
+    "time_col": "DTCADASTRO",
+    "area": "ro",
+    "var_cat": [
+        "CODMUNNASC",
+        "CODMUNNASC"
+    ],
+    "var_num": [
+        "CODMUNNASC",
+        "CODMUNNASC"
+    ],
+    "time_unit": "",
+    "time_range": [
+        "2015",
+        "2016"
+    ]
+}

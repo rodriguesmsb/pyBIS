@@ -1,12 +1,35 @@
 {
-    "database": "SIM",
-    "base": "DO",
-    "limit": [
-        "BA"
+    "name": "analisys",
+    "type": "Espa\u00e7o temporal",
+    "id_area": "ID_MN_RESI",
+    "time_col": "DT_NOTIFIC",
+    "area": "sul",
+    "var_cat": [
+        "",
+        ""
     ],
-    "date_range": [
+    "var_num": [
+        "123123123",
+        "num\u00e9rica 2"
+    ],
+    "time_unit": "",
+    "time_range": [
         "2013",
         "2014",
-        "2015"
+        "2015",
+        "2016",
+        "2017",
+        "2018",
+        "2019",
+        "2020"
+    ],
+    "database": "SINASC",
+    "base": "DN",
+    "limit": [
+        "RO"
+    ],
+    "date_range": [
+        "2015",
+        "2016"
     ]
 }
