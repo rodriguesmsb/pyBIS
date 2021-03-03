@@ -43,7 +43,7 @@ class functions:
         return self.conf_file["time_range"]
 
     def return_data_size(self):
-        return self.data.shape[1]
+        return self.data.shape[0]
 
     def return_area(self):
         return self.conf_file["id_area"]

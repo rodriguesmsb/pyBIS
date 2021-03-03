@@ -13,6 +13,7 @@ import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_leaflet as dl
 from dash_leaflet import express as dlx
+import plotly.express as px
 import pandas as pd
 from aux.functions import functions
 import json
@@ -30,6 +31,16 @@ json_map = path_to_images + "maps/geojs-" + conf.set_json_map() + "-mun.json"
 min_time = conf.return_time_range()[0]
 max_time = conf.return_time_range()[1]
 
+data_hor_bar = conf.read_data()
+data_hor_bar = data_hor_bar.groupby([conf.return_area()]).size().reset_index(name = "count")
+data_hor_bar = data_hor_bar.sort_values(by = ["count"], ascending = False)
+data_hor_bar = data_hor_bar.head()
+
+
+def plot_hor_bar():
+    data_hor_bar[conf.return_area()] = data_hor_bar[conf.return_area()].astype("str") 
+    fig =  px.bar(data_hor_bar, x = "count", y = data_hor_bar[conf.return_area()], orientation='h')
+    return fig
 
 
 
@@ -283,9 +294,12 @@ layout = html.Div(
                 html.Div(
                     children = [
                         dcc.Graph(
+                            id = "hor_bar",
+                            figure = plot_hor_bar(),
+                            className = "side-graph-item"),
+                        dcc.Graph(
                             id = "donut_plot", 
                             className = "side-graph-item"),
-                        dcc.Graph(id = "cov2", className = "side-graph-item")
                     ],
                     className = "side-graph-container"
 

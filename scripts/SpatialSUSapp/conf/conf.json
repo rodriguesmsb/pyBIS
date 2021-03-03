@@ -1,6 +1,6 @@
 {
-    "name": "Meu rabico 4",
-    "type": "spatio_temporal",
+    "name": "lalalalla",
+    "type": "temporal",
     "id_area": "ID_MN_RESI",
     "time_col": "DT_NOTIFIC",
     "area": "ro",
@@ -17,6 +17,7 @@
         "2015",
         "2016",
         "2017",
-        "2018"
+        "2018",
+        "2019"
     ]
 }

@@ -13,7 +13,7 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 import numpy as np
 from app import app
-from apps import spatio_temporal
+from apps import spatio_temporal, temporal
 from aux.functions import functions
 import pandas as pd
 import plotly.graph_objects as go
@@ -85,7 +85,7 @@ def display_page(pathname):
     if pathname == "spatio_temporal":
         return spatio_temporal.layout
     elif pathname == "temporal":
-        return 404
+        return temporal.layout
 
 @app.callback(Output("info", "children"), [Input("geojson", "click_feature")])
 def info_hover(feature):
