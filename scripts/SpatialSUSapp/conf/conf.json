@@ -1,20 +1,20 @@
 {
-    "name": "testando",
+    "name": "ro",
     "type": "spatio_temporal",
-    "id_area": "ID_MN_RESI",
-    "time_col": "DT_NOTIFIC",
-    "area": "sul",
+    "id_area": "CODMUNNASC",
+    "time_col": "DTCADASTRO",
+    "area": "ro",
     "var_cat": [
-        "CS_RACA",
-        "CS_SEXO"
+        "CODMUNNASC",
+        "CODMUNNASC"
     ],
     "var_num": [
-        "num\u00e9rica 1",
-        "num\u00e9rica 2"
+        "CODMUNNASC",
+        "CODMUNNASC"
     ],
     "time_unit": "",
     "time_range": [
-        2014,
-        2019
+        "2015",
+        "2016"
     ]
 }

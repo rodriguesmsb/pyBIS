@@ -1,0 +1,39 @@
+{
+    "database": [
+        {
+            "SIH": [
+                {"SIG": "Internações Hospitalares", "PREFIX": "RD"}
+            ],
+
+            "SIM": [
+                {"SIG": "Óbito", "PREFIX": "DO"},
+                {"SIG": "Óbito Fetal", "PREFIX": "DOFE"}
+            ],
+
+            "SINAN": [
+                {"SIG": "Animais Peçonhentos", "PREFIX": "ANIM"},
+                {"SIG": "Botulismo", "PREFIX": "BOTU"},
+                {"SIG": "Chagas", "PREFIX": "CHAG"},
+                {"SIG": "Cólera", "PREFIX": "COLE"},
+                {"SIG": "Coqueluche", "PREFIX": "COQU"},
+                {"SIG": "Difteria", "PREFIX": "DIFT"},
+                {"SIG": "Esquistossomose", "PREFIX": "ESQU"},
+                {"SIG": "Febre Maculosa", "PREFIX": "FMAC"},
+                {"SIG": "Febre Tifóide", "PREFIX": "FTIF"},
+                {"SIG": "Hanseníase", "PREFIX": "HANS"},
+                {"SIG": "Leptospirose", "PREFIX": "LEPT"},
+                {"SIG": "Meningite", "PREFIX": "MENI"},
+                {"SIG": "Raiva", "PREFIX": "RAIV"},
+                {"SIG": "Tétano", "PREFIX": "TETA"},
+                {"SIG": "Tuberculose", "PREFIX": "TUBE"},
+                {"SIG": "Zika-V", "PREFIX": "ZIKA"},
+                {"SIG": "Dengue", "PREFIX": "DENG"},
+                {"SIG": "Chickungunya", "PREFIX": "CHIK"}
+            ],
+
+            "SINASC": [
+                {"SIG": "Nascidos Vivos", "PREFIX": "DN"}
+            ]
+        }
+    ]
+}
