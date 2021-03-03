@@ -4,6 +4,8 @@ import sys
 import time
 import subprocess
 import os
+import multiprocessing
+import psutil
 import re
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QMessageBox,
         QPushButton, QTableWidgetItem, QTabBar, QTabWidget, QStyle,
@@ -137,9 +139,18 @@ class DownloadUi(QMainWindow):
         self.horizontalSlider.valueChanged.connect(self.return_date)
         self.horizontalSlider_2.valueChanged.connect(self.return_date_)
         self.spinBox.valueChanged.connect(self.mem)
+        swap = psutil.swap_memory()
+        self.spinBox.setMaximum(self.get_size())
         self.spinBox_2.valueChanged.connect(self.cpu)
+        self.spinBox_2.setMaximum(multiprocessing.cpu_count())
 
         self.all_buttons = self.findChildren(QPushButton)
+
+    def get_size(self):
+        swap = psutil.swap_memory()
+        mem = str(swap.total // 1024)
+        mem = mem[0:2]
+        return int(mem)
 
     def reset(self):
         with open(conf + "search.json", "r") as f:
@@ -156,6 +167,12 @@ class DownloadUi(QMainWindow):
         with open(conf + "config.json", "w") as f:
             data["mem"] = "2"
             data["cpu"] = "2"
+            json.dump(data, f, indent=4)
+
+        with open(dir_sus_conf + "conf.json", "r") as f:
+            data = json.load(f)
+        with open(dir_sus_conf + "conf.json", "w") as f:
+            data["time_range"] = [2010]
             json.dump(data, f, indent=4)
 
     def mem(self, val):
@@ -478,6 +495,7 @@ class DownloadUi(QMainWindow):
         self.tableWidget.setColumnCount(len(self.cols))
         self.signal.signal_clear_add.emit(1)
         self.signal.signal_clear_items.emit(1)
+        self.signal.signal_cols_analysis.emit("")
         for i, col in enumerate(self.cols):
             self.signal.signal_col_etl.emit(col)
             column = QTableWidgetItem(col)
@@ -553,6 +571,7 @@ class DownloadUi(QMainWindow):
 
         self.signal.signal_clear_items.emit(1)
 
+        self.signal.signal_cols_analysis.emit("")
         for i, col in enumerate(self.data_filtered.columns):
             self.signal.signal_cols_analysis.emit(col)
             column = QTableWidgetItem(col)
@@ -1001,30 +1020,18 @@ class AnalysisUi(QMainWindow):
             data["var_num"][1] = var
             json.dump(data, f, indent=4)
 
-    def var_area(self, e):
-        pass
-        # print(e)
-
-    def var_time(self, e):
-        pass
-        # print(e)
-
     def start_server(self):
-        # import index
-        
         self.servidor = subprocess.Popen(
             ["python3", os.path.join(os.path.dirname(__file__),
             "../scripts/SpatialSUSapp/index.py")
             ]
         )
-        # self.servidor = Thread(index.app.run_server)
-        # self.servidor.start()
 
     def terminate(self):
         try:
             self.servidor.kill()
         except AttributeError:
-            print("Não existe")
+            print("O servidor não está em execução!")
 
     def clear_items(self, val):
         self.comboBox.clear()

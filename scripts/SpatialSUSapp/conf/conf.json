@@ -1,23 +1,19 @@
 {
     "name": "lalalalla",
     "type": "temporal",
-    "id_area": "ID_MN_RESI",
-    "time_col": "DT_NOTIFIC",
-    "area": "ro",
+    "id_area": "",
+    "time_col": "",
+    "area": "ac",
     "var_cat": [
-        "CS_SEXO",
-        "CS_RACA"
+        "ACIDTRAB",
+        "ACIDTRAB"
     ],
     "var_num": [
-        "DT_NOTIFIC",
-        "DT_NOTIFIC"
+        "ACIDTRAB",
+        "ACIDTRAB"
     ],
     "time_unit": "",
     "time_range": [
-        "2015",
-        "2016",
-        "2017",
-        "2018",
-        "2019"
+        2010
     ]
 }
