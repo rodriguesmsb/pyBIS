@@ -16,6 +16,7 @@ from PyQt5.QtCore import (QThread, pyqtSignal, QObject, QMetaType, QRect,
 from PyQt5 import uic
 import json
 import pandas as pd
+import webbrowser
 
 from pydatasus import PyDatasus
 from f_spark import spark_conf, start_spark
@@ -1026,10 +1027,13 @@ class AnalysisUi(QMainWindow):
             "../scripts/SpatialSUSapp/index.py")
             ]
         )
+        self.nav = Thread(webbrowser.open, "127.0.0.1:8050")
+        self.nav.start()
 
     def terminate(self):
         try:
             self.servidor.kill()
+            self.nav.stop()
         except AttributeError:
             print("O servidor não está em execução!")
 

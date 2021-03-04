@@ -1,35 +1,20 @@
 {
-<<<<<<< HEAD
-    "name": "lalalalla",
-    "type": "temporal",
-    "id_area": "",
-    "time_col": "",
-    "area": "ba",
-=======
-    "name": "Analises Dengue RO",
+    "name": "teste",
     "type": "spatio_temporal",
-    "id_area": "ID_MN_RESI",
-    "time_col": "DT_NOTIFIC",
+    "id_area": "ID_MUNICIP",
+    "time_col": "DT_OBITO",
     "area": "ro",
->>>>>>> 9421eb3a4f71d798e99d5bd3f9443e150d5063c9
     "var_cat": [
-        "CS_SEXO",
-        "CS_RACA"
+        "TP_NOT",
+        "CS_SEXO"
     ],
     "var_num": [
-        "ACIDTRAB",
+        "",
         "ACIDTRAB"
     ],
     "time_unit": "",
     "time_range": [
         "2015",
-        "2016",
-        "2017",
-<<<<<<< HEAD
-        "2018"
-=======
-        "2018",
-        "2019"
->>>>>>> 9421eb3a4f71d798e99d5bd3f9443e150d5063c9
+        "2016"
     ]
 }
