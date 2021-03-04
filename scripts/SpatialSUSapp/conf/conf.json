@@ -3,7 +3,7 @@
     "type": "temporal",
     "id_area": "",
     "time_col": "",
-    "area": "ac",
+    "area": "sul",
     "var_cat": [
         "ACIDTRAB",
         "ACIDTRAB"
@@ -14,6 +14,9 @@
     ],
     "time_unit": "",
     "time_range": [
-        2010
+        "2015",
+        "2016",
+        "2017",
+        "2018"
     ]
 }
