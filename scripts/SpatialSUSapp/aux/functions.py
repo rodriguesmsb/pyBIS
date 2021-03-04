@@ -29,6 +29,13 @@ class functions:
             json_map["features"][i]['properties'].update(data)
             return json_map
 
+    def format_date(self, series):
+        day = pd.to_datetime(series, format = "%Y-%m-%d", errors = "coerce")
+        year = day.dt.year
+        month = day.dt.month
+        week = day.dt.week
+        return [day,year,month, week]
+
     def return_title(self):
         return self.conf_file["name"]
         

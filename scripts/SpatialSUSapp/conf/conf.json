@@ -1,12 +1,12 @@
 {
-    "name": "teste",
+    "name": "La analise del denguito",
     "type": "spatio_temporal",
-    "id_area": "ID_MUNICIP",
-    "time_col": "DT_OBITO",
+    "id_area": "ID_MN_RESI",
+    "time_col": "DT_NOTIFIC",
     "area": "ro",
     "var_cat": [
-        "TP_NOT",
-        "CS_SEXO"
+        "CS_SEXO",
+        "CS_GESTANT"
     ],
     "var_num": [
         "",
@@ -15,6 +15,9 @@
     "time_unit": "",
     "time_range": [
         "2015",
-        "2016"
+        "2016",
+        "2017",
+        "2018",
+        "2019"
     ]
 }

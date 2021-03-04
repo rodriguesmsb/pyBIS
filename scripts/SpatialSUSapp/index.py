@@ -39,20 +39,19 @@ def get_id(feature = None):
 path_to_data = "scripts/SpatialSUSapp/data/data.csv"
 path_to_json =  "scripts/SpatialSUSapp/conf/conf.json"
 
-# path_to_data = "data/data.csv"
-# path_to_json =  "conf/conf.json"
 
 conf = functions(conf_file = path_to_json, data = path_to_data)
 
 data = conf.read_data()
 
-ts = data.groupby([conf.return_area(), conf.return_time()]).size().reset_index(name = "count")
+data["day"], data["year"], data["month"], data["week"]  = conf.format_date(data[conf.return_time()])
 
 
+ts = data.groupby([conf.return_area(), "day"]).size().reset_index(name = "count")
 
 def plotTs(df):
     cases_trace = go.Scatter(
-        x  = df[conf.return_time()],
+        x  = df["day"],
         y =  df["count"],
         mode ='markers',
         name = "Fitted",
@@ -93,7 +92,7 @@ def info_hover(feature):
     return get_info(feature)
 
 
-@app.callback(Output(component_id = "time-series-cases", component_property = "figure"),
+@app.callback(Output(component_id = "time-series-graph", component_property = "figure"),
               [Input(component_id = "geojson", component_property = "click_feature")])
 def update_Graph(feature):
     filtered_df = ts[ts[conf.return_area()] == get_id(feature)]
@@ -109,6 +108,14 @@ def update_table(feature):
 
     summary = summary.rename(columns = {"index": " "})
     return [summary.to_dict("records")]
+
+
+# @app.callback(Output(component_id = "time-series-graph", component_property = "figure"),
+#               [Input(component_id = "geojson", component_property = "click_feature"),
+#                Input(component_id = "time-unit", component_property = "value")])
+# def update_ts(feature, selected_unit):
+
+
 
 
 
