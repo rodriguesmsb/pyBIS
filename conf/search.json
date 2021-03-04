@@ -26,14 +26,13 @@
     "database": "SINAN",
     "base": "DENG",
     "limit": [
-        "SC",
-        "RS",
-        "PR"
+        "RO"
     ],
     "date_range": [
         "2015",
         "2016",
         "2017",
-        "2018"
+        "2018",
+        "2019"
     ]
 }

@@ -1,12 +1,12 @@
 {
-    "name": "lalalalla",
-    "type": "temporal",
-    "id_area": "",
-    "time_col": "",
-    "area": "sul",
+    "name": "Analises Dengue RO",
+    "type": "spatio_temporal",
+    "id_area": "ID_MN_RESI",
+    "time_col": "DT_NOTIFIC",
+    "area": "ro",
     "var_cat": [
-        "ACIDTRAB",
-        "ACIDTRAB"
+        "CS_SEXO",
+        "CS_RACA"
     ],
     "var_num": [
         "ACIDTRAB",
@@ -17,6 +17,7 @@
         "2015",
         "2016",
         "2017",
-        "2018"
+        "2018",
+        "2019"
     ]
 }
