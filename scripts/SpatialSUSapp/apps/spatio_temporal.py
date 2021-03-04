@@ -27,7 +27,6 @@ path_to_images = "scripts/SpatialSUSapp/assets/"
 conf = functions(conf_file = path_to_json, data = path_to_data)
 json_map = path_to_images + "maps/geojs-" + conf.set_json_map() + "-mun.json"
 
-
 min_time = conf.return_time_range()[0]
 max_time = conf.return_time_range()[1]
 
@@ -36,24 +35,19 @@ data_hor_bar = data_hor_bar.groupby([conf.return_area()]).size().reset_index(nam
 data_hor_bar = data_hor_bar.sort_values(by = ["count"], ascending = False)
 data_hor_bar = data_hor_bar.head()
 
-
 def plot_hor_bar():
     data_hor_bar[conf.return_area()] = data_hor_bar[conf.return_area()].astype("str") 
     fig =  px.bar(data_hor_bar, x = "count", y = data_hor_bar[conf.return_area()], orientation='h')
     return fig
 
-
-
-######Add functions to json here
-with open(json_map, 'r') as f:
+#### read geojson data
+with open(json_map, "r") as f:
     json_data = json.load(f)
 
-    
-with open(json_map, 'w') as m:
-    json.dump(json_data, m, indent = 4)
-
-##### load json to plot here
-json_map = "assets/maps/geojs-" + conf.set_json_map() + "-mun.json"
+geojson = dl.GeoJSON(
+    data = json_data, 
+    zoomToBoundsOnClick = False,
+    id = "geojson")
 
 #### define function to hover on map
 def get_info(feature = None):
@@ -170,10 +164,7 @@ layout = html.Div(
                                     zoom = 4,
                                     children = [
                                         dl.TileLayer(),
-                                        dl.GeoJSON(
-                                            url = json_map,
-                                            id = "geojson",
-                                            zoomToBoundsOnClick = False),
+                                        geojson,
                                         html.Div(
                                             children = get_info(), 
                                             id = "info", className = "info",
@@ -232,16 +223,7 @@ layout = html.Div(
                         html.Br(),
                         html.Label(
                             ["Selecione o intervalo de tempo",
-                            dcc.RangeSlider(
-                                id = "range-select",
-                                min = min_time,
-                                max = max_time,
-                                step = 1,
-                                marks = {
-                                    min_time: {'label': str(min_time), 'style': {'color': '#77b0b1'}},
-                                    max_time: {'label': str(max_time), 'style': {'color': '#77b0b1'}}
-
-                                },
+                            dcc.RangeSlider(    options=dict(style=ns("style")),
                                 value = [min_time, max_time],
                                 className = "side-bar-item")
                                 ],

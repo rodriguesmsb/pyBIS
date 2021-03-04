@@ -20,6 +20,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 
 
+
 #### define function to hover on map
 def get_info(feature=None):
     header = [html.H4("Municipio")]

@@ -17,4 +17,9 @@ __pycache__/
 .vscode/
 scripts/SpatialSUSapp/conf/conf.json
 scripts/SpatialSUSapp/data/data.csv
+conf/config.json
+conf/search.json
+x-special/nautilus-clipboard
+copy
+scripts/SpatialSUSapp/data/_SUCCESS
 
