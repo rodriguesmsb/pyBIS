@@ -17,4 +17,7 @@ __pycache__/
 .vscode/
 scripts/SpatialSUSapp/conf/conf.json
 scripts/SpatialSUSapp/data/data.csv
+conf/config.json
+conf/search.json
+
 
