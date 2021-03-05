@@ -6,7 +6,7 @@ Atualmente a forma mais fácil de utilizar a interface é clonando o repositóri
 
 
 ```shell
-python3 GUI/__main__.py
+python3 app/gui.py
 ```
 
 # Recursos implantados
