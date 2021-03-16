@@ -1,4 +1,4 @@
-# CIDACS-pyBIS: Uma interface gráfica para trabalhar com dados dos Sistemas de informação Brasileiros
+# pyBIS: Uma interface gráfica para trabalhar com dados dos Sistemas de informação Brasileiros
 
 ## Instalação
 
