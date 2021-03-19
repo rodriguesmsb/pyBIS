@@ -27,8 +27,8 @@ path_to_images = "scripts/SpatialSUSapp/assets/"
 conf = functions(conf_file = path_to_json, data = path_to_data)
 json_map = path_to_images + "maps/geojs-" + conf.set_json_map() + "-mun.json"
 
-min_time = conf.return_time_range()[0]
-max_time = conf.return_time_range()[1]
+min_time = int(conf.return_time_range()[0])
+max_time = int(conf.return_time_range()[-1])
 
 data_hor_bar = conf.read_data()
 data_hor_bar = data_hor_bar.groupby([conf.return_area()]).size().reset_index(name = "count")
@@ -43,6 +43,7 @@ def plot_hor_bar():
 #### read geojson data
 with open(json_map, "r") as f:
     json_data = json.load(f)
+
 
 geojson = dl.GeoJSON(
     data = json_data, 
@@ -189,7 +190,7 @@ layout = html.Div(
                             id = "time-series",
                             children = [
                                 dcc.Graph(
-                                    id = "time-series-cases",
+                                    id = "time-series-graph",
                                     className = "ts-graph"
                                 )
                             ],
@@ -215,20 +216,39 @@ layout = html.Div(
                         html.Br(),
                         html.Br(),
                         html.Label(
-                            ["Selecione uma variável", 
-                             dcc.Dropdown(id = "var-select", className = "side-bar-item", multi = False)],
-                             className = "side-bar-text"
-                             ),
-                        html.Br(),
-                        html.Br(),
-                        html.Label(
                             ["Selecione o intervalo de tempo",
-                            dcc.RangeSlider(    options=dict(style=ns("style")),
+                            dcc.RangeSlider(
+                                id = "range-select",
+                                min = min_time,
+                                max = max_time,
+                                step = 1,
+                                marks = {
+                                    min_time: {'label': str(min_time), 'style': {'color': '#77b0b1'}},
+                                    max_time: {'label': str(max_time), 'style': {'color': '#77b0b1'}}
+
+                                },
                                 value = [min_time, max_time],
                                 className = "side-bar-item")
                                 ],
                                 className = "side-bar-text"
                                 ),
+                        html.Br(),
+                        html.Br(),
+                        html.Label(
+                            ["Selecione a unidade de tempo",
+                            dcc.RadioItems(
+                                id = "time-unit",
+                                options = [
+                                    {"label": "Dia", "value": "dia"},
+                                    {"label": "Semana", "value": "semana"},
+                                    {"label": "Mês", "value": "mes"},
+                                    {"label": "Ano", "value": "ano"}
+                                ],
+                                value = "dia",
+                                style={'margin-top': '10px'}
+                            )],
+                             className = "side-bar-text"
+                             ),
                         html.Br(),
                         html.Br(),
                         html.Label(

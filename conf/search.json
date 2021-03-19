@@ -23,8 +23,13 @@
         "2019",
         "2020"
     ],
+<<<<<<< HEAD
     "database": "SIM",
     "base": "DOFET",
+=======
+    "database": "SINAN",
+    "base": "ANIM",
+>>>>>>> 9f7097be0995cb779f76b3e2f72529a998de4148
     "limit": [
         "AC, AP, AM, PA, RO, RR, TO",
         "DF, GO, MT, MS",
@@ -33,8 +38,16 @@
         "ES, MG, RJ, SP"
     ],
     "date_range": [
+<<<<<<< HEAD
         "2013",
         "2014",
         "2015"
+=======
+        "2015",
+        "2016",
+        "2017",
+        "2018",
+        "2019"
+>>>>>>> 9f7097be0995cb779f76b3e2f72529a998de4148
     ]
 }
