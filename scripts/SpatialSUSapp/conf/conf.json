@@ -1,9 +1,9 @@
 {
     "name": "teste",
     "type": "spatio_temporal",
-    "id_area": "ID_MUNICIP",
-    "time_col": "DT_OBITO",
-    "area": "ro",
+    "id_area": "",
+    "time_col": "",
+    "area": "ac, ap, am, pa, ro, rr, todf, go, mt, msal, ba, ce, ma, pb, pe, pi, rn, sepr, rs, sces, mg, rj, sp",
     "var_cat": [
         "TP_NOT",
         "CS_SEXO"
@@ -14,7 +14,8 @@
     ],
     "time_unit": "",
     "time_range": [
-        "2015",
-        "2016"
+        "2013",
+        "2014",
+        "2015"
     ]
 }

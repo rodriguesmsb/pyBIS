@@ -1,39 +1,17 @@
 {
-    "database": [
-        {
-            "SIH": [
-                {"SIG": "Internações Hospitalares", "PREFIX": "RD"}
-            ],
+    "SIH": {"Internações Hospitalares": "RD"},
 
-            "SIM": [
-                {"SIG": "Óbito", "PREFIX": "DO"},
-                {"SIG": "Óbito Fetal", "PREFIX": "DOFE"}
-            ],
+    "SIM": {"Óbito": "DO", "Óbito Fetal": "DOFET"},
 
-            "SINAN": [
-                {"SIG": "Animais Peçonhentos", "PREFIX": "ANIM"},
-                {"SIG": "Botulismo", "PREFIX": "BOTU"},
-                {"SIG": "Chagas", "PREFIX": "CHAG"},
-                {"SIG": "Cólera", "PREFIX": "COLE"},
-                {"SIG": "Coqueluche", "PREFIX": "COQU"},
-                {"SIG": "Difteria", "PREFIX": "DIFT"},
-                {"SIG": "Esquistossomose", "PREFIX": "ESQU"},
-                {"SIG": "Febre Maculosa", "PREFIX": "FMAC"},
-                {"SIG": "Febre Tifóide", "PREFIX": "FTIF"},
-                {"SIG": "Hanseníase", "PREFIX": "HANS"},
-                {"SIG": "Leptospirose", "PREFIX": "LEPT"},
-                {"SIG": "Meningite", "PREFIX": "MENI"},
-                {"SIG": "Raiva", "PREFIX": "RAIV"},
-                {"SIG": "Tétano", "PREFIX": "TETA"},
-                {"SIG": "Tuberculose", "PREFIX": "TUBE"},
-                {"SIG": "Zika-V", "PREFIX": "ZIKA"},
-                {"SIG": "Dengue", "PREFIX": "DENG"},
-                {"SIG": "Chickungunya", "PREFIX": "CHIK"}
-            ],
+    "SINAN": {"Animais Peçonhentos": "ANIM", "Botulismo": "BOTU",
+        "Chagas": "CHAG", "Cólera": "COLE",
+        "Coqueluche": "COQU", "Difteria": "DIFT",
+        "Esquistossomose": "ESQU", "Febre Maculosa": "FMAC",
+        "Febre Tifóide": "FTIF", "Hanseníase": "HANS",
+        "Leptospirose": "LEPT", "Meningite": "MENI",
+        "Raiva": "RAIV", "Tétano": "TETA",
+        "Tuberculose": "TUBE", "Zika-V": "ZIKA",
+        "Dengue": "DENG", "Chickungunya": "CHIK"},
 
-            "SINASC": [
-                {"SIG": "Nascidos Vivos", "PREFIX": "DN"}
-            ]
-        }
-    ]
+    "SINASC": {"Nascidos Vivos": "DN"}
 }

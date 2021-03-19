@@ -23,13 +23,18 @@
         "2019",
         "2020"
     ],
-    "database": "SINAN",
-    "base": "ZIKA",
+    "database": "SIM",
+    "base": "DOFET",
     "limit": [
-        "RO"
+        "AC, AP, AM, PA, RO, RR, TO",
+        "DF, GO, MT, MS",
+        "AL, BA, CE, MA, PB, PE, PI, RN, SE",
+        "PR, RS, SC",
+        "ES, MG, RJ, SP"
     ],
     "date_range": [
-        "2015",
-        "2016"
+        "2013",
+        "2014",
+        "2015"
     ]
 }
