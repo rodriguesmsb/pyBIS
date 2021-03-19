@@ -123,6 +123,10 @@ class Thread(QThread):
 
 class DownloadUi(QMainWindow):
 
+    signal_clear_add = pyqtSignal(int)
+    signal_clear_items = pyqtSignal(int)
+    signal_cols_analysis = pyqtSignal(str)
+
     def __init__(self):
         super().__init__()
         uic.loadUi(dir_ui + "download.ui", self)
@@ -190,17 +194,6 @@ class DownloadUi(QMainWindow):
             data["cpu"] = val
             json.dump(data, f, indent=4)
 
-    def read_json_database(self, choice: str) -> list:
-        values = []
-        self.comboBox_2.setEnabled(True)
-        with open(conf + "database.json", "r") as f:
-            database = json.load(f)
-            database = database["database"]
-            for base in database:
-                for val in base.get(choice):
-                    values.append(list(val.values())[0])
-            return sorted(values)
-
     def return_code_base(self, choice: str) -> str:
             if self.comboBox.currentText().lower() == "sihsus":
                 self.write_base("RD")
@@ -208,11 +201,12 @@ class DownloadUi(QMainWindow):
                     != "selecionar sistema de dados"):
                 with open(conf + "database.json", "r") as f:
                     database_json = json.load(f)
-                    database_json = database_json["database"]
-                    for base in database_json:
-                        for val in base.get(self.comboBox.currentText()):
-                            if choice == list(val.values())[0]:
-                                self.write_base(list(val.values())[1])
+                    try:
+                        self.write_base(
+                            database_json[self.comboBox.currentText()][choice]
+                        )
+                    except KeyError:
+                        pass
             else:
                 self.write_base("")
 
@@ -220,53 +214,34 @@ class DownloadUi(QMainWindow):
         ufs = set()
         with open(conf + "locales.json", "r") as f:
             stts_json = json.load(f)
-            stts_json = stts_json["estados"]
-            for stt_keys in stts_json:
-                if limit == stt_keys.get(limit):
-                    ufs.add(stt_keys.get("UF"))
-                elif limit == stt_keys.get(list(stt_keys.keys())[1]):
-                    ufs.add(stt_keys.get("UF"))
-                elif limit == stt_keys.get(list(stt_keys.keys())[3]):
-                    ufs.add(stt_keys.get("UF"))
+            if limit != '':
+                if limit != 'Brasil':
+                    ufs.add(stts_json[limit])
+                else:
+                    ufs.add(stts_json['Norte'])
+                    ufs.add(stts_json['Nordeste'])
+                    ufs.add(stts_json['Centro-Oeste'])
+                    ufs.add(stts_json['Sudeste'])
+                    ufs.add(stts_json['Sul'])
 
-        with open(conf + "search.json", "r") as f:
-            data = json.load(f)
-        with open(conf + "search.json", "w") as f:
-            data["limit"] = list(ufs)
-            json.dump(data, f, indent=4)
+            with open(conf + "search.json", "r") as f:
+                data = json.load(f)
+            with open(conf + "search.json", "w") as f:
+                data["limit"] = list(ufs)
+                json.dump(data, f, indent=4)
 
         with open(dir_sus_conf + "conf.json", "r") as f:
             data = json.load(f)
         with open(dir_sus_conf + "conf.json", "w") as f:
             if limit == "BRASIL":
                 data["area"] = limit.lower()
-            elif limit in ["Centro-Oeste", "Nordeste",
-                           "Norte", "Sudeste", "Sul"]:
+            elif limit in ['Norte', 'Nordeste', 'Centro-Oeste',
+                            'Sudeste', 'Sul']:
                 data["area"] = limit.lower()
             else:
                 data["area"] = ''.join(list(ufs)).lower()
 
             json.dump(data, f, indent=4)
-
-
-    def load_json_locales(self, choice: str) -> list:
-        stts = []
-        region = set()
-        self.comboBox_4.setEnabled(True)
-        with open(conf + "locales.json", "r") as f:
-            locales = json.load(f)
-            locales = locales["estados"]
-            if choice == "ESTADO":
-                for limit in locales:
-                    stts.append(limit.get(choice))
-                    stts.sort()
-                return stts
-            elif choice == "REGIÃO":
-                for limit in locales:
-                    region.add(limit.get(choice))
-                return sorted(list(region))
-            else:
-                return ["BRASIL"]
 
     def write_database(self, database: str):
         if database.lower() == "selecionar sistema de dados":
@@ -281,7 +256,6 @@ class DownloadUi(QMainWindow):
             with open(conf + "search.json", "w") as f:
                     data["database"] = database
                     json.dump(data, f, indent=4)
-
 
     def write_base(self, base: str):
         with open(conf + "search.json", "r") as f:
@@ -312,20 +286,66 @@ class DownloadUi(QMainWindow):
             self.write_date([str(date)])
 
     def load_database(self, database: str):
-        self.comboBox_2.clear()
-        if (database.lower() != "selecionar sistema de dados"
-                and database.lower() != "sihsus"):
-            self.comboBox_2.addItems(self.read_json_database(database))
-        elif database.lower() == "sihsus":
-            self.comboBox_2.addItems(self.read_json_database("SIH"))
+        def read_json_database(database):
+            with open(conf + 'database.json', 'r') as f:
+                self.comboBox_2.clear()
+                self.comboBox_2.setEnabled(True)
+                bases = []
+                data = json.load(f)
+                data = data[database]
+                for base in data:
+                    bases.append(base)
+                bases.sort()
+                self.comboBox_2.addItems(bases)
+
+        if database.lower() != 'selecionar sistema de dados':
+            if database.lower() == 'sihsus':
+                database = 'SIH'
+                read_json_database(database)
+            else:
+                read_json_database(database)
         else:
+            self.comboBox_2.clear()
             self.comboBox_2.setEnabled(False)
 
     def load_limit(self, limit: str):
-        self.comboBox_4.clear()
+        def load_states():
+            with open(conf + 'locales.json', 'r') as f:
+                self.comboBox_4.setEnabled(True)
+                states = json.load(f)
+                states_list = []
+                for keys in states.keys():
+                    if keys not in ['Norte', 'Nordeste', 
+                            'Sudeste', 'Sul', 'Centro-Oeste']:
+                        states_list.append(keys)
+                        states_list.sort()
+                self.comboBox_4.clear()
+                self.comboBox_4.addItems(states_list)
+
+        def load_region():
+            with open(conf + 'locales.json', 'r') as f:
+                self.comboBox_4.setEnabled(True)
+                states = json.load(f)
+                states_list = []
+                for keys in states.keys():
+                    if keys in ['Norte', 'Nordeste', 
+                            'Sudeste', 'Sul', 'Centro-Oeste']:
+                        states_list.append(keys)
+                        states_list.sort()
+                self.comboBox_4.clear()
+                self.comboBox_4.addItems(states_list)
+
         if limit.lower() != "selecionar local":
-            self.comboBox_4.addItems(self.load_json_locales(limit))
+            if limit.lower() == 'estado':
+                load_states()
+            elif limit.lower() == 'região':
+                load_region()
+            elif limit.lower() == 'brasil':
+                self.comboBox_4.clear()
+                self.comboBox_4.addItem('Brasil')
+                self.comboBox_4.setEnabled(False)
         else:
+            self.comboBox_4.clear()
             self.comboBox_4.setEnabled(False)
 
     def return_date(self, date: int) -> list:
@@ -368,7 +388,6 @@ class DownloadUi(QMainWindow):
                                           *self.load_conf()
             )
             self.thread_download.start()
-            # QApplication.processEvents()
 
     def finished(self, val):
         [btn.setEnabled(True) for btn in self.all_buttons]
