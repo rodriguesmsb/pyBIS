@@ -1,35 +1,19 @@
 {
-    "name": "La analise del denguito",
-    "type": "spatio_temporal",
-<<<<<<< HEAD
-    "id_area": "",
+    "name": "teste",
+    "type": "spatial",
+    "id_area": "SG_UF_NOT",
     "time_col": "",
-    "area": "ac, ap, am, pa, ro, rr, todf, go, mt, msal, ba, ce, ma, pb, pe, pi, rn, sepr, rs, sces, mg, rj, sp",
-=======
-    "id_area": "ID_MN_RESI",
-    "time_col": "DT_NOTIFIC",
     "area": "ro",
->>>>>>> 9f7097be0995cb779f76b3e2f72529a998de4148
     "var_cat": [
-        "CS_SEXO",
+        "ANI_SERPEN",
         "CS_GESTANT"
     ],
     "var_num": [
-        "",
+        "ANI_ARANHA",
         "ACIDTRAB"
     ],
     "time_unit": "",
     "time_range": [
-<<<<<<< HEAD
-        "2013",
-        "2014",
-        "2015"
-=======
-        "2015",
-        "2016",
-        "2017",
-        "2018",
-        "2019"
->>>>>>> 9f7097be0995cb779f76b3e2f72529a998de4148
+        2010
     ]
 }

@@ -11,8 +11,8 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QMessageBox,
         QPushButton, QTableWidgetItem, QTabBar, QTabWidget, QStyle,
         QStyleOptionTab, QStylePainter, QFileDialog)
 from PyQt5.QtGui import QFont, QIcon, QStandardItemModel, QStandardItem
-from PyQt5.QtCore import (QThread, pyqtSignal, QObject, QMetaType, QRect,
-        QPoint, pyqtSlot, Qt)
+from PyQt5.QtCore import (QThread, pyqtSignal, QObject, QRect, QPoint,
+        pyqtSlot, Qt)
 from PyQt5 import uic
 import json
 import pandas as pd
@@ -144,7 +144,6 @@ class DownloadUi(QMainWindow):
         self.horizontalSlider.valueChanged.connect(self.return_date)
         self.horizontalSlider_2.valueChanged.connect(self.return_date_)
         self.spinBox.valueChanged.connect(self.mem)
-        swap = psutil.swap_memory()
         self.spinBox.setMaximum(self.get_size())
         self.spinBox_2.valueChanged.connect(self.cpu)
         self.spinBox_2.setMaximum(multiprocessing.cpu_count())
