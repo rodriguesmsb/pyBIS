@@ -157,7 +157,7 @@ class DownloadUi(QMainWindow):
         return int(mem)
 
     def reset(self):
-        with open(conf + "search.json", "r") as f:
+        with open(conf + "search.json", "r", encoding='utf8') as f:
             data = json.load(f)
         with open(conf + "search.json", "w") as f:
             data["database"] = ""
@@ -166,28 +166,28 @@ class DownloadUi(QMainWindow):
             data["date_range"] = ["2010"]
             json.dump(data, f, indent=4)
 
-        with open(conf + "config.json", "r") as f:
+        with open(conf + "config.json", "r", encoding='utf8') as f:
             data = json.load(f)
         with open(conf + "config.json", "w") as f:
             data["mem"] = "2"
             data["cpu"] = "2"
             json.dump(data, f, indent=4)
 
-        with open(dir_sus_conf + "conf.json", "r") as f:
+        with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
             data = json.load(f)
         with open(dir_sus_conf + "conf.json", "w") as f:
             data["time_range"] = [2010]
             json.dump(data, f, indent=4)
 
     def mem(self, val):
-        with open(conf + "config.json", "r") as f:
+        with open(conf + "config.json", "r", encoding='utf8') as f:
             data = json.load(f)
         with open(conf + "config.json", "w") as f:
             data["mem"] = val
             json.dump(data, f, indent=4)
 
     def cpu(self, val):
-        with open(conf + "config.json", "r") as f:
+        with open(conf + "config.json", "r", encoding='utf8') as f:
             data = json.load(f)
         with open(conf + "config.json", "w") as f:
             data["cpu"] = val
@@ -198,7 +198,7 @@ class DownloadUi(QMainWindow):
                 self.write_base("RD")
             elif (self.comboBox.currentText().lower() 
                     != "selecionar sistema de dados"):
-                with open(conf + "database.json", "r") as f:
+                with open(conf + "database.json", "r", encoding='utf8') as f:
                     database_json = json.load(f)
                     try:
                         self.write_base(
@@ -211,7 +211,7 @@ class DownloadUi(QMainWindow):
 
     def return_uf(self, limit: str)-> str:
         ufs = set()
-        with open(conf + "locales.json", "r") as f:
+        with open(conf + "locales.json", "r", encoding='utf8') as f:
             stts_json = json.load(f)
             if limit != '':
                 if limit != 'Brasil':
@@ -223,13 +223,13 @@ class DownloadUi(QMainWindow):
                     ufs.add(stts_json['Sudeste'])
                     ufs.add(stts_json['Sul'])
 
-            with open(conf + "search.json", "r") as f:
+            with open(conf + "search.json", "r", encoding='utf8') as f:
                 data = json.load(f)
             with open(conf + "search.json", "w") as f:
                 data["limit"] = list(ufs)
                 json.dump(data, f, indent=4)
 
-        with open(dir_sus_conf + "conf.json", "r") as f:
+        with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
             data = json.load(f)
         with open(dir_sus_conf + "conf.json", "w") as f:
             if limit == "BRASIL":
@@ -244,33 +244,33 @@ class DownloadUi(QMainWindow):
 
     def write_database(self, database: str):
         if database.lower() == "selecionar sistema de dados":
-            with open(conf + "search.json", "r") as f:
+            with open(conf + "search.json", "r", encoding='utf8') as f:
                 data = json.load(f)
             with open(conf + "search.json", "w") as f:
                     data["database"] = ""
                     json.dump(data, f, indent=4)
         else:
-            with open(conf + "search.json", "r") as f:
+            with open(conf + "search.json", "r", encoding='utf8') as f:
                 data = json.load(f)
             with open(conf + "search.json", "w") as f:
                     data["database"] = database
                     json.dump(data, f, indent=4)
 
     def write_base(self, base: str):
-        with open(conf + "search.json", "r") as f:
+        with open(conf + "search.json", "r", encoding='utf8') as f:
             data = json.load(f)
         with open(conf + "search.json", "w") as f:
             data["base"] = base
             json.dump(data, f, indent=4)
 
     def write_date(self, date: list):
-        with open(conf + "search.json", "r") as f:
+        with open(conf + "search.json", "r", encoding='utf8') as f:
             data = json.load(f)
         with open(conf + "search.json", "w") as f:
             data["date_range"] = date
             json.dump(data, f, indent=4)
 
-        with open(dir_sus_conf + "conf.json", "r") as f:
+        with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
             data = json.load(f)
         with open(dir_sus_conf + "conf.json", "w") as f:
             data["time_range"] = date
@@ -286,7 +286,7 @@ class DownloadUi(QMainWindow):
 
     def load_database(self, database: str):
         def read_json_database(database):
-            with open(conf + 'database.json', 'r') as f:
+            with open(conf + 'database.json', 'r', encoding='utf8') as f:
                 self.comboBox_2.clear()
                 self.comboBox_2.setEnabled(True)
                 bases = []
@@ -309,7 +309,7 @@ class DownloadUi(QMainWindow):
 
     def load_limit(self, limit: str):
         def load_states():
-            with open(conf + 'locales.json', 'r') as f:
+            with open(conf + 'locales.json', 'r', encoding='utf8') as f:
                 self.comboBox_4.setEnabled(True)
                 states = json.load(f)
                 states_list = []
@@ -322,7 +322,7 @@ class DownloadUi(QMainWindow):
                 self.comboBox_4.addItems(states_list)
 
         def load_region():
-            with open(conf + 'locales.json', 'r') as f:
+            with open(conf + 'locales.json', 'r', encoding='utf8') as f:
                 self.comboBox_4.setEnabled(True)
                 states = json.load(f)
                 states_list = []
@@ -354,7 +354,7 @@ class DownloadUi(QMainWindow):
         self.return_list_date(date_, self.horizontalSlider.value())
 
     def load_conf(self):
-        with open(conf + "search.json") as f:
+        with open(conf + "search.json", 'r', encoding='utf8') as f:
             data = json.load(f)
             database = data["database"]
             base = data["base"]
@@ -489,7 +489,7 @@ class DownloadUi(QMainWindow):
                 error.exec_()
 
     def read_file(self):
-        with open(conf + "config.json", "r") as f:
+        with open(conf + "config.json", "r", encoding='utf8') as f:
             data = json.load(f)
             self.conf = spark_conf("pyBIS", data["cpu"], data["mem"],
                 driver_memory=20
@@ -965,14 +965,14 @@ class AnalysisUi(QMainWindow):
                 self.write_chocie_json("temporal")
 
     def write_chocie_json(self, e):
-        with open(dir_sus_conf + "conf.json", "r") as f:
+        with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
             data = json.load(f)
         with open(dir_sus_conf + "conf.json", "w") as f:
             data["type"] = e
             json.dump(data, f, indent=4)
 
     def write_text(self, e):
-        with open(dir_sus_conf + "conf.json", "r") as f:
+        with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
             data = json.load(f)
         with open(dir_sus_conf + "conf.json", "w") as f:
             data["name"] = e
@@ -998,42 +998,42 @@ class AnalysisUi(QMainWindow):
             self.var_num_1(self.sender().currentText())
 
     def id_area(self, var):
-        with open(dir_sus_conf + "conf.json", "r") as f:
+        with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
             data = json.load(f)
         with open(dir_sus_conf + "conf.json", "w") as f:
             data["id_area"] = var
             json.dump(data, f, indent=4)
 
     def time_col(self, var):
-        with open(dir_sus_conf + "conf.json", "r") as f:
+        with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
             data = json.load(f)
         with open(dir_sus_conf + "conf.json", "w") as f:
             data["time_col"] = var
             json.dump(data, f, indent=4)
 
     def var_cat_0(self, var):
-        with open(dir_sus_conf + "conf.json", "r") as f:
+        with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
             data = json.load(f)
         with open(dir_sus_conf + "conf.json", "w") as f:
             data["var_cat"][0] = var
             json.dump(data, f, indent=4)
 
     def var_cat_1(self, var):
-        with open(dir_sus_conf + "conf.json", "r") as f:
+        with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
             data = json.load(f)
         with open(dir_sus_conf + "conf.json", "w") as f:
             data["var_cat"][1] = var
             json.dump(data, f, indent=4)
 
     def var_num_0(self, var):
-        with open(dir_sus_conf + "conf.json", "r") as f:
+        with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
             data = json.load(f)
         with open(dir_sus_conf + "conf.json", "w") as f:
             data["var_num"][0] = var
             json.dump(data, f, indent=4)
 
     def var_num_1(self, var):
-        with open(dir_sus_conf + "conf.json", "r") as f:
+        with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
             data = json.load(f)
         with open(dir_sus_conf + "conf.json", "w") as f:
             data["var_num"][1] = var
