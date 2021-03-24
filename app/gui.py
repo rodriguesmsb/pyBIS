@@ -1072,12 +1072,18 @@ class AnalysisUi(QMainWindow):
         self.comboBox_10.addItem(cols)
 
 
+class Help(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+
 def main():
     app = QApplication(sys.argv)
     app.setApplicationName("pyBIS")
     download = DownloadUi()
     etl = EtlUi()
     merge = MergeUi()
+    help = Help()
     analysis = AnalysisUi()
     download.signal.signal_col_etl.connect(etl.convert_model)
     download.signal.signal_col_etl.connect(etl.line_select.addItem)
@@ -1090,7 +1096,7 @@ def main():
     download.signal.signal_clear_items.connect(analysis.clear_items)
     etl.signal.signal_trim_data.connect(download.trim_data)
     etl.signal.signal_save.connect(download.save_file)
-    manager = Manager(download, etl, merge, analysis)
+    manager = Manager(download, etl, merge, analysis, help)
     manager.setWindowIcon(QIcon(dir_ico + "favicon.ico"))
     sys.exit(app.exec_())
 

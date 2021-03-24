@@ -23,8 +23,8 @@ x-special/nautilus-clipboard
 copy
 scripts/SpatialSUSapp/data/_SUCCESS
 
-conf/config.json
-conf/database.json
-conf/locales.json
-conf/search.json
+*/config.json
+*/database.json
+*/locales.json
+*/search.json
 scripts/SpatialSUSapp/conf/conf.json
