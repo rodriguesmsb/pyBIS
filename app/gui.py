@@ -1076,6 +1076,8 @@ class Help(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.setWindowIcon(QIcon(dir_ico + "help.png"))
+
 
 def main():
     app = QApplication(sys.argv)
