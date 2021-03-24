@@ -1082,6 +1082,7 @@ class Help(QMainWindow):
 def main():
     app = QApplication(sys.argv)
     app.setApplicationName("pyBIS")
+    app.setWindowIcon(QIcon(dir_ico + "favicon.ico"))
     download = DownloadUi()
     etl = EtlUi()
     merge = MergeUi()
