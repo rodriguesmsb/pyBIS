@@ -1,16 +1,14 @@
 {
-    "name": "teste",
-    "type": "spatial",
-    "id_area": "SG_UF_NOT",
+    "name": "test",
+    "type": "temporal",
+    "id_area": "ACIDTRAB",
     "time_col": "",
     "area": "ac",
-    "var_cat": [
-        "ANI_SERPEN",
-        "CS_GESTANT"
-    ],
-    "var_num": [
-        "ANI_ARANHA",
+    "var_type": [
         "ACIDTRAB"
+    ],
+    "var_col": [
+        "Numerica"
     ],
     "time_unit": "",
     "time_range": [

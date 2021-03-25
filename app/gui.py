@@ -9,7 +9,7 @@ import psutil
 import re
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QMessageBox,
         QPushButton, QTableWidgetItem, QTabBar, QTabWidget, QStyle,
-        QStyleOptionTab, QStylePainter, QFileDialog)
+        QStyleOptionTab, QStylePainter, QFileDialog, QHeaderView)
 from PyQt5.QtGui import QFont, QIcon, QStandardItemModel, QStandardItem
 from PyQt5.QtCore import (QThread, pyqtSignal, QObject, QRect, QPoint,
         pyqtSlot, Qt)
@@ -83,27 +83,6 @@ class Manager(QMainWindow):
         self.show()
 
 
-class Update(QObject):
-
-    signal = pyqtSignal(int)
-    signal_clear_add = pyqtSignal(int)
-    signal_finished = pyqtSignal(int)
-    signal_txt = pyqtSignal(str)
-    signal_col_etl = pyqtSignal(str)
-    signal_column = pyqtSignal(list)
-    signal_column_export = pyqtSignal(list)
-    signal_trim_data = pyqtSignal(list)
-    signal_export_count = pyqtSignal(int)
-    signal_etl_el = pyqtSignal(list)
-    signal_save = pyqtSignal(list)
-    signal_text = pyqtSignal(int)
-    signal_cols_analysis = pyqtSignal(str)
-    signal_clear_items = pyqtSignal(int)
-
-    def __init__(self):
-        super().__init__()
-
-
 class Thread(QThread):
     def __init__(self, func, *args, **kwargs):
         super().__init__()
@@ -123,16 +102,23 @@ class Thread(QThread):
 
 class DownloadUi(QMainWindow):
 
+    signal_col_etl = pyqtSignal(str)
     signal_clear_add = pyqtSignal(int)
     signal_clear_items = pyqtSignal(int)
     signal_cols_analysis = pyqtSignal(str)
+    signal_export_count = pyqtSignal(int)
+    signal_column_export = pyqtSignal(list)
+    signal_column = pyqtSignal(list)
+    signal_etl_el = pyqtSignal(list)
+    signal_finished = pyqtSignal(int)
+    signal_txt = pyqtSignal(str)
+    signal_pbar = pyqtSignal(int)
 
     def __init__(self):
         super().__init__()
         uic.loadUi(dir_ui + "download.ui", self)
         self.reset()
 
-        self.signal = Update()
         self.comboBox.currentTextChanged.connect(self.load_database)
         self.comboBox.currentTextChanged.connect(self.write_database)
         self.comboBox_2.currentTextChanged.connect(self.return_code_base)
@@ -159,7 +145,7 @@ class DownloadUi(QMainWindow):
     def reset(self):
         with open(conf + "search.json", "r", encoding='utf8') as f:
             data = json.load(f)
-        with open(conf + "search.json", "w") as f:
+        with open(conf + "search.json", "w", encoding='utf8') as f:
             data["database"] = ""
             data["base"] = ""
             data["limit"] = ""
@@ -168,28 +154,28 @@ class DownloadUi(QMainWindow):
 
         with open(conf + "config.json", "r", encoding='utf8') as f:
             data = json.load(f)
-        with open(conf + "config.json", "w") as f:
+        with open(conf + "config.json", "w", encoding='utf8') as f:
             data["mem"] = "2"
             data["cpu"] = "2"
             json.dump(data, f, indent=4)
 
         with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
             data = json.load(f)
-        with open(dir_sus_conf + "conf.json", "w") as f:
+        with open(dir_sus_conf + "conf.json", "w", encoding='utf8') as f:
             data["time_range"] = [2010]
             json.dump(data, f, indent=4)
 
     def mem(self, val):
         with open(conf + "config.json", "r", encoding='utf8') as f:
             data = json.load(f)
-        with open(conf + "config.json", "w") as f:
+        with open(conf + "config.json", "w", encoding='utf8') as f:
             data["mem"] = val
             json.dump(data, f, indent=4)
 
     def cpu(self, val):
         with open(conf + "config.json", "r", encoding='utf8') as f:
             data = json.load(f)
-        with open(conf + "config.json", "w") as f:
+        with open(conf + "config.json", "w", encoding='utf8') as f:
             data["cpu"] = val
             json.dump(data, f, indent=4)
 
@@ -225,13 +211,13 @@ class DownloadUi(QMainWindow):
 
             with open(conf + "search.json", "r", encoding='utf8') as f:
                 data = json.load(f)
-            with open(conf + "search.json", "w") as f:
+            with open(conf + "search.json", "w", encoding='utf8') as f:
                 data["limit"] = list(ufs)
                 json.dump(data, f, indent=4)
 
         with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
             data = json.load(f)
-        with open(dir_sus_conf + "conf.json", "w") as f:
+        with open(dir_sus_conf + "conf.json", "w", encoding='utf8') as f:
             if limit == "BRASIL":
                 data["area"] = limit.lower()
             elif limit in ['Norte', 'Nordeste', 'Centro-Oeste',
@@ -246,33 +232,33 @@ class DownloadUi(QMainWindow):
         if database.lower() == "selecionar sistema de dados":
             with open(conf + "search.json", "r", encoding='utf8') as f:
                 data = json.load(f)
-            with open(conf + "search.json", "w") as f:
+            with open(conf + "search.json", "w", encoding='utf8') as f:
                     data["database"] = ""
                     json.dump(data, f, indent=4)
         else:
             with open(conf + "search.json", "r", encoding='utf8') as f:
                 data = json.load(f)
-            with open(conf + "search.json", "w") as f:
+            with open(conf + "search.json", "w", encoding='utf8') as f:
                     data["database"] = database
                     json.dump(data, f, indent=4)
 
     def write_base(self, base: str):
         with open(conf + "search.json", "r", encoding='utf8') as f:
             data = json.load(f)
-        with open(conf + "search.json", "w") as f:
+        with open(conf + "search.json", "w", encoding='utf8') as f:
             data["base"] = base
             json.dump(data, f, indent=4)
 
     def write_date(self, date: list):
         with open(conf + "search.json", "r", encoding='utf8') as f:
             data = json.load(f)
-        with open(conf + "search.json", "w") as f:
+        with open(conf + "search.json", "w", encoding='utf8') as f:
             data["date_range"] = date
             json.dump(data, f, indent=4)
 
         with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
             data = json.load(f)
-        with open(dir_sus_conf + "conf.json", "w") as f:
+        with open(dir_sus_conf + "conf.json", "w", encoding='utf8') as f:
             data["time_range"] = date
             json.dump(data, f, indent=4)
 
@@ -502,7 +488,7 @@ class DownloadUi(QMainWindow):
         self.tableWidget.setHorizontalHeaderItem(col[0], col[1])
 
     def write_header(self):
-        self.signal.signal_finished.connect(self.finished)
+        self.signal_finished.connect(self.finished)
 
         self.tableWidget.clear()
         if self.df.columns[0] == "_c0":
@@ -512,14 +498,14 @@ class DownloadUi(QMainWindow):
 
         self.cols.sort()
         self.tableWidget.setColumnCount(len(self.cols))
-        self.signal.signal_clear_add.emit(1)
-        self.signal.signal_clear_items.emit(1)
-        self.signal.signal_cols_analysis.emit("")
+        self.signal_clear_add.emit(1)
+        self.signal_clear_items.emit(1)
+        self.signal_cols_analysis.emit("")
         for i, col in enumerate(self.cols):
-            self.signal.signal_col_etl.emit(col)
+            self.signal_col_etl.emit(col)
             column = QTableWidgetItem(col)
-            self.signal.signal_column.connect(self.ant_bug_column)
-            self.signal.signal_column.emit([i, column])
+            self.signal_column.connect(self.ant_bug_column)
+            self.signal_column.emit([i, column])
             i += 1
 
     def write_body(self):
@@ -529,16 +515,16 @@ class DownloadUi(QMainWindow):
         val = 0
 
         self.percentage = 0
-        self.signal.signal_txt.connect(self.label_5.setText)
-        self.signal.signal_txt.emit("Escrevendo seus dados")
+        self.signal_txt.connect(self.label_5.setText)
+        self.signal_txt.emit("Escrevendo seus dados")
         try:
             for col in self.cols:
                 val += 1
                 for r in range(1, 21):
                     ratio = round((float(val / len(self.cols)) * 100 - 6), 1)
                     percentage = int(round(100 * ratio / (100 - 6), 1))
-                    self.signal.signal.connect(self.progressBar.setValue)
-                    self.signal.signal.emit(percentage)
+                    self.signal_pbar.connect(self.progressBar.setValue)
+                    self.signal_pbar.emit(percentage)
                     self.tableWidget.setItem(
                         row_n, col_n, QTableWidgetItem(
                             str(self.df.select(
@@ -546,11 +532,11 @@ class DownloadUi(QMainWindow):
                     row_n += 1
                 row_n = 0
                 col_n += 1
-            self.signal.signal_txt.emit("Os dados foram escritos com sucesso")
-            self.signal.signal_finished.emit(1)
+            self.signal_txt.emit("Os dados foram escritos com sucesso")
+            self.signal_finished.emit(1)
         except IndexError:
-            self.signal.signal_txt.emit("Não há nada aqui")
-            self.signal.signal_finished.emit(1)
+            self.signal_txt.emit("Não há nada aqui")
+            self.signal_finished.emit(1)
 
     def write_table(self):
         self.write_header()
@@ -586,15 +572,15 @@ class DownloadUi(QMainWindow):
             elif params[1] == None:
                 self.data_filtered = self.data_drop
 
-        self.signal.signal_export_count.emit(len(self.data_filtered.columns))
+        self.signal_export_count.emit(len(self.data_filtered.columns))
 
-        self.signal.signal_clear_items.emit(1)
+        self.signal_clear_items.emit(1)
 
-        self.signal.signal_cols_analysis.emit("")
+        self.signal_cols_analysis.emit("")
         for i, col in enumerate(self.data_filtered.columns):
-            self.signal.signal_cols_analysis.emit(col)
+            self.signal_cols_analysis.emit(col)
             column = QTableWidgetItem(col)
-            self.signal.signal_column_export.emit([i, column])
+            self.signal_column_export.emit([i, column])
             i += 1
 
         col_n = 0
@@ -602,7 +588,7 @@ class DownloadUi(QMainWindow):
 
         for col in self.data_filtered.columns:
             for r in range(1, 21):
-                self.signal.signal_etl_el.emit(
+                self.signal_etl_el.emit(
                     [row_n, col_n, QTableWidgetItem(str(
                         self.data_filtered.select(
                     self.data_filtered[col]).take(r)[r - 1][0]))])
@@ -612,15 +598,19 @@ class DownloadUi(QMainWindow):
 
     def save_file(self, params):
         self.data_filtered.coalesce(1).write.option(params[0],
-                                                    params[1]).csv(params[2])
+                                                    params[1]).csv(
+                                                        params[2]
+                                                    )
 
 
 class EtlUi(QMainWindow):
+
+    signal_trim_data = pyqtSignal(list)
+    signal_save = pyqtSignal(list)
+
     def __init__(self):
         super().__init__()
         uic.loadUi(dir_ui + "etl.ui", self)
-
-        self.signal = Update()
 
         self.model_col_add = QStandardItemModel()
         self.model_col_apply = QStandardItemModel()
@@ -714,7 +704,7 @@ class EtlUi(QMainWindow):
            for idx in range(self.model_col_ext.rowCount()):
                self.filter_list.append(self.model_col_ext.item(idx).text())
 
-        self.signal.signal_trim_data.emit([self.drop_list,
+        self.signal_trim_data.emit([self.drop_list,
                                             self.filter_list])
 
         try:
@@ -725,7 +715,7 @@ class EtlUi(QMainWindow):
         except:
             pass
 
-        self.signal.signal_save.emit(
+        self.signal_save.emit(
             ["header", "true", os.path.join(os.path.dirname(__file__),
              "../scripts/SpatialSUSapp/data/")
              ]
@@ -758,9 +748,9 @@ class EtlUi(QMainWindow):
                                                       f"{dir_dbc}",
                                                       "Arquivo csv (*.csv)")
             if filename.endswith(".csv"):
-                self.signal.signal_save.emit(["header", "true", filename])
+                self.signal_save.emit(["header", "true", filename])
             else:
-                self.signal.signal_save.emit(["header", "true",
+                self.signal_save.emit(["header", "true",
                                               filename + ".csv"])
         except NameError:
             pass
@@ -874,7 +864,7 @@ class MergeUi(QMainWindow):
             data["YEAR"] = year
             data["MONTH"] = month
         elif "DTNASC" in data.columns and "TPOBITO" not in data.columns:
-            year, month = year_month(data["DTNASC"])
+            year, month = self.year_month(data["DTNASC"])
             data["YEAR"] = year
             data["MONTH"] = month
 
@@ -929,8 +919,6 @@ class AnalysisUi(QMainWindow):
         super().__init__()
         uic.loadUi(dir_ui + "analysis.ui", self)
 
-        self.signal = Update()
-
         self.radioButton.toggled.connect(self.configure_combobox)
         self.radioButton_2.toggled.connect(self.configure_combobox)
         self.radioButton_3.toggled.connect(self.configure_combobox)
@@ -938,15 +926,94 @@ class AnalysisUi(QMainWindow):
         self.comboBox.currentTextChanged.connect(self.write_column_var)
         self.comboBox_2.currentTextChanged.connect(self.write_column_var)
 
-        self.comboBox_7.currentTextChanged.connect(self.write_column_var)
-        self.comboBox_8.currentTextChanged.connect(self.write_column_var)
-        self.comboBox_9.currentTextChanged.connect(self.write_column_var)
-        self.comboBox_10.currentTextChanged.connect(self.write_column_var)
-
         self.lineEdit.textChanged.connect(self.write_text)
 
         self.pushButton.clicked.connect(self.terminate)
         self.pushButton_2.clicked.connect(self.start_server)
+        self.pushButton_3.clicked.connect(self.write_items)
+
+        self.tableWidget.doubleClicked.connect(self.deleteClicked)
+
+        self.tableWidget.setColumnCount(2)
+
+        types = ['Tipo da variavel', 'Nome da variavel']
+
+        for i in range(2):
+            self.tableWidget.setHorizontalHeaderItem(
+                i, QTableWidgetItem(types[i])
+            )
+            self.tableWidget.horizontalHeader().setSectionResizeMode(
+                i, QHeaderView.Stretch
+            )
+
+    def write_items(self):
+        def write_json(items):
+            with open(dir_sus_conf + 'conf.json', 'r',
+                      encoding='utf8') as f:
+                data = json.load(f)
+            with open(dir_sus_conf + 'conf.json', 'w',
+                      encoding='utf8') as f:
+                data['var_type'] = []
+                data['var_col'] = []
+
+                for n, itm in enumerate(items):
+                    if n % 2:
+                        data['var_type'].append(itm)
+                    else:
+                        data['var_col'].append(itm)
+
+                json.dump(data, f, indent=4)
+
+        if (self.comboBox_3.currentText() in ['Categorica', 'Numerica']
+                and self.comboBox_4.currentText() != ''):
+            rowPosition = self.tableWidget.rowCount()
+            var = self.comboBox_4.currentText()
+            type_var = self.comboBox_3.currentText()
+            self.tableWidget.insertRow(rowPosition)
+
+            self.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(var))
+            self.tableWidget.setItem(rowPosition, 0,
+                                     QTableWidgetItem(type_var))
+
+            items = []
+            for row in range(self.tableWidget.rowCount()):
+                for col in range(self.tableWidget.columnCount()):
+                    _item = self.tableWidget.item(row, col)
+                    if _item:
+                        item = self.tableWidget.item(row, col).text()
+                        items.append(item)
+
+            write_json(items)
+
+    def deleteClicked(self, mi):
+        def write_json(items):
+            with open(dir_sus_conf + 'conf.json', 'r',
+                      encoding='utf8') as f:
+                data = json.load(f)
+            with open(dir_sus_conf + 'conf.json', 'w',
+                      encoding='utf8') as f:
+                data['var_type'] = []
+                data['var_col'] = []
+
+                for n, itm in enumerate(items):
+                    if n % 2:
+                        data['var_type'].append(itm)
+                    else:
+                        data['var_col'].append(itm)
+
+                json.dump(data, f, indent=4)
+
+        self.tableWidget.removeRow(mi.row())
+
+        items = []
+        for row in range(self.tableWidget.rowCount()):
+            for col in range(self.tableWidget.columnCount()):
+                _item = self.tableWidget.item(row, col)
+                if _item:
+                    item = self.tableWidget.item(row, col).text()
+                    items.append(item)
+
+        write_json(items)
 
     def configure_combobox(self):
         radiobutton = self.sender()
@@ -967,14 +1034,14 @@ class AnalysisUi(QMainWindow):
     def write_chocie_json(self, e):
         with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
             data = json.load(f)
-        with open(dir_sus_conf + "conf.json", "w") as f:
+        with open(dir_sus_conf + "conf.json", "w", encoding='utf8') as f:
             data["type"] = e
             json.dump(data, f, indent=4)
 
     def write_text(self, e):
         with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
             data = json.load(f)
-        with open(dir_sus_conf + "conf.json", "w") as f:
+        with open(dir_sus_conf + "conf.json", "w", encoding='utf8') as f:
             data["name"] = e
             json.dump(data, f, indent=4)
 
@@ -985,58 +1052,18 @@ class AnalysisUi(QMainWindow):
         elif self.sender().objectName() == "comboBox_2":
             self.time_col(self.sender().currentText())
 
-        elif self.sender().objectName() == "comboBox_7":
-            self.var_cat_0(self.sender().currentText())
-
-        elif self.sender().objectName() == "comboBox_8":
-            self.var_cat_1(self.sender().currentText())
-
-        elif self.sender().objectName() == "comboBox_9":
-            self.var_num_0(self.sender().currentText())
-
-        elif self.sender().objectName() == "comboBox_10":
-            self.var_num_1(self.sender().currentText())
-
     def id_area(self, var):
         with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
             data = json.load(f)
-        with open(dir_sus_conf + "conf.json", "w") as f:
+        with open(dir_sus_conf + "conf.json", "w", encoding='utf8') as f:
             data["id_area"] = var
             json.dump(data, f, indent=4)
 
     def time_col(self, var):
         with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
             data = json.load(f)
-        with open(dir_sus_conf + "conf.json", "w") as f:
+        with open(dir_sus_conf + "conf.json", "w", encoding='utf8') as f:
             data["time_col"] = var
-            json.dump(data, f, indent=4)
-
-    def var_cat_0(self, var):
-        with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
-            data = json.load(f)
-        with open(dir_sus_conf + "conf.json", "w") as f:
-            data["var_cat"][0] = var
-            json.dump(data, f, indent=4)
-
-    def var_cat_1(self, var):
-        with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
-            data = json.load(f)
-        with open(dir_sus_conf + "conf.json", "w") as f:
-            data["var_cat"][1] = var
-            json.dump(data, f, indent=4)
-
-    def var_num_0(self, var):
-        with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
-            data = json.load(f)
-        with open(dir_sus_conf + "conf.json", "w") as f:
-            data["var_num"][0] = var
-            json.dump(data, f, indent=4)
-
-    def var_num_1(self, var):
-        with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
-            data = json.load(f)
-        with open(dir_sus_conf + "conf.json", "w") as f:
-            data["var_num"][1] = var
             json.dump(data, f, indent=4)
 
     def start_server(self):
@@ -1056,20 +1083,14 @@ class AnalysisUi(QMainWindow):
             print("O servidor não está em execução!")
 
     def clear_items(self, val):
+        self.comboBox_4.clear()
         self.comboBox.clear()
         self.comboBox_2.clear()
-        self.comboBox_7.clear()
-        self.comboBox_8.clear()
-        self.comboBox_9.clear()
-        self.comboBox_10.clear()
 
     def update_items(self, cols):
+        self.comboBox_4.addItem(cols)
         self.comboBox.addItem(cols)
         self.comboBox_2.addItem(cols)
-        self.comboBox_7.addItem(cols)
-        self.comboBox_8.addItem(cols)
-        self.comboBox_9.addItem(cols)
-        self.comboBox_10.addItem(cols)
 
 
 class Help(QMainWindow):
@@ -1088,17 +1109,17 @@ def main():
     merge = MergeUi()
     help = Help()
     analysis = AnalysisUi()
-    download.signal.signal_col_etl.connect(etl.convert_model)
-    download.signal.signal_col_etl.connect(etl.line_select.addItem)
-    download.signal.signal_clear_add.connect(etl.clear_models)
-    download.signal.signal_export_count.connect(etl.header_etl_count)
-    download.signal.signal_column_export.connect(etl.header_etl)
-    download.signal.signal_etl_el.connect(etl.build_table)
-    download.signal.signal_col_etl.connect(analysis.update_items)
-    download.signal.signal_cols_analysis.connect(analysis.update_items)
-    download.signal.signal_clear_items.connect(analysis.clear_items)
-    etl.signal.signal_trim_data.connect(download.trim_data)
-    etl.signal.signal_save.connect(download.save_file)
+    download.signal_col_etl.connect(etl.convert_model)
+    download.signal_col_etl.connect(etl.line_select.addItem)
+    download.signal_clear_add.connect(etl.clear_models)
+    download.signal_export_count.connect(etl.header_etl_count)
+    download.signal_column_export.connect(etl.header_etl)
+    download.signal_etl_el.connect(etl.build_table)
+    download.signal_col_etl.connect(analysis.update_items)
+    download.signal_cols_analysis.connect(analysis.update_items)
+    download.signal_clear_items.connect(analysis.clear_items)
+    etl.signal_trim_data.connect(download.trim_data)
+    etl.signal_save.connect(download.save_file)
     manager = Manager(download, etl, merge, analysis, help)
     manager.setWindowIcon(QIcon(dir_ico + "favicon.ico"))
     sys.exit(app.exec_())

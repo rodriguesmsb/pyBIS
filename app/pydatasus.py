@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding:utf-8 -*-
+
 import sys
 import platform
 import re
@@ -83,7 +86,6 @@ class PyDatasus(QObject):
             after_ = None
             db = None
 
-
     def __adjust_date(self, database, dates):
         if database == 'SINAN':
             if isinstance(dates, str):
@@ -166,7 +168,6 @@ class PyDatasus(QObject):
             for line in lines[1:]:
                 count += 1
                 self.__page.cwd(line.split(',')[0])
-                data = line.split(',')[1][:4]
                 if not path.isfile(self.__path_dbc + database + '/'
                                    + line.split(',')[1].split('.')[0]
                                    + '.csv'):
@@ -194,7 +195,6 @@ class PyDatasus(QObject):
                             line.split(',')[1]
                         )
                     )
-
                 else:
                     pass
 
@@ -202,7 +202,6 @@ class PyDatasus(QObject):
             self.lcd_signal.emit(0)
             self.download_signal.emit(0)
             self.finished.emit(1)
-
 
 
 if __name__ == '__main__':
