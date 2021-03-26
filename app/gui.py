@@ -696,7 +696,7 @@ class EtlUi(QMainWindow):
 
         if len(range(self.model_col_apply.rowCount())):
            self.drop_list = []
-           for idx in enumerate(range(self.model_col_apply.rowCount())):
+           for idx in range(self.model_col_apply.rowCount()):
                self.drop_list.append(self.model_col_apply.item(idx).text())
            self.table_export.setRowCount(20)
 
