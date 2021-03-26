@@ -43,32 +43,6 @@
          </layout>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QFrame" name="frame_2">
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <widget class="QPushButton" name="button_add">
-            <property name="text">
-             <string>Adicionar</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="button_rm">
-            <property name="text">
-             <string>Remover</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
       </layout>
      </widget>
     </item>
@@ -337,8 +311,6 @@
  <tabstops>
   <tabstop>column_add</tabstop>
   <tabstop>column_apply</tabstop>
-  <tabstop>button_add</tabstop>
-  <tabstop>button_rm</tabstop>
   <tabstop>button_lt</tabstop>
   <tabstop>button_gt</tabstop>
   <tabstop>button_lte</tabstop>

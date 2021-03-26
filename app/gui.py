@@ -618,10 +618,11 @@ class EtlUi(QMainWindow):
 
         self.column_add.setModel(self.model_col_add)
         self.column_apply.setModel(self.model_col_apply)
-        self.column_ext.setModel(self.model_col_ext)
+        self.column_apply.doubleClicked.connect(self.remove_col_apply)
+        self.column_add.doubleClicked.connect(self.add_col_apply
+        )
 
-        self.button_add.clicked.connect(self.add_col_apply)
-        self.button_rm.clicked.connect(self.remove_col_apply)
+        self.column_ext.setModel(self.model_col_ext)
 
         self.button_lt.clicked.connect(self.send_op)
         self.button_gt.clicked.connect(self.send_op)
@@ -673,7 +674,7 @@ class EtlUi(QMainWindow):
             "igual", "e", "ou", "não", "em"
         ]
         ops_t = [
-                "<", ">", "<=", ">=", "!=", "==", "and", "or", "not", "in"
+            "<", ">", "<=", ">=", "!=", "==", "and", "or", "not", "in"
         ]
 
         if self.sender().text().lower() in ops:
@@ -695,7 +696,7 @@ class EtlUi(QMainWindow):
 
         if len(range(self.model_col_apply.rowCount())):
            self.drop_list = []
-           for n, idx in enumerate(range(self.model_col_apply.rowCount())):
+           for idx in enumerate(range(self.model_col_apply.rowCount())):
                self.drop_list.append(self.model_col_apply.item(idx).text())
            self.table_export.setRowCount(20)
 

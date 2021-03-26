@@ -136,7 +136,7 @@
         </layout>
        </widget>
       </item>
-      <item>
+      <item alignment="Qt::AlignBottom">
        <widget class="QGroupBox" name="groupBox">
         <property name="title">
          <string/>
@@ -194,13 +194,6 @@
             <widget class="QPushButton" name="pushButton_3">
              <property name="text">
               <string>Adicionar</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_4">
-             <property name="text">
-              <string>Remover</string>
              </property>
             </widget>
            </item>

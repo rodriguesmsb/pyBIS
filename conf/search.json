@@ -23,8 +23,8 @@
         "2019",
         "2020"
     ],
-    "database": "SIM",
-    "base": "DO",
+    "database": "SINAN",
+    "base": "ANIM",
     "limit": [
         "AC"
     ],

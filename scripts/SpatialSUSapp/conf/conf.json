@@ -1,15 +1,11 @@
 {
     "name": "test",
     "type": "temporal",
-    "id_area": "ACIDTRAB",
+    "id_area": "ANI_SERPEN",
     "time_col": "",
     "area": "ac",
-    "var_type": [
-        "ACIDTRAB"
-    ],
-    "var_col": [
-        "Numerica"
-    ],
+    "var_type": [],
+    "var_col": [],
     "time_unit": "",
     "time_range": [
         2010

@@ -61,7 +61,7 @@ class PyDatasus(QObject):
 
         elif isinstance(patterns, str):
             self.__create_folder(database, patterns, table_or_dbc='dbc')
-            self.__get_data_dbc(pattterns)
+            self.__get_data_dbc(patterns)
 
 
     def get_data(self, database, base, state, date):
@@ -80,6 +80,7 @@ class PyDatasus(QObject):
         else:
             after_ = db[:-3] + 'dbf'
             system(f'{self.__blast} {db} {after_}')
+            print(db)
             remove(db)
             ReadDbf({after_}, convert='convert')
             remove(after_)
@@ -148,8 +149,10 @@ class PyDatasus(QObject):
         self.__page.cwd('..')
 
     def __create_file_write(self, base, select):
-        self.__file_base = open(self.__path_dbc + "/" + base
-                                + "/" + select, "wb")
+        self.__file_base = open(
+            path.abspath(self.__path_dbc + "/" + base
+                + "/" + select), "wb"
+        )
         self.__file_base_size = self.__page.size(select)
 
     def __write(self, base):
@@ -188,8 +191,11 @@ class PyDatasus(QObject):
                     self.label_signal.emit(
                         "Convertendo: {}".format(line.split(',')[1])
                     )
-                    self.__convert_dbc(self.__path_dbc + database + '/'
-                                       + line.split(',')[1])
+                    self.__convert_dbc(
+                        path.abspath(
+                            self.__path_dbc + database + '/'
+                            + line.split(',')[1])
+                    )
                     self.label_signal.emit(
                         "{} convertido com sucesso!".format(
                             line.split(',')[1]
