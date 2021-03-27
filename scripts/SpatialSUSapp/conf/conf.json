@@ -1,11 +1,17 @@
 {
     "name": "test",
-    "type": "temporal",
-    "id_area": "",
-    "time_col": "",
-    "area": "ac",
-    "var_type": [],
-    "var_col": [],
+    "type": "spatio_temporal",
+    "id_area": "ID_MN_RESI",
+    "time_col": "DT_NOTIFIC",
+    "area": "ro",
+    "var_type": [
+        "CS_SEXO",
+        "CS_RACA"
+    ],
+    "var_col": [
+        "Categorica",
+        "Categorica"
+    ],
     "time_unit": "",
     "time_range": [
         2010

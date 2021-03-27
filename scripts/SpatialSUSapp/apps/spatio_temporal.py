@@ -35,10 +35,10 @@ data_hor_bar = data_hor_bar.groupby([conf.return_area()]).size().reset_index(nam
 data_hor_bar = data_hor_bar.sort_values(by = ["count"], ascending = False)
 data_hor_bar = data_hor_bar.head()
 
-def plot_hor_bar():
-    data_hor_bar[conf.return_area()] = data_hor_bar[conf.return_area()].astype("str") 
-    fig =  px.bar(data_hor_bar, x = "count", y = data_hor_bar[conf.return_area()], orientation='h')
-    return fig
+# def plot_hor_bar():
+#     data_hor_bar[conf.return_area()] = data_hor_bar[conf.return_area()].astype("str") 
+#     fig =  px.bar(data_hor_bar, x = "count", y = data_hor_bar[conf.return_area()], orientation='h')
+#     return fig
 
 #### read geojson data
 with open(json_map, "r") as f:
@@ -252,7 +252,7 @@ layout = html.Div(
                         html.Br(),
                         html.Br(),
                         html.Label(
-                            ["Selecionar covariável 1",
+                            ["Selecionar variável para Donut plot",
                             dcc.Dropdown(
                                 id = "var_cat",
                                 options = [
@@ -267,20 +267,20 @@ layout = html.Div(
                         ),
                         html.Br(),
                         html.Br(),
-                        html.Label(
-                            ["Selecionar covariável 2",
-                            dcc.Dropdown(
-                                id = "var_num",
-                                options = [
-                                    {"label": conf.return_num()[0], "value": conf.return_num()[0]},
-                                    {"label": conf.return_num()[1], "value": conf.return_num()[1]}
-                                ],
-                                value = None,
-                                multi = False
-                            ),
-                            ],
-                            className = "side-bar-text"
-                        )
+                        # html.Label(
+                        #     ["Selecionar covariável 2",
+                        #     dcc.Dropdown(
+                        #         id = "var_num",
+                        #         options = [
+                        #             # {"label": conf.return_num()[0], "value": conf.return_num()[0]},
+                        #             # {"label": conf.return_num()[1], "value": conf.return_num()[1]}
+                        #         ],
+                        #         value = None,
+                        #         multi = False
+                        #     ),
+                        #     ],
+                        #     className = "side-bar-text"
+                        # )
                         
                     ],
                     className = "side-bar-container"
@@ -295,13 +295,19 @@ layout = html.Div(
             children = [
                 html.Div(
                     children = [
-                        dcc.Graph(
-                            id = "hor_bar",
-                            figure = plot_hor_bar(),
-                            className = "side-graph-item"),
-                        dcc.Graph(
-                            id = "donut_plot", 
-                            className = "side-graph-item"),
+                        # dcc.Graph(
+                        #     id = "hor_bar",
+                        #     figure = plot_hor_bar(),
+                        #     className = "side-graph-item"),
+                        html.Label(
+                            ["Donut Plot",
+                                dcc.Graph(
+                                    id = "donut_plot",
+                                    className = "side-graph-item")],
+                            className = "side-bar-text"
+                                    
+
+                        )
                     ],
                     className = "side-graph-container"
 

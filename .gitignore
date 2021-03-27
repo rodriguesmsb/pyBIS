@@ -15,16 +15,14 @@ GUI/beta/
 */__pycache__
 __pycache__/
 .vscode/
-scripts/SpatialSUSapp/conf/conf.json
-scripts/SpatialSUSapp/data/data.csv
-conf/config.json
-conf/search.json
-x-special/nautilus-clipboard
-copy
-scripts/SpatialSUSapp/data/_SUCCESS
 
+
+
+
+*/_SUCCESS
+*/data.csv
 */config.json
 */database.json
 */locales.json
 */search.json
-scripts/SpatialSUSapp/conf/conf.json
+*/conf.json
