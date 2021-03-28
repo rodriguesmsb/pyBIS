@@ -1,8 +1,8 @@
 {
-    "name": "test",
+    "name": "Analise Dengue RO",
     "type": "spatio_temporal",
     "id_area": "ID_MN_RESI",
-    "time_col": "DT_NOTIFIC",
+    "time_col": "ID_MN_RESI",
     "area": "ro",
     "var_type": [
         "CS_SEXO",
@@ -14,6 +14,11 @@
     ],
     "time_unit": "",
     "time_range": [
-        2010
+        "2015",
+        "2016",
+        "2017",
+        "2018",
+        "2019",
+        "2020"
     ]
 }
