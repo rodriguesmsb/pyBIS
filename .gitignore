@@ -26,3 +26,4 @@ __pycache__/
 */locales.json
 */search.json
 */conf.json
+*/*.csv.crc
