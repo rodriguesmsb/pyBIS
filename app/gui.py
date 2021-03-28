@@ -8,11 +8,12 @@ import multiprocessing
 import psutil
 import re
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QMessageBox,
-        QPushButton, QTableWidgetItem, QTabBar, QTabWidget, QStyle,
-        QStyleOptionTab, QStylePainter, QFileDialog, QHeaderView)
-from PyQt5.QtGui import QFont, QIcon, QStandardItemModel, QStandardItem
+    QPushButton, QTableWidgetItem, QTabBar, QTabWidget, QStyle,
+    QStyleOptionTab, QStylePainter, QFileDialog, QHeaderView)
+from PyQt5.QtGui import (QFont, QIcon, QStandardItemModel, QStandardItem,
+        QPixmap)
 from PyQt5.QtCore import (QThread, pyqtSignal, QObject, QRect, QPoint,
-        pyqtSlot, Qt)
+    pyqtSlot, Qt, QTimer)
 from PyQt5 import uic
 import json
 import pandas as pd
@@ -30,6 +31,18 @@ conf = os.path.join(os.path.dirname(__file__), "../conf/")
 dir_dbc = os.path.expanduser("~/datasus_dbc/")
 dir_sus_conf = os.path.join(os.path.dirname(__file__),
                             "../scripts/SpatialSUSapp/conf/")
+
+
+class Error(QMessageBox):
+    def __init__(self):
+        super().__init__()
+
+        self.setupUI()
+
+    def setupUI(self):
+        self.setFont(QFont("Arial", 15))
+        self.setWindowTitle("Erro!")
+        self.setStandardButtons(self.Ok)
 
 
 class TabBar(QTabBar):
@@ -113,6 +126,7 @@ class DownloadUi(QMainWindow):
     signal_finished = pyqtSignal(int)
     signal_txt = pyqtSignal(str)
     signal_pbar = pyqtSignal(int)
+    signal_error = pyqtSignal(list)
 
     def __init__(self):
         super().__init__()
@@ -135,6 +149,18 @@ class DownloadUi(QMainWindow):
         self.spinBox_2.setMaximum(multiprocessing.cpu_count())
 
         self.all_buttons = self.findChildren(QPushButton)
+        self.signal_error.connect(self.showError)
+
+    def showError(self, signal):
+        self.error = Error()
+        self.error.setText(signal[1])
+        try:
+            self.error.setWindowIcon(QIcon(signal[2]))
+            self.error.setIconPixmap(QPixmap(signal[2]))
+        except IndexError:
+            pass
+        self.error.buttonClicked.connect(lambda: self.destroy)
+        self.error.show()
 
     def get_size(self):
         swap = psutil.swap_memory()
@@ -350,15 +376,11 @@ class DownloadUi(QMainWindow):
 
     def process_download(self):
         if not all(self.load_conf()):
-            error = QMessageBox()
-            error.setFont(QFont("Arial", 15))
-            error.setIcon(QMessageBox.Warning)
-            error.setText("Parametros incorretos")
-            error.setInformativeText(
-                "Você precisa escolher todos os parametros de busca"
+            self.signal_error.emit(
+                [
+                    1, 'Precisa selecionar todos os parametros de download',
+                    dir_ico + 'cat_sad_2.png']
             )
-            error.setWindowTitle("Erro!")
-            error.exec_()
         else:
             pydatasus = PyDatasus()
             pydatasus.download_signal.connect(self.progressBar.setValue)
@@ -397,15 +419,12 @@ class DownloadUi(QMainWindow):
 
     def load_data_table(self):
         if not all(self.load_conf()):
-            error = QMessageBox()
-            error.setFont(QFont("Arial", 15))
-            error.setIcon(QMessageBox.Warning)
-            error.setText("Parametros incorretos")
-            error.setInformativeText(
-                "Você precisa escolher todos os parametros de busca"
+            self.signal_error.emit(
+                [
+                    1,
+                    'Precisa selecionar todos os parametros de vizualização',
+                    dir_ico + 'cat_sad_3.png']
             )
-            error.setWindowTitle("Erro!")
-            error.exec_()
         else:
             self.database, self.base, self.limit, self.date = self.load_conf()
 
@@ -481,8 +500,18 @@ class DownloadUi(QMainWindow):
                 driver_memory=20
             )
             self.spark = start_spark(conf)
-            self.df = self.spark.read.csv(self.files, header=True)
-            self.write_table()
+            try:
+                self.df = self.spark.read.csv(self.files, header=True)
+                self.write_table()
+            except:
+                self.signal_error.emit(
+                    [
+                        1, 'O arquivo solicitado não foi encontrado', dir_ico
+                        + 'cat_sad_1.png'
+                    ]
+                )
+                self.stop_thread()
+
 
     def ant_bug_column(self, col):
         self.tableWidget.setHorizontalHeaderItem(col[0], col[1])
@@ -788,6 +817,9 @@ class MergeUi(QMainWindow):
                 for e, col in enumerate(self.df_1.columns):
                     self.table1.setHorizontalHeaderItem(e,
                                                         QTableWidgetItem(col))
+                    self.table1.horizontalHeader().setSectionResizeMode(e,
+                        QHeaderView.Stretch
+                    )
                     e += 1
 
                 col_n = 0
@@ -1068,17 +1100,21 @@ class AnalysisUi(QMainWindow):
             json.dump(data, f, indent=4)
 
     def start_server(self):
-        self.servidor = subprocess.Popen(
+        self.server = subprocess.Popen(
             ["python3", os.path.join(os.path.dirname(__file__),
             "../scripts/SpatialSUSapp/index.py")
             ]
         )
-        self.nav = Thread(webbrowser.open, "127.0.0.1:8050")
-        self.nav.start()
+        if self.server:
+            self.nav = Thread(webbrowser.open, "127.0.0.1:8050")
+            self.nav.start()
 
     def terminate(self):
         try:
-            self.servidor.kill()
+            self.server.kill()
+        except AttributeError:
+            print("O servidor não está em execução!")
+        try:
             self.nav.stop()
         except AttributeError:
             print("O servidor não está em execução!")

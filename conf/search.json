@@ -23,11 +23,9 @@
         "2019",
         "2020"
     ],
-    "database": "SINAN",
-    "base": "ANIM",
-    "limit": [
-        "AC"
-    ],
+    "database": "SIHSUS",
+    "base": "RD",
+    "limit": "",
     "date_range": [
         "2010"
     ]
