@@ -61,8 +61,11 @@ class ReadDbf:
         with open('{}.csv'.format(file_dbf.split(".")[0]), 'w+') as csvfile:
             data = csv.writer(csvfile)
             data.writerow(dbf.field_names)
-            for record in dbf:
-                data.writerow(list(record.values()))
+            try:
+                for record in dbf:
+                    data.writerow(list(record.values()))
+            except ValueError:
+                pass
 
 
 if __name__ == '__main__':

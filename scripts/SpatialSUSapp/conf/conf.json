@@ -1,32 +1,17 @@
 {
-<<<<<<< HEAD
-    "name": "test",
+    "name": "teste",
     "type": "spatial",
     "id_area": "",
     "time_col": "",
-    "area": "ac",
-=======
-    "name": "Analise Dengue RO",
-    "type": "spatio_temporal",
-    "id_area": "ID_MN_RESI",
-    "time_col": "ID_MN_RESI",
     "area": "ro",
->>>>>>> f69c1e05b10cb04b596fa6a025da207425fb21a8
     "var_type": [
-        "CS_SEXO",
-        "CS_RACA"
+        "CS_SEXO"
     ],
     "var_col": [
-        "Categorica",
         "Categorica"
     ],
     "time_unit": "",
     "time_range": [
-        "2015",
-        "2016",
-        "2017",
-        "2018",
-        "2019",
-        "2020"
+        2010
     ]
 }

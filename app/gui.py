@@ -492,13 +492,6 @@ class DownloadUi(QMainWindow):
                         dir_ico + 'cat_sad_3.png'
                     ]
                 )
-                # error = QMessageBox()
-                # error.setFont(QFont("Arial", 15))
-                # error.setIcon(QMessageBox.Critical)
-                # error.setText("A pasta não foi encontrada!")
-                # error.setInformativeText("A pasta {}".format(self.database))
-                # error.setWindowTitle("Erro!")
-                # error.exec_()
 
     def read_file(self):
         with open(conf + "config.json", "r", encoding='utf8') as f:

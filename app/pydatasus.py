@@ -55,7 +55,7 @@ class PyDatasus(QObject):
 
         if isinstance(patterns, list):
             for pattern in patterns:
-                self.__create_folder(database, pattern.split('\\')[0],
+                self.__create_folder(database, pattern.split('/')[0],
                                      table_or_dbc='dbc')
                 self.__get_data_dbc(database)
 
@@ -80,8 +80,7 @@ class PyDatasus(QObject):
         else:
             after_ = db[:-3] + 'dbf'
             system(f'{self.__blast} {db} {after_}')
-            print(db)
-            remove(db)
+            remove(path.expanduser(db))
             ReadDbf({after_}, convert='convert')
             remove(after_)
             after_ = None
@@ -120,7 +119,7 @@ class PyDatasus(QObject):
         pathlib.Path(self.__path_table).mkdir(parents=True, exist_ok=True)
         pathlib.Path(self.__path_dbc).mkdir(parents=True, exist_ok=True)
         try:
-            mkdir(self.__path_dbc + database + '/')
+            mkdir(path.expanduser(self.__path_dbc + database + '/'))
         except FileExistsError:
             pass
 
@@ -165,15 +164,17 @@ class PyDatasus(QObject):
 
     def __get_data_dbc(self, database):
         count = 0 
-        if path.isfile(self.__path_table + database + '.csv'):
-            with open(self.__path_table + database + '.csv') as table:
+        if path.isfile(path.expanduser(
+            self.__path_table + database + '.csv')):
+            with open(path.expanduser(
+                self.__path_table + database + '.csv')) as table:
                 lines = table.readlines()
             for line in lines[1:]:
                 count += 1
                 self.__page.cwd(line.split(',')[0])
-                if not path.isfile(self.__path_dbc + database + '/'
-                                   + line.split(',')[1].split('.')[0]
-                                   + '.csv'):
+                if not path.isfile(path.expanduser(
+                    self.__path_dbc + database + '/'
+                    + line.split(',')[1].split('.')[0] + '.csv')):
 
                     self.__pbar = 0
                     self.download_signal.emit(self.__pbar)
@@ -184,7 +185,7 @@ class PyDatasus(QObject):
                     self.label_signal.emit(
                         "Baixando {}".format(line.split(',')[1])
                     )
-                    self.lcd_signal.emit(count - 1)
+                    self.lcd_signal.emit(count)
                     self.__page.retrbinary('RETR ' + line.split(',')[1],
                                            self.__write)
 
@@ -192,7 +193,7 @@ class PyDatasus(QObject):
                         "Convertendo: {}".format(line.split(',')[1])
                     )
                     self.__convert_dbc(
-                        path.abspath(
+                        path.expanduser(
                             self.__path_dbc + database + '/'
                             + line.split(',')[1])
                     )
@@ -205,7 +206,6 @@ class PyDatasus(QObject):
                     pass
 
             self.label_signal.emit("Concluido com sucesso")
-            self.lcd_signal.emit(0)
             self.download_signal.emit(0)
             self.finished.emit(1)
 

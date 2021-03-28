@@ -32,9 +32,43 @@
       </property>
      </widget>
     </item>
+    <item row="5" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_11">
+      <item>
+       <widget class="QPushButton" name="pushButton_2">
+        <property name="text">
+         <string>Iniciar análise</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="text">
+         <string>Encerrar</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="1">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Preferred</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
     <item row="4" column="1">
      <layout class="QVBoxLayout" name="verticalLayout_4">
-      <item>
+      <item alignment="Qt::AlignVCenter">
        <widget class="QGroupBox" name="horizontalGroupBox">
         <property name="enabled">
          <bool>true</bool>
@@ -42,34 +76,20 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>100</height>
+          <height>200</height>
          </size>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QGroupBox" name="groupBox_2">
-           <property name="font">
-            <font>
-             <kerning>true</kerning>
-            </font>
+          <widget class="QComboBox" name="comboBox">
+           <property name="editable">
+            <bool>true</bool>
            </property>
-           <property name="title">
-            <string>Selecionar variavel de espaço</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout">
-            <item>
-             <widget class="QComboBox" name="comboBox">
-              <property name="editable">
-               <bool>true</bool>
-              </property>
-              <item>
-               <property name="text">
-                <string>Variavel identificadora de area</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
+           <item>
+            <property name="text">
+             <string>Selecionar variavel de espaço</string>
+            </property>
+           </item>
           </widget>
          </item>
          <item>
@@ -89,48 +109,24 @@
           </spacer>
          </item>
          <item>
-          <widget class="QGroupBox" name="horizontalGroupBox_7">
+          <widget class="QComboBox" name="comboBox_2">
            <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="editable">
             <bool>true</bool>
            </property>
-           <property name="whatsThis">
-            <string/>
-           </property>
-           <property name="title">
-            <string>Selecionar variavel de tempo</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignJustify|Qt::AlignVCenter</set>
-           </property>
-           <property name="flat">
+           <property name="duplicatesEnabled">
             <bool>false</bool>
            </property>
-           <property name="checkable">
-            <bool>false</bool>
+           <property name="frame">
+            <bool>true</bool>
            </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_8">
-            <item>
-             <widget class="QComboBox" name="comboBox_2">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="editable">
-               <bool>true</bool>
-              </property>
-              <property name="duplicatesEnabled">
-               <bool>false</bool>
-              </property>
-              <property name="frame">
-               <bool>true</bool>
-              </property>
-              <item>
-               <property name="text">
-                <string>Variavel de tempo</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
+           <item>
+            <property name="text">
+             <string>Selecionar variavel de tempo</string>
+            </property>
+           </item>
           </widget>
          </item>
         </layout>
@@ -284,22 +280,6 @@
       </item>
      </layout>
     </item>
-    <item row="1" column="2">
-     <spacer name="horizontalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Preferred</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
     <item row="1" column="0">
      <spacer name="horizontalSpacer">
       <property name="orientation">
@@ -316,10 +296,10 @@
       </property>
      </spacer>
     </item>
-    <item row="0" column="1">
-     <spacer name="verticalSpacer">
+    <item row="1" column="2">
+     <spacer name="horizontalSpacer_2">
       <property name="orientation">
-       <enum>Qt::Vertical</enum>
+       <enum>Qt::Horizontal</enum>
       </property>
       <property name="sizeType">
        <enum>QSizePolicy::Preferred</enum>
@@ -327,7 +307,7 @@
       <property name="sizeHint" stdset="0">
        <size>
         <width>20</width>
-        <height>40</height>
+        <height>20</height>
        </size>
       </property>
      </spacer>
@@ -370,24 +350,6 @@
        </item>
       </layout>
      </widget>
-    </item>
-    <item row="5" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout_11">
-      <item>
-       <widget class="QPushButton" name="pushButton_2">
-        <property name="text">
-         <string>Iniciar análise</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton">
-        <property name="text">
-         <string>Encerrar</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </item>
    </layout>
   </widget>
