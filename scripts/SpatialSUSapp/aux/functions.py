@@ -56,10 +56,13 @@ class functions:
         return self.conf_file["id_area"]
 
     def return_cat(self):
-        return self.conf_file["var_cat"]
+        results = []
+        for var, var_type in zip(self.conf_file["var_type"], self.conf_file["var_col"]):
+            if var_type == "Categorica":
+                results.append(var)
+        return results
+    
 
-    def return_num(self):
-        return self.conf_file["var_num"]
 
     
 

@@ -18,7 +18,7 @@ python3 app/gui.py
   - SIH
   - SINAN
 - Operações de <i>Extract Transform Load</i> utilizando  <i>spark</i> como backend
-- <i>Simple Exploratory Data Analysis</i> (EDA) utilizando plotly
+- <i>Simple Exploratory Data Analysis</i> (EDA) utilizando plotly and dash
 
 # Mais informação
 

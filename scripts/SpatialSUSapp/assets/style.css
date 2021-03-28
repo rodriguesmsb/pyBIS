@@ -185,6 +185,7 @@ background-color: white;
 display: grid;
 grid-row: 1/ span 7;
 background-color: white;
+border-color: white;
 
 }
 
@@ -201,7 +202,6 @@ border-radius: 8px;
 height: 99%;
 width: 99%;
 }
-
 
 .card-img{
 display: block;
