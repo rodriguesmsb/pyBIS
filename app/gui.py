@@ -423,7 +423,7 @@ class DownloadUi(QMainWindow):
                 [
                     1,
                     'Precisa selecionar todos os parametros de vizualização',
-                    dir_ico + 'cat_sad_3.png']
+                    dir_ico + 'cat_sad_2.png']
             )
         else:
             self.database, self.base, self.limit, self.date = self.load_conf()
@@ -485,13 +485,20 @@ class DownloadUi(QMainWindow):
                         if btn.text().lower() != "encerrar"
                 ]
             except FileNotFoundError:
-                error = QMessageBox()
-                error.setFont(QFont("Arial", 15))
-                error.setIcon(QMessageBox.Critical)
-                error.setText("A pasta não foi encontrada!")
-                error.setInformativeText("A pasta {}".format(self.database))
-                error.setWindowTitle("Erro!")
-                error.exec_()
+
+                self.signal_error.emit(
+                    [
+                        1, f'A pasta {self.database} não foi encontrada',
+                        dir_ico + 'cat_sad_3.png'
+                    ]
+                )
+                # error = QMessageBox()
+                # error.setFont(QFont("Arial", 15))
+                # error.setIcon(QMessageBox.Critical)
+                # error.setText("A pasta não foi encontrada!")
+                # error.setInformativeText("A pasta {}".format(self.database))
+                # error.setWindowTitle("Erro!")
+                # error.exec_()
 
     def read_file(self):
         with open(conf + "config.json", "r", encoding='utf8') as f:
@@ -507,7 +514,7 @@ class DownloadUi(QMainWindow):
                 self.signal_error.emit(
                     [
                         1, 'O arquivo solicitado não foi encontrado', dir_ico
-                        + 'cat_sad_1.png'
+                        + 'cat_sad_3.png'
                     ]
                 )
                 self.stop_thread()

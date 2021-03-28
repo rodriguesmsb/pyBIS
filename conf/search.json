@@ -23,9 +23,11 @@
         "2019",
         "2020"
     ],
-    "database": "SIHSUS",
-    "base": "RD",
-    "limit": "",
+    "database": "SINASC",
+    "base": "DN",
+    "limit": [
+        "AC"
+    ],
     "date_range": [
         "2010"
     ]
