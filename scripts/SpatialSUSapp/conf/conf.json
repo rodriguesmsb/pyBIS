@@ -1,37 +1,24 @@
 {
-<<<<<<< HEAD
-    "name": "teste",
-    "sistema": "SINAN",
-    "type": "spatio_temporal",
-    "id_area": "ID_MUNICIP",
-    "time_col": "",
-    "area": "ac",
-    "var_type": [
-        "CS_RACA"
-    ],
-    "var_col": [
-=======
-    "name": "Analise Obtio Pernambuco",
-    "sistema": "SIM",
+    "name": "SINASC",
+    "sistema": "SINASC",
     "type": "spatio_temporal",
     "id_area": "CODMUNRES",
-    "time_col": "DTOBITO",
+    "time_col": "DTNASC",
     "area": "ac",
     "var_type": [
+        "SEXO",
         "RACACOR",
-        "GRAVIDEZ",
-        "GESTACAO"
+        "IDANOMAL"
     ],
     "var_col": [
         "Categorica",
         "Categorica",
->>>>>>> cd68ed7e567e55c68e988f172ffe739a198a4cf1
         "Categorica"
     ],
     "time_unit": "",
     "time_range": [
+        "2014",
         "2015",
-        "2016",
-        "2017"
+        "2016"
     ]
 }

@@ -23,19 +23,14 @@
         "2019",
         "2020"
     ],
-<<<<<<< HEAD
-    "database": "SINAN",
-    "base": "ANIM",
-=======
-    "database": "SIM",
-    "base": "DO",
->>>>>>> cd68ed7e567e55c68e988f172ffe739a198a4cf1
+    "database": "SINASC",
+    "base": "DN",
     "limit": [
         "AC"
     ],
     "date_range": [
+        "2014",
         "2015",
-        "2016",
-        "2017"
+        "2016"
     ]
 }

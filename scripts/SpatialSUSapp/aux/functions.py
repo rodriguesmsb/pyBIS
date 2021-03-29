@@ -59,7 +59,7 @@ class functions:
         results = []
         for var, var_type in zip(self.conf_file["var_type"], self.conf_file["var_col"]):
             if var_type == "Categorica":
-                results.append({"label": var, "value": var_type})
+                results.append({"label": var, "value": var})
         return results
     
 
