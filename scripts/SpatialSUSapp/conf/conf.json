@@ -1,14 +1,14 @@
 {
-    "name": "",
+    "name": "SINASC",
     "sistema": "SINASC",
     "type": "spatio_temporal",
     "id_area": "CODMUNRES",
     "time_col": "DTNASC",
-    "area": "ac",
+    "area": "am",
     "var_type": [
-        "SEXO",
-        "RACACOR",
-        "IDANOMAL"
+        "IDANOMAL",
+        "GESTACAO",
+        "CODANOMAL"
     ],
     "var_col": [
         "Categorica",
@@ -17,7 +17,6 @@
     ],
     "time_unit": "",
     "time_range": [
-        "2014",
         "2015",
         "2016"
     ]
