@@ -23,9 +23,11 @@
         "2019",
         "2020"
     ],
-    "database": "SINASC",
-    "base": "DN",
-    "limit": "",
+    "database": "SINAN",
+    "base": "ANIM",
+    "limit": [
+        "AC"
+    ],
     "date_range": [
         "2010"
     ]

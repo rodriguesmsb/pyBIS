@@ -1,16 +1,14 @@
 {
-    "name": "Nascimentos Pernambuco",
-    "sistema": "SINASC",
+    "name": "teste",
+    "sistema": "SINAN",
     "type": "spatio_temporal",
-    "id_area": "CODMUNRES",
-    "time_col": "DTNASC",
-    "area": "pe",
+    "id_area": "ID_MUNICIP",
+    "time_col": "",
+    "area": "ac",
     "var_type": [
-        "CODANOMAL",
-        "SEXO"
+        "CS_RACA"
     ],
     "var_col": [
-        "Categorica",
         "Categorica"
     ],
     "time_unit": "",

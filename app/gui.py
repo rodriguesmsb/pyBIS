@@ -95,6 +95,12 @@ class Manager(QMainWindow):
         self.setCentralWidget(self.tab_manager)
         self.show()
 
+    # def closeEvent(self, event):
+    #     if cant_exit:
+    #         event.accept()
+    #     else:
+    #         event.ignore()
+
 
 class Thread(QThread):
     def __init__(self, func, *args, **kwargs):
@@ -1170,6 +1176,7 @@ def main():
     etl.signal_save.connect(download.save_file)
     manager = Manager(download, etl, merge, analysis, help)
     manager.setWindowIcon(QIcon(dir_ico + "favicon.ico"))
+    app.aboutToQuit.connect(lambda: analysis.terminate)
     sys.exit(app.exec_())
 
 
