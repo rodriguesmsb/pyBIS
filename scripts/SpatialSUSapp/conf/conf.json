@@ -1,15 +1,17 @@
 {
-    "name": "Analise Pernambuco",
-    "sistema": "SINASC",
+    "name": "Analise Obtio Pernambuco",
+    "sistema": "SIM",
     "type": "spatio_temporal",
     "id_area": "CODMUNRES",
-    "time_col": "DTNASC",
-    "area": "pe",
+    "time_col": "DTOBITO",
+    "area": "ac",
     "var_type": [
-        "SEXO",
-        "RACACOR"
+        "RACACOR",
+        "GRAVIDEZ",
+        "GESTACAO"
     ],
     "var_col": [
+        "Categorica",
         "Categorica",
         "Categorica"
     ],
@@ -17,9 +19,6 @@
     "time_range": [
         "2015",
         "2016",
-        "2017",
-        "2018",
-        "2019",
-        "2020"
+        "2017"
     ]
 }

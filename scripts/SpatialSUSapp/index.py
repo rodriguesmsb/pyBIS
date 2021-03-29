@@ -50,8 +50,7 @@ data["date"] = conf.format_date(data[conf.return_time()])
 ts = data.groupby([conf.return_area(), "date"]).size().reset_index(name = "count")
 
 
-print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-print(ts)
+
 
 def plotTs(df):
     cases_trace = go.Scatter(
