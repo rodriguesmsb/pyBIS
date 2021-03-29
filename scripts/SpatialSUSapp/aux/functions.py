@@ -30,8 +30,10 @@ class functions:
             return json_map
 
     def format_date(self, series):
-        date = pd.to_datetime(series, format = "%Y-%m-%d", errors = "coerce")
-       
+        if self.conf_file["sistema"] == "SINASC":
+            date = pd.to_datetime(series, format = "%d%m%Y", errors = "coerce")
+        else:
+            date = pd.to_datetime(series, format = "%Y-%m-%d", errors = "coerce")
         return date
 
     def return_title(self):
@@ -55,6 +57,7 @@ class functions:
 
     def return_cat(self):
         results = []
+        nvars = len(self.conf_file["var_col"])
         for var, var_type in zip(self.conf_file["var_type"], self.conf_file["var_col"]):
             if var_type == "Categorica":
                 results.append(var)

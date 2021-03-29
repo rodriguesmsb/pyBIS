@@ -1,13 +1,13 @@
 {
-    "name": "Nascimentos Pernambuco",
+    "name": "Analise Pernambuco",
     "sistema": "SINASC",
     "type": "spatio_temporal",
     "id_area": "CODMUNRES",
     "time_col": "DTNASC",
     "area": "pe",
     "var_type": [
-        "CODANOMAL",
-        "SEXO"
+        "SEXO",
+        "RACACOR"
     ],
     "var_col": [
         "Categorica",
@@ -15,6 +15,11 @@
     ],
     "time_unit": "",
     "time_range": [
-        2010
+        "2015",
+        "2016",
+        "2017",
+        "2018",
+        "2019",
+        "2020"
     ]
 }
