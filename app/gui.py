@@ -261,12 +261,23 @@ class DownloadUi(QMainWindow):
             with open(conf + "search.json", "w", encoding='utf8') as f:
                     data["database"] = ""
                     json.dump(data, f, indent=4)
+            with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
+                data = json.load(f)
+            with open(dir_sus_conf + "conf.json", "w", encoding='utf8') as f:
+                data["sistema"] = ""
+                json.dump(data, f, indent=4)
         else:
             with open(conf + "search.json", "r", encoding='utf8') as f:
                 data = json.load(f)
             with open(conf + "search.json", "w", encoding='utf8') as f:
                     data["database"] = database
                     json.dump(data, f, indent=4)
+
+            with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
+                data = json.load(f)
+            with open(dir_sus_conf + "conf.json", "w", encoding='utf8') as f:
+                data["sistema"] = database
+                json.dump(data, f, indent=4)
 
     def write_base(self, base: str):
         with open(conf + "search.json", "r", encoding='utf8') as f:

@@ -25,12 +25,8 @@
     ],
     "database": "SINASC",
     "base": "DN",
-    "limit": [
-        "PE"
-    ],
+    "limit": "",
     "date_range": [
-        "2015",
-        "2016",
-        "2017"
+        "2010"
     ]
 }

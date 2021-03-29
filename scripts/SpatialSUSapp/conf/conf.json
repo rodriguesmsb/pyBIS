@@ -1,5 +1,6 @@
 {
     "name": "Nascimentos Pernambuco",
+    "sistema": "SINASC",
     "type": "spatio_temporal",
     "id_area": "CODMUNRES",
     "time_col": "DTNASC",
@@ -14,8 +15,6 @@
     ],
     "time_unit": "",
     "time_range": [
-        "2015",
-        "2016",
-        "2017"
+        2010
     ]
 }
