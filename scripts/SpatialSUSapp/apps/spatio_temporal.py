@@ -255,10 +255,7 @@ layout = html.Div(
                             ["Selecionar variável para Donut plot",
                             dcc.Dropdown(
                                 id = "var_cat",
-                                options = [
-                                    {"label": conf.return_cat()[0], "value": conf.return_cat()[0]},
-                                    {"label": conf.return_cat()[1], "value": conf.return_cat()[1]}
-                                ],
+                                options = conf.return_cat(),
                                 value = None,
                                 multi = False
                             ),

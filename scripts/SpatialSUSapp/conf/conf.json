@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
     "name": "teste",
     "sistema": "SINAN",
     "type": "spatio_temporal",
@@ -9,10 +10,28 @@
         "CS_RACA"
     ],
     "var_col": [
+=======
+    "name": "Analise Obtio Pernambuco",
+    "sistema": "SIM",
+    "type": "spatio_temporal",
+    "id_area": "CODMUNRES",
+    "time_col": "DTOBITO",
+    "area": "ac",
+    "var_type": [
+        "RACACOR",
+        "GRAVIDEZ",
+        "GESTACAO"
+    ],
+    "var_col": [
+        "Categorica",
+        "Categorica",
+>>>>>>> cd68ed7e567e55c68e988f172ffe739a198a4cf1
         "Categorica"
     ],
     "time_unit": "",
     "time_range": [
-        2010
+        "2015",
+        "2016",
+        "2017"
     ]
 }
