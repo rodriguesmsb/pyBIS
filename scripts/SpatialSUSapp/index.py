@@ -44,14 +44,18 @@ conf = functions(conf_file = path_to_json, data = path_to_data)
 
 data = conf.read_data()
 
-data["day"], data["year"], data["month"], data["week"]  = conf.format_date(data[conf.return_time()])
+data["date"] = conf.format_date(data[conf.return_time()])
 
 
-ts = data.groupby([conf.return_area(), "day"]).size().reset_index(name = "count")
+ts = data.groupby([conf.return_area(), "date"]).size().reset_index(name = "count")
+
+
+print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+print(ts)
 
 def plotTs(df):
     cases_trace = go.Scatter(
-        x  = df["day"],
+        x  = df["date"],
         y =  df["count"],
         mode ='markers',
         name = "Fitted",

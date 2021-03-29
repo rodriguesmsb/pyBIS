@@ -1,17 +1,21 @@
 {
-    "name": "teste",
-    "type": "spatial",
-    "id_area": "",
-    "time_col": "",
-    "area": "ro",
+    "name": "Nascimentos Pernambuco",
+    "type": "spatio_temporal",
+    "id_area": "CODMUNRES",
+    "time_col": "DTNASC",
+    "area": "pe",
     "var_type": [
-        "CS_SEXO"
+        "CODANOMAL",
+        "SEXO"
     ],
     "var_col": [
+        "Categorica",
         "Categorica"
     ],
     "time_unit": "",
     "time_range": [
-        2010
+        "2015",
+        "2016",
+        "2017"
     ]
 }
