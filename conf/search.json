@@ -26,10 +26,9 @@
     "database": "SINASC",
     "base": "DN",
     "limit": [
-        "AM"
+        "MG"
     ],
     "date_range": [
-        "2015",
-        "2016"
+        "2020"
     ]
 }
