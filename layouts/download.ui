@@ -78,6 +78,9 @@
            <property name="enabled">
             <bool>false</bool>
            </property>
+           <property name="toolTip">
+            <string>base de dados</string>
+           </property>
            <property name="editable">
             <bool>true</bool>
            </property>
@@ -85,6 +88,9 @@
          </item>
          <item row="0" column="0">
           <widget class="QComboBox" name="comboBox">
+           <property name="toolTip">
+            <string>banco onde estão depositadas as bases de dados</string>
+           </property>
            <property name="editable">
             <bool>true</bool>
            </property>
@@ -120,6 +126,9 @@
            <property name="enabled">
             <bool>false</bool>
            </property>
+           <property name="toolTip">
+            <string>area de busca</string>
+           </property>
            <property name="editable">
             <bool>true</bool>
            </property>
@@ -143,6 +152,9 @@
          </item>
          <item row="0" column="2">
           <widget class="QComboBox" name="comboBox_3">
+           <property name="toolTip">
+            <string>nivel de busca: Brasil - Região - Estado</string>
+           </property>
            <property name="editable">
             <bool>true</bool>
            </property>
@@ -201,7 +213,11 @@
           </spacer>
          </item>
          <item row="1" column="0">
-          <widget class="QTableWidget" name="tableWidget"/>
+          <widget class="QTableWidget" name="tableWidget">
+           <property name="toolTip">
+            <string>mostra as primeiras 20 linhas dos dados selecionadas</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -269,6 +285,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="toolTip">
+            <string>memória destinada ao processo de leitura dos dados</string>
+           </property>
            <property name="minimum">
             <number>2</number>
            </property>
@@ -312,6 +331,9 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="toolTip">
+            <string>ano inicial da busca</string>
+           </property>
            <property name="minimum">
             <number>2010</number>
            </property>
@@ -339,6 +361,9 @@
              <width>400</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="toolTip">
+            <string>ano final da busca</string>
            </property>
            <property name="minimum">
             <number>2010</number>
@@ -371,6 +396,9 @@
              <bold>false</bold>
             </font>
            </property>
+           <property name="toolTip">
+            <string/>
+           </property>
            <property name="intValue" stdset="0">
             <number>2010</number>
            </property>
@@ -399,6 +427,9 @@
              <width>400</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="toolTip">
+            <string>cores destinados a leitura dos dados</string>
            </property>
            <property name="minimum">
             <number>2</number>
@@ -491,7 +522,11 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLCDNumber" name="lcdNumber_3"/>
+         <widget class="QLCDNumber" name="lcdNumber_3">
+          <property name="toolTip">
+           <string>numero de bases que foram lidas com sucesso</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
