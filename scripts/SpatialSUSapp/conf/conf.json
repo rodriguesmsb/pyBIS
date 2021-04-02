@@ -1,0 +1,14 @@
+{
+    "name": "Aanlise Mortalidade Zika",
+    "sistema": "SINASC",
+    "type": "spatio_temporal",
+    "id_area": "ID_MN_RESI",
+    "time_col": "DT_NOTIFIC",
+    "area": "mg",
+    "var_type": [],
+    "var_col": [],
+    "time_unit": "",
+    "time_range": [
+        "2020"
+    ]
+}
