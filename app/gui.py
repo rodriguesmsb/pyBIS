@@ -1176,7 +1176,7 @@ def main():
     etl.signal_save.connect(download.save_file)
     manager = Manager(download, etl, merge, analysis, help)
     manager.setWindowIcon(QIcon(dir_ico + "favicon.ico"))
-    app.aboutToQuit.connect(lambda: analysis.terminate)
+    #app.aboutToQuit.connect(lambda: analysis.terminate())
     sys.exit(app.exec_())
 
 
