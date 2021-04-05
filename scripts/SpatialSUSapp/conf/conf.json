@@ -2,9 +2,9 @@
     "name": "analise exemplo",
     "sistema": "SINASC",
     "type": "spatio_temporal",
-    "id_area": "ID_MUNICIP",
-    "time_col": "DT_NOTIFIC",
-    "area": "sul",
+    "id_area": "Selecionar variavel de espa\u00e7o",
+    "time_col": "Selecionar variavel de tempo",
+    "area": "ro",
     "var_type": [
         "CS_SEXO",
         "CS_RACA"
@@ -17,6 +17,7 @@
     "time_range": [
         "2015",
         "2016",
-        "2017"
+        "2017",
+        "2018"
     ]
 }

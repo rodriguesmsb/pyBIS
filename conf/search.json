@@ -26,11 +26,12 @@
     "database": "SINASC",
     "base": "DN",
     "limit": [
-        "PR, RS, SC"
+        "RO"
     ],
     "date_range": [
         "2015",
         "2016",
-        "2017"
+        "2017",
+        "2018"
     ]
 }
