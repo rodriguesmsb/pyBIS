@@ -1149,10 +1149,10 @@ class AnalysisUi(QMainWindow):
         self.comboBox_4.clear()
         self.comboBox.clear()
         self.comboBox_2.clear()
-
-    def update_items(self, cols):
         self.comboBox.addItem('Selecionar variavel de espaço')
         self.comboBox_2.addItem('Selecionar variavel de tempo')
+
+    def update_items(self, cols):
         self.comboBox_4.addItem(cols)
         self.comboBox.addItem(cols)
         self.comboBox_2.addItem(cols)
