@@ -511,6 +511,9 @@ class DownloadUi(QMainWindow):
                 )
 
     def read_file(self):
+        def unionAll(dfs):
+            return reduce(lambda df1,df2: df1.union(df2.select(df1.columns)), dfs)
+
         with open(conf + "config.json", "r", encoding='utf8') as f:
             data = json.load(f)
             self.conf = spark_conf("pyBIS", data["cpu"], data["mem"],
@@ -518,7 +521,14 @@ class DownloadUi(QMainWindow):
             )
             self.spark = start_spark(conf)
             try:
-                self.df = self.spark.read.csv(self.files, header=True)
+                self.lista_spark = []
+                for banco in self.files:
+                    self.lista_spark.append(
+                        self.spark.read.csv(banco, header=True)
+                    )
+
+                self.df = unionAll(self.lista_spark)
+                # self.df = self.spark.read.csv(self.files, header=True)
                 self.write_table()
             except:
                 self.signal_error.emit(
