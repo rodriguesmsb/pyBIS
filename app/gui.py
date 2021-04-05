@@ -7,6 +7,7 @@ import os
 import multiprocessing
 import psutil
 import re
+from functools import reduce
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QMessageBox,
     QPushButton, QTableWidgetItem, QTabBar, QTabWidget, QStyle,
     QStyleOptionTab, QStylePainter, QFileDialog, QHeaderView)
