@@ -2,12 +2,12 @@
     "name": "analise exemplo",
     "sistema": "SINASC",
     "type": "spatio_temporal",
-    "id_area": "Selecionar variavel de espa\u00e7o",
-    "time_col": "Selecionar variavel de tempo",
+    "id_area": "CODMUNRES",
+    "time_col": "DTNASC",
     "area": "ro",
     "var_type": [
-        "CS_SEXO",
-        "CS_RACA"
+        "SEXO",
+        "RACACOR"
     ],
     "var_col": [
         "Categorica",
@@ -15,7 +15,6 @@
     ],
     "time_unit": "",
     "time_range": [
-        "2015",
-        "2016"
+        2010
     ]
 }

@@ -23,13 +23,10 @@
         "2019",
         "2020"
     ],
-    "database": "SINASC",
-    "base": "DN",
-    "limit": [
-        "RO"
-    ],
+    "database": "",
+    "base": "",
+    "limit": "",
     "date_range": [
-        "2015",
-        "2016"
+        "2010"
     ]
 }

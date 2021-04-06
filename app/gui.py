@@ -1139,11 +1139,11 @@ class AnalysisUi(QMainWindow):
         try:
             self.server.kill()
         except AttributeError:
-            print("O servidor não está em execução!")
+            pass
         try:
             self.nav.stop()
         except AttributeError:
-            print("O servidor não está em execução!")
+            pass
 
     def clear_items(self, val):
         self.comboBox_4.clear()
@@ -1187,7 +1187,7 @@ def main():
     etl.signal_save.connect(download.save_file)
     manager = Manager(download, etl, merge, analysis, help)
     manager.setWindowIcon(QIcon(dir_ico + "favicon.ico"))
-    #app.aboutToQuit.connect(lambda: analysis.terminate())
+    app.aboutToQuit.connect(lambda: analysis.terminate())
     sys.exit(app.exec_())
 
 
