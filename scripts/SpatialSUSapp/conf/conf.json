@@ -1,6 +1,6 @@
 {
     "name": "analise exemplo",
-    "sistema": "SINASC",
+    "sistema": "SIHSUS",
     "type": "spatio_temporal",
     "id_area": "CODMUNRES",
     "time_col": "DTNASC",

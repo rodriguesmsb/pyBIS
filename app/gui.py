@@ -83,11 +83,17 @@ class TabWidget(QTabWidget):
 
 
 class Manager(QMainWindow):
+
+    resized = pyqtSignal()
+
     def __init__(self, *tabs):
         super().__init__()
 
         self.setWindowTitle("pyBiss")
-        self.setFont(QFont("Arial", 12))
+        # self.setFont(QFont("Arial", 12))
+
+        self.resized.connect(self.set_font_size)
+
         self.tab_manager = TabWidget()
 
         for tab in tabs:
@@ -96,11 +102,14 @@ class Manager(QMainWindow):
         self.setCentralWidget(self.tab_manager)
         self.show()
 
-    # def closeEvent(self, event):
-    #     if cant_exit:
-    #         event.accept()
-    #     else:
-    #         event.ignore()
+    def resizeEvent(self, event):
+        self.resized.emit()
+
+    def set_font_size(self):
+        curr_geo = self.geometry().width()
+        new_pixel_size = curr_geo//90
+
+        self.setFont(QFont("Areial", new_pixel_size))
 
 
 class Thread(QThread):
@@ -134,6 +143,7 @@ class DownloadUi(QMainWindow):
     signal_txt = pyqtSignal(str)
     signal_pbar = pyqtSignal(int)
     signal_error = pyqtSignal(list)
+    resized = pyqtSignal()
 
     def __init__(self):
         super().__init__()
@@ -157,6 +167,16 @@ class DownloadUi(QMainWindow):
 
         self.all_buttons = self.findChildren(QPushButton)
         self.signal_error.connect(self.showError)
+        self.resized.connect(self.set_font_size)
+
+    def resizeEvent(self, event):
+        self.resized.emit()
+
+    def set_font_size(self):
+        curr_geo = self.geometry().width()
+        new_pixel_size = curr_geo//90
+
+        self.setFont(QFont("Areial", new_pixel_size))
 
     def showError(self, signal):
         self.error = Error()
