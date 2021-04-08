@@ -1169,24 +1169,50 @@ class AnalysisUi(QMainWindow):
             json.dump(data, f, indent=4)
 
     def start_server(self):
-        self.server = subprocess.Popen(
-            ["python3", os.path.join(os.path.dirname(__file__),
-            "../scripts/SpatialSUSapp/index.py")
-            ]
-        )
-        if self.server:
-            self.nav = Thread(webbrowser.open, "127.0.0.1:8050")
-            self.nav.start()
+        if self.radioButton_2.isChecked():
+            try:
+                self.server_spatio_temporal = subprocess.Popen(
+                    ["python3", os.path.join(os.path.dirname(__file__),
+                    "../scripts/SpatialSUSapp/spatio_temporal.py")
+                    ]
+                )
+            except:
+                pass
+        elif self.radioButton_3.isChecked():
+            try:
+                self.server_temporal = subprocess.Popen(
+                    ["python3", os.path.join(os.path.dirname(__file__),
+                    "../scripts/SpatialSUSapp/temporal.py")
+                    ]
+                )
+            except:
+                pass
+
+        try:
+            if self.server_spatio_temporal or self.server_temporal:
+                self.nav = subprocess.Popen(['firefox', '127.0.0.1:8050'], shell=True)
+                # webbrowser.open('127.0.0.1:8050')
+        except AttributeError:
+            pass
+            # self.mybrowser = webbrowser
+            # self.nav = Thread(webbrowser.open, "127.0.0.1:8050")
+            # self.nav = subprocess.Popen(['firefox', '127.0.0.1:8050'])
+            # self.nav = Thread(self.mybrowser.open, "127.0.0.1:8050")
+            # self.nav.start()
 
     def terminate(self):
         try:
-            self.server.kill()
+            self.server_temporal.kill()
+            self.server_spatio_temporal.kill()
+            # self.nav.terminate()
         except AttributeError:
             pass
-        try:
-            self.nav.stop()
-        except AttributeError:
-            pass
+        # try:
+        #     # self.webbrowser.close()
+        #     # self.nav.stop()
+        #     self.nav.terminate()
+        # except AttributeError:
+        #     pass
 
     def clear_items(self, val):
         self.comboBox_4.clear()
