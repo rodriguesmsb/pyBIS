@@ -26,4 +26,5 @@ scripts/SpatialSUSapp/data/data.csv
 */locales.json
 */search.json
 scripts/SpatialSUSapp/conf/conf.json
-*/*.csv.crc
+*/.csv.crc
+*/_SUCESS.crc
