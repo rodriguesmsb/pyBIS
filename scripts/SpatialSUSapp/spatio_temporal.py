@@ -28,9 +28,9 @@ import numpy as np
 
 
 ### Indicates patch
-path_to_data = "data/data.csv"
-path_to_json = "conf/conf.json"
-path_to_images = "assets/"
+path_to_data = "scripts/SpatialSUSapp/data/data.csv"
+path_to_json = "scripts/SpatialSUSapp/conf/conf.json"
+path_to_images = "scripts/SpatialSUSapp/assets/"
 
 
 
