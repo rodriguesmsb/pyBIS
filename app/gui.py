@@ -1204,8 +1204,8 @@ class AnalysisUi(QMainWindow):
 
     def terminate(self):
         try:
-            self.server_temporal.kill()
-            self.server_spatio_temporal.kill()
+            self.server_temporal.terminate()
+            self.server_spatio_temporal.terminate()
             # self.nav.terminate()
         except AttributeError:
             pass
