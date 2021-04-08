@@ -1190,12 +1190,13 @@ class AnalysisUi(QMainWindow):
 
         try:
             if self.server_spatio_temporal or self.server_temporal:
-                self.nav = subprocess.Popen(['firefox', '127.0.0.1:8050'], shell=True)
+                webbrowser.open('127.0.0.1:8050')
+                # self.nav = subprocess.Popen(['firefox', '127.0.0.1:8050'], shell=True)
                 # webbrowser.open('127.0.0.1:8050')
         except AttributeError:
             pass
             # self.mybrowser = webbrowser
-            webbrowser.open('127.0.0.1:8050')
+            # webbrowser.open('127.0.0.1:8050')
             # self.nav = Thread(webbrowser.open, "127.0.0.1:8050")
             # self.nav = subprocess.Popen(['firefox', '127.0.0.1:8050'])
             # self.nav = Thread(self.mybrowser.open, "127.0.0.1:8050")
