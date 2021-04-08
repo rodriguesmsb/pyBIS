@@ -25,5 +25,5 @@ __pycache__/
 */database.json
 */locales.json
 */search.json
-*/scripts/SpatialSUSapp/conf/conf.json
+*/conf.json
 */*.csv.crc
