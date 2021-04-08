@@ -21,6 +21,7 @@ import pandas as pd
 from aux.functions import functions
 import json
 import numpy as np
+from datetime import date
 
 
 
@@ -43,12 +44,54 @@ app.title = "Data visualization"
 app.layout = html.Div(
     children = [
         html.Div(
-            children = ["header"],
-            className = "time-series-header-container"
+            children = [
+                html.H1(
+                        conf.return_title(),
+                        className = "temporal-header-title"
+                        ),
+            ],
+            className = "temporal-header",
         ),
         html.Div(
-            children = ["Filters"],
-            className = "time-series-filter-container"
+            children = [],
+            className = "time-series-footer-container"
+        ),
+        html.Div(
+            children = [
+                html.Label(
+                    ["Selecione o intervalo de tempo",
+                    dcc.DatePickerRange(
+                        id = "data_picker",
+                        start_date = date(2010,1,1),
+                        end_date_placeholder_text = 'MM/DD/YYYY',
+                        clearable = True,
+                        with_portal = True,
+                        
+                )],
+                className = "date-picker"),
+                html.Div(
+                    children = [
+                        html.Label(
+                    ["Filtrar por grupos",
+                    dcc.Dropdown(
+                        id = "city_picker",
+                        searchable = True,
+
+                        placeholder = "Selecione um municipio",
+                    )],
+                ),
+                dcc.Dropdown(
+                        id = "var_picker",
+                        searchable = True,
+                        clearable = True,
+                        placeholder = "Selecione uma variável",
+                    )
+                    ],
+                    className = "dropdown-selectors"
+                )
+
+            ],
+            className = "filter"
         ),
         html.Div(
             children = ["hline"],
@@ -57,15 +100,33 @@ app.layout = html.Div(
         html.Div(
             children = [
                 html.Div(
-                    children = [],
+                    children = [
+                        html.Div(
+                            [dcc.Graph(id = "daily_series")],
+                            className = "daily-series"
+                        ),
+                        html.Div(
+                            [dcc.Graph(id = "weekly_series")],
+                            className = "weekly-series"
+                        ),
+                        html.Div(
+                            [dcc.Graph(id = "monthly-series")],
+                            className = "monthly-series"
+                        ),
+                        html.Div(
+                            [dcc.Graph(id = "heat_map")],
+                            className = "heat-series"
+                        ),
+                        html.Div(
+                            [dcc.Graph(id = "monthly_grouped")],
+                            className = "monthly-grouped"
+                        )
+                        
+                    ],
                     className = "time-series-body-content"
                 )
             ],
             className = "time-series-body-container"
-        ),
-        html.Div(
-            children = ["Footer"],
-            className = "time-series-footer-container"
         )
     ],
     className = "time-series-container"
