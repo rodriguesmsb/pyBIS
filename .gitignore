@@ -20,10 +20,10 @@ __pycache__/
 
 
 */_SUCCESS
-*/data.csv
+scripts/SpatialSUSapp/data/data.csv
 */config.json
 */database.json
 */locales.json
 */search.json
-*/conf.json
+scripts/SpatialSUSapp/conf/conf.json
 */*.csv.crc
