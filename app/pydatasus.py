@@ -104,7 +104,7 @@ class PyDatasus(QObject):
     def __generate_pattern(self, database, base, states, dates):
         if isinstance(states, list) and isinstance(dates, list):
             return [ base + state + date + r'\.[dDc][bBs][cCv]'
-                     for state in states for date in dates ]
+                    for state in states for date in dates ]
         elif isinstance(states, list) and isinstance(dates, str):
             return [ base + state + dates + r'\.[dDc][bBs][cCv]'
                      for state in states ]
@@ -113,7 +113,6 @@ class PyDatasus(QObject):
         elif isinstance(states, str) and isinstance(dates, list):
             return [ base + states + date + r'\.[dDc][bBs][cCv]'
                      for date in dates ]
-
 
     def __create_folder(self, database, pattern, table_or_dbc):
         pathlib.Path(self.__path_table).mkdir(parents=True, exist_ok=True)

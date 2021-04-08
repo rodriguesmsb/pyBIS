@@ -276,14 +276,22 @@ class DownloadUi(QMainWindow):
         with open(conf + "locales.json", "r", encoding='utf8') as f:
             stts_json = json.load(f)
             if limit != '':
-                if limit != 'Brasil':
+                if limit == 'Brasil':
+                    regiao = [
+                       'Norte', 'Nordeste', 'Centro-Oeste', 'Sudeste', 'Sul'
+                    ]
+                    for reg in regiao:
+                        for uf in stts_json[reg]:
+                            ufs.add(uf)
+
+                elif (limit in stts_json.keys()
+                        and limit not in ['Norte', 'Nordeste',
+                                          'Centro-Oeste', 'Sul', 'Suldeste']
+                        ):
                     ufs.add(stts_json[limit])
                 else:
-                    ufs.add(stts_json['Norte'])
-                    ufs.add(stts_json['Nordeste'])
-                    ufs.add(stts_json['Centro-Oeste'])
-                    ufs.add(stts_json['Sudeste'])
-                    ufs.add(stts_json['Sul'])
+                    for uf in stts_json[limit]:
+                        ufs.add(uf)
 
             with open(conf + "search.json", "r", encoding='utf8') as f:
                 data = json.load(f)
@@ -394,24 +402,15 @@ class DownloadUi(QMainWindow):
                 self.comboBox_4.clear()
                 self.comboBox_4.addItems(states_list)
 
-        def load_region():
-            with open(conf + 'locales.json', 'r', encoding='utf8') as f:
-                self.comboBox_4.setEnabled(True)
-                states = json.load(f)
-                states_list = []
-                for keys in states.keys():
-                    if keys in ['Norte', 'Nordeste', 
-                            'Sudeste', 'Sul', 'Centro-Oeste']:
-                        states_list.append(keys)
-                        states_list.sort()
-                self.comboBox_4.clear()
-                self.comboBox_4.addItems(states_list)
-
         if limit.lower() != "selecionar local":
             if limit.lower() == 'estado':
                 load_states()
             elif limit.lower() == 'região':
-                load_region()
+                self.comboBox_4.clear()
+                self.comboBox_4.addItems(
+                    ['Norte', 'Nordeste', 'Centro-Oeste', 'Sudeste', 'Sul']
+                )
+                self.comboBox_4.setEnabled(True)
             elif limit.lower() == 'brasil':
                 self.comboBox_4.clear()
                 self.comboBox_4.addItem('Brasil')
@@ -1243,7 +1242,10 @@ def main():
     etl.signal_save.connect(download.save_file)
     manager = Manager(download, etl, merge, analysis, help)
     manager.setWindowIcon(QIcon(dir_ico + "favicon.ico"))
-    app.aboutToQuit.connect(lambda: analysis.terminate())
+    try:
+        app.aboutToQuit.connect(lambda: analysis.terminate())
+    except AttributeError:
+        pass
     sys.exit(app.exec_())
 
 
