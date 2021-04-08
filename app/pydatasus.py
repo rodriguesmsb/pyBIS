@@ -205,7 +205,7 @@ class PyDatasus(QObject):
                     pass
 
             self.label_signal.emit("Concluido com sucesso")
-            self.download_signal.emit(0)
+            self.download_signal.emit(100)
             self.finished.emit(1)
 
 

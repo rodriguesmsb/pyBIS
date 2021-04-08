@@ -1201,7 +1201,7 @@ class AnalysisUi(QMainWindow):
         #     pass
 
     def terminate(self):
-        os.system("kill -9 netstat -tulpn | grep 8050 | awk '{print $7}' | egrep ^[0-9]{1\,6}")
+        os.system("kill -9 $(netstat -tulpn | grep 8050 | awk '{print $7}' | egrep ^[0-9]{1\,6})")
         try:
             self.server_temporal.terminate()
         except AttributeError:
