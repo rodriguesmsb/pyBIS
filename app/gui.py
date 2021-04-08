@@ -196,8 +196,33 @@ class DownloadUi(QMainWindow):
         return int(mem)
 
     def reset(self):
-        with open(conf + "search.json", "r", encoding='utf8') as f:
-            data = json.load(f)
+        try:
+            with open(conf + "search.json", "r", encoding='utf8') as f:
+                data = json.load(f)
+            with open(conf + "search.json", "w", encoding='utf8') as f:
+                data["database"] = ""
+                data["base"] = ""
+                data["limit"] = ""
+                data["date_range"] = ["2010"]
+                json.dump(data, f, indent=4)
+
+            with open(conf + "config.json", "r", encoding='utf8') as f:
+                data = json.load(f)
+            with open(conf + "config.json", "w", encoding='utf8') as f:
+                data["mem"] = "2"
+                data["cpu"] = "2"
+                json.dump(data, f, indent=4)
+
+            with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
+                data = json.load(f)
+            with open(dir_sus_conf + "conf.json", "w", encoding='utf8') as f:
+                data["time_range"] = [2010]
+                json.dump(data, f, indent=4)
+        except FileNotFoundError:
+            self.ifJsonNotExist()
+
+    def ifJsonNotExist(self):
+        data = {}
         with open(conf + "search.json", "w", encoding='utf8') as f:
             data["database"] = ""
             data["base"] = ""
@@ -205,15 +230,13 @@ class DownloadUi(QMainWindow):
             data["date_range"] = ["2010"]
             json.dump(data, f, indent=4)
 
-        with open(conf + "config.json", "r", encoding='utf8') as f:
-            data = json.load(f)
+        data = {}
         with open(conf + "config.json", "w", encoding='utf8') as f:
             data["mem"] = "2"
             data["cpu"] = "2"
             json.dump(data, f, indent=4)
 
-        with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
-            data = json.load(f)
+        data = {}
         with open(dir_sus_conf + "conf.json", "w", encoding='utf8') as f:
             data["time_range"] = [2010]
             json.dump(data, f, indent=4)
