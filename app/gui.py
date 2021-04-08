@@ -1174,23 +1174,34 @@ class AnalysisUi(QMainWindow):
                 "../scripts/SpatialSUSapp/spatio_temporal.py")
                 ]
             )
+            time.sleep(2)
+            webbrowser.open('127.0.0.1:8050')
+        elif self.radioButton.isChecked():
+            self.msg = Error()
+            self.msg.setText("Em desenvolvimento")
+            self.msg.setWindowIcon(QIcon(dir_ico + "cat_dev.png"))
+            self.msg.setIconPixmap(QPixmap(dir_ico + "cat_dev.png"))
+            self.msg.buttonClicked.connect(lambda: self.destroy)
+            self.msg.show()
+
         elif self.radioButton_3.isChecked():
             self.server_temporal = subprocess.Popen(
                 ["python3", os.path.join(os.path.dirname(__file__),
                 "../scripts/SpatialSUSapp/temporal.py")
                 ]
             )
-
-        try:
-            if self.server_spatio_temporal or self.server_temporal:
-                time.sleep(2)
-                webbrowser.open('127.0.0.1:8050')
-        except AttributeError:
             time.sleep(2)
             webbrowser.open('127.0.0.1:8050')
-            # pass
+
+        # try:
+        #     if self.server_spatio_temporal or self.server_temporal:
+        # except AttributeError:
+        #     # time.sleep(2)
+        #     # webbrowser.open('127.0.0.1:8050')
+        #     pass
 
     def terminate(self):
+        os.system("kill -9 netstat -tulpn | grep 8050 | awk '{print $7}' | egrep ^[0-9]{1\,6}")
         try:
             self.server_temporal.terminate()
         except AttributeError:
