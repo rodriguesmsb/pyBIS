@@ -26,7 +26,9 @@ class functions:
     def ibg6(json_map):
         for i in range(len(json_map["features"])):
             data = {"codmunres": int(str(json_map["features"][i]["properties"]["id"])[0:6])}
+            case = {"case": 0}
             json_map["features"][i]['properties'].update(data)
+            json_map["features"][i]['properties'].update(case)
             return json_map
 
     def format_date(self, series):

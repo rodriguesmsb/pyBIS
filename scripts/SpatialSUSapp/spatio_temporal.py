@@ -6,6 +6,9 @@ Created on Tue Jan 26 2021
 @author: Moreno rodrigues rodriguesmsb@gmail.com
 """
 
+
+
+import dash
 import os
 import dash_core_components as dcc
 import dash_table as dt
@@ -13,50 +16,117 @@ import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_leaflet as dl
 from dash_leaflet import express as dlx
+from dash.dependencies import Input, Output, State
+from dash_extensions.javascript import Namespace, arrow_function
 import plotly.express as px
+import plotly.graph_objects as go
 import pandas as pd
 from aux.functions import functions
 import json
+import numpy as np
 
 
-path_to_data = "scripts/SpatialSUSapp/data/data.csv"
-path_to_json = "scripts/SpatialSUSapp/conf/conf.json"
-path_to_images = "scripts/SpatialSUSapp/assets/"
+
+### Indicates patch
+path_to_data = "data/data.csv"
+path_to_json = "conf/conf.json"
+path_to_images = "assets/"
 
 
+
+### Manipulate data
 conf = functions(conf_file = path_to_json, data = path_to_data)
 json_map = path_to_images + "maps/geojs-" + conf.set_json_map() + "-mun.json"
 
 min_time = int(conf.return_time_range()[0])
 max_time = int(conf.return_time_range()[-1])
 
-data_hor_bar = conf.read_data()
-data_hor_bar = data_hor_bar.groupby([conf.return_area()]).size().reset_index(name = "count")
-data_hor_bar = data_hor_bar.sort_values(by = ["count"], ascending = False)
-data_hor_bar = data_hor_bar.head()
 
-# def plot_hor_bar():
-#     data_hor_bar[conf.return_area()] = data_hor_bar[conf.return_area()].astype("str") 
-#     fig =  px.bar(data_hor_bar, x = "count", y = data_hor_bar[conf.return_area()], orientation='h')
-#     return fig
+data = conf.read_data()
+data["date"] = conf.format_date(data[conf.return_time()])
 
-#### read geojson data
+#grouping initial data
+ts = data.groupby([conf.return_area(), "date"]).size().reset_index(name = "count")
+cases_per_city = data.groupby([conf.return_area()]).size().reset_index(name = "cases")
+
+
+
 with open(json_map, "r") as f:
     json_data = json.load(f)
 
+def search_on(id, data):
+    return data.index(int(id))
+    
 
-geojson = dl.GeoJSON(
-    data = json_data, 
-    zoomToBoundsOnClick = False,
-    id = "geojson")
+for i in range(0,len(json_data["features"])):
+    codmunres = json_data["features"][i]['properties']["id"][0:6]
+    index_cases = search_on(id = codmunres, data = list(cases_per_city[conf.return_area()].values))
+    cases = {"cases": cases_per_city["cases"][index_cases]}
+    json_data["features"][i]['properties'].update(cases)
+
+
+
+### Define functions that will be used on callbacks
 
 #### define function to hover on map
-def get_info(feature = None):
+def get_info(feature=None):
     header = [html.H4("Municipio")]
     if not feature:
-        return header + ["Hoover over a state"]
+        return header + ["Click on a state"]
     return header + [html.B(feature["properties"]["name"]), html.Br()]
 #"{:} people / mi".format(feature["properties"]["codmunres"]), html.Sup("2")
+
+
+def get_id(feature = None):
+    if not feature:
+        return ["Selecione um municipio"]
+    return int(str(feature["properties"]["id"][0:6]))
+
+def plotTs(df):
+    cases_trace = go.Scatter(
+        x  = df["date"],
+        y =  df["count"],
+        mode ='markers',
+        name = "Fitted",
+        line = {"color": "#d73027"}
+    )
+    data = [cases_trace]
+    layout = go.Layout(yaxis = {"title": "Incidência"})
+    return {"data": data, "layout": layout}
+
+
+### Create a instance of Dash class
+app = dash.Dash(__name__, 
+external_stylesheets = ["https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css",
+                        "https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap"])
+app.title = "Data visualization"
+
+
+##options
+quantiles = cases_per_city["cases"].quantile([0,.25,.5,.75, 0.9])
+
+quantiles = [int(n) for n in quantiles.values]
+
+classes = quantiles
+colorscale = ['#FED976', '#FEB24C', '#FD8D3C', '#FC4E2A', '#800026']
+style = dict(weight=2, opacity=1, color='white', dashArray='3', fillOpacity = 0.7)
+
+# Create colorbar.
+ctg = ["{}+".format(cls, classes[i + 1]) for i, cls in enumerate(classes[:-1])] + ["{}+".format(classes[-1])]
+colorbar = dlx.categorical_colorbar(categories=ctg, colorscale=colorscale, width=300, height=30, position="bottomleft")
+
+ns = Namespace("dlx", "choropleth")
+### Define layouts
+geojson = dl.GeoJSON(
+    data = json_data,
+    options=dict(style=ns("style")),
+    zoomToBoundsOnClick = False,
+    hoverStyle=arrow_function(dict(weight=2, color='#666', dashArray='', fillOpacity=0.2)),  # style applied on hover
+    hideout=dict(colorscale=colorscale, classes=classes, style=style, colorProp = "cases"),
+    id = "geojson")
+
+
+
 
 cont = dbc.Card(
     [
@@ -104,7 +174,7 @@ time_unit = dbc.Card(
     className = "info-item",
 )
 
-layout = html.Div(
+app.layout = html.Div(
 
     id = "container",
     children = [
@@ -166,6 +236,7 @@ layout = html.Div(
                                     children = [
                                         dl.TileLayer(),
                                         geojson,
+                                        colorbar,
                                         html.Div(
                                             children = get_info(), 
                                             id = "info", className = "info",
@@ -329,3 +400,65 @@ layout = html.Div(
 
 
 
+@app.callback(Output("info", "children"), [Input("geojson", "click_feature")])
+def info_hover(feature):
+    return get_info(feature)
+
+
+@app.callback(Output(component_id = "time-series-graph", component_property = "figure"),
+              [Input(component_id = "geojson", component_property = "click_feature"),
+               Input(component_id = "time-unit", component_property = "value")])
+def update_Graph(feature, time_unit):
+    filtered_df = ts[ts[conf.return_area()] == get_id(feature)]
+    if time_unit == "semana":
+        filtered_df["date"] = pd.to_datetime(
+            filtered_df["date"].dt.week.astype(str) +
+            filtered_df["date"].dt.year.astype(str).add("-2"),
+            format = "%W%Y-%w"
+        )
+        filtered_df = filtered_df.groupby([conf.return_area(), "date"])["count"].sum().reset_index(name = "count")
+    elif time_unit == "mes":
+        filtered_df["date"] = pd.to_datetime(
+            "01" +
+            filtered_df["date"].dt.month.astype(str) +
+            filtered_df["date"].dt.year.astype(str),
+            format = "%d%m%Y"
+        )
+        filtered_df = filtered_df.groupby([conf.return_area(), "date"])["count"].sum().reset_index(name = "count")
+    elif time_unit == "ano":
+        filtered_df["date"] = pd.to_datetime(
+            "01" +
+            "01" +
+            filtered_df["date"].dt.year.astype(str),
+            format = "%d%m%Y"
+        )
+        filtered_df = filtered_df.groupby([conf.return_area(), "date"])["count"].sum().reset_index(name = "count")
+    return plotTs(df = filtered_df)
+
+
+@app.callback([Output(component_id = "data_table", component_property = "data")],
+             [Input(component_id = "geojson", component_property = "click_feature")])
+def update_table(feature):
+    filtered_df = ts[ts[conf.return_area()] == get_id(feature)]
+    summary = filtered_df["count"].describe().reset_index()[1:]
+    summary["count"] = np.round(summary["count"], 2)
+
+    summary = summary.rename(columns = {"index": " "})
+    return [summary.to_dict("records")]
+
+
+@app.callback(Output(component_id = "donut_plot", component_property = "figure"),
+              [Input(component_id = "geojson", component_property = "click_feature"),
+               Input(component_id = "var_cat", component_property = "value")])
+def update_donut(feature, selected_var):
+    filtered_df = data[data[conf.return_area()] == get_id(feature)]
+    filtered_df = filtered_df.groupby([selected_var]).size().reset_index(name = "count")
+    filtered_df["prop"] = np.round(filtered_df["count"] / np.sum(filtered_df["count"]),2)
+    donut = px.pie(data_frame = filtered_df, names = filtered_df[selected_var], values = filtered_df["prop"], hole = .4)
+    return donut
+
+
+
+
+if __name__ == '__main__':
+    app.run_server()

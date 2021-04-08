@@ -6,6 +6,7 @@ Created on Tue Mar 01 2021
 @author: Moreno rodrigues rodriguesmsb@gmail.com
 """
 
+import dash
 import os
 import dash_core_components as dcc
 import dash_table as dt
@@ -13,19 +14,33 @@ import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_leaflet as dl
 from dash_leaflet import express as dlx
+from dash.dependencies import Input, Output, State
+import plotly.express as px
+import plotly.graph_objects as go
 import pandas as pd
 from aux.functions import functions
 import json
-import plotly.express as px
-
-path_to_data = "scripts/SpatialSUSapp/data/data.csv"
-path_to_json = "scripts/SpatialSUSapp/conf/conf.json"
-path_to_images = "scripts/SpatialSUSapp/assets/"
+import numpy as np
 
 
+
+### Indicates path
+path_to_data = "data/data.csv"
+path_to_json = "conf/conf.json"
+path_to_images = "assets/"
+
+
+### Manipulate data
 conf = functions(conf_file = path_to_json, data = path_to_data)
 
-layout = html.Div(
+
+### Create a instance of Dash class
+app = dash.Dash(__name__, 
+external_stylesheets = ["https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css",
+                        "https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap"])
+app.title = "Data visualization"
+
+app.layout = html.Div(
     children = [
         html.Div(
             children = ["header"],
@@ -55,3 +70,7 @@ layout = html.Div(
     ],
     className = "time-series-container"
 )
+
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
