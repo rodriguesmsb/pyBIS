@@ -59,10 +59,13 @@ def search_on(id, data):
     
 
 for i in range(0,len(json_data["features"])):
-    codmunres = json_data["features"][i]['properties']["id"][0:6]
-    index_cases = search_on(id = codmunres, data = list(cases_per_city[conf.return_area()].values))
-    cases = {"cases": cases_per_city["cases"][index_cases]}
-    json_data["features"][i]['properties'].update(cases)
+    try:
+        codmunres = json_data["features"][i]['properties']["id"][0:6]
+        index_cases = search_on(id = codmunres, data = list(cases_per_city[conf.return_area()].values))
+        cases = {"cases": cases_per_city["cases"][index_cases]}
+        json_data["features"][i]['properties'].update(cases)
+    except:
+        pass
 
 
 
