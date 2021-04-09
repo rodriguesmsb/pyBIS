@@ -196,7 +196,6 @@ app.layout = html.Div(
 def update_Graph(city):
     if city == "all":
         new_ts = ts.groupby(["date"])["count"].sum().reset_index(name = "count")
-        print(new_ts)
     else:
         new_ts = ts[ts[conf.return_area()] == int(city)]
         new_ts = new_ts.groupby(["date"])["count"].sum().reset_index(name = "count")
