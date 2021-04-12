@@ -30,15 +30,12 @@ try:
     path_to_data = "scripts/SpatialSUSapp/data/data.csv"
     path_to_json = "scripts/SpatialSUSapp/conf/conf.json"
     path_to_images = "scripts/SpatialSUSapp/assets/"
+    conf = functions(conf_file = path_to_json, data = path_to_data)
 except:
     path_to_data = "data/data.csv"
     path_to_json = "conf/conf.json"
     path_to_images = "assets/"
-
-
-
-### Manipulate data
-conf = functions(conf_file = path_to_json, data = path_to_data)
+    conf = functions(conf_file = path_to_json, data = path_to_data)
 
 
 ### Reading data
@@ -60,12 +57,29 @@ ts["month"] = pd.to_datetime("01" +
                              ts["date"].dt.month.astype(str) +
                              ts["date"].dt.year.astype(str),
                              format = "%d%m%Y")
+ts["weekday"] = ts["date"].dt.day_name()
+
 
 weekly_series = ts.groupby([conf.return_area(), "week"])["count"].sum().reset_index(name = "count")
 weekly_series = weekly_series.rename(columns = {"week": "date"})
 
 monthly_series = ts.groupby([conf.return_area(),"month"])["count"].sum().reset_index(name = "count")
 monthly_series = monthly_series.rename(columns = {"month": "date"})
+
+daily_heat_map = ts.groupby([conf.return_area(), "weekday", "week"])["count"].sum().reset_index(name = "count")
+daily_heat_map["week"] = daily_heat_map["week"].dt.week
+
+map_week_day = {"Monday": "Segunda", "Tuesday": "Terça", "Wednesday": "Quarta", 
+                "Thursday": "Quinta", "Friday": "Sexta", "Saturday": "Sábado",
+                "Sunday": "Domingo"}
+
+daily_heat_map["weekday"] = daily_heat_map["weekday"].map(map_week_day)
+
+
+daily_heat_map["weekday"] = pd.Categorical(values = daily_heat_map["weekday"],
+                                           categories = ["Segunda", "Terça", "Quarta", 
+                                                         "Quinta", "Sexta", "Sábado", "Domingo"],
+                                           ordered = True)
 
 cities_code = set(ts[conf.return_area()])
 
@@ -87,6 +101,34 @@ def plotTs(df, Title):
         plot_bgcolor = 'rgba(0,0,0,0)',
         font_color = "white")
     return {"data": data,"layout": layout}
+
+
+def plotHetmap(df, Title):
+    my_hovertemplate = (
+        "<i>Semana</i>: %{y}<br>" +
+        "<i>Dia da Semana</i>: %{x}<br>" +
+        "<i>Incidencia</i>: %{z}" +
+        "<extra></extra>") # Remove trace info
+    trace = go.Heatmap(
+        x = df["weekday"],
+        y = df["week"],
+        z = df["count"],
+        hovertemplate = my_hovertemplate,
+        colorscale = "Picnic",
+        hoverongaps = False,
+        showscale = False,
+        xgap = 1,
+        ygap = 1)
+    data = [trace]
+    layout = go.Layout(
+        title = Title,
+        yaxis = {"title": "Incidência"},
+        xaxis = {'showgrid': False},
+        paper_bgcolor = 'rgba(0,0,0,0)',
+        plot_bgcolor = 'rgba(0,0,0,0)',
+        font_color = "white")
+    return {"data": data,"layout": layout}
+
 
 
 def return_city(data):
@@ -178,7 +220,7 @@ app.layout = html.Div(
                             className = "monthly-series"
                         ),
                         html.Div(
-                            [dcc.Graph(id = "heat_map")],
+                            [dcc.Graph(id = "daily_heat_map")],
                             className = "heat-series"
                         ),
                         html.Div(
@@ -228,6 +270,19 @@ def update_Graph(city):
         new_ts = monthly_series[monthly_series[conf.return_area()] == int(city)]
         new_ts = new_ts.groupby(["date"])["count"].sum().reset_index(name = "count")
     return plotTs(new_ts, Title = "Incidência mensal")
+
+
+@app.callback(Output(component_id = "daily_heat_map", component_property = "figure"),
+              [Input(component_id = "city_picker", component_property = "value")])
+def update_Graph(city):
+    if city == "all":
+        new_ts = daily_heat_map.groupby(["weekday", "week"])["count"].mean().reset_index(name = "count")
+    else:
+        
+        new_ts = daily_heat_map[daily_heat_map[conf.return_area()] == int(city)]
+        new_ts = new_ts.groupby(["weekday", "week"])["count"].mean().reset_index(name = "count")
+
+    return plotHetmap(new_ts, Title = "Incidência Média de Notificações Diária")
               
 
 
