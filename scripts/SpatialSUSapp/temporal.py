@@ -58,6 +58,8 @@ ts["month"] = pd.to_datetime("01" +
                              ts["date"].dt.year.astype(str),
                              format = "%d%m%Y")
 ts["weekday"] = ts["date"].dt.day_name()
+ts["month_name"] = ts["month"].apply(lambda x: x.strftime("%b"))
+
 
 
 weekly_series = ts.groupby([conf.return_area(), "week"])["count"].sum().reset_index(name = "count")
@@ -81,6 +83,22 @@ daily_heat_map["weekday"] = pd.Categorical(values = daily_heat_map["weekday"],
                                                          "Quinta", "Sexta", "Sábado", "Domingo"],
                                            ordered = True)
 
+monthly_heat_map =  ts.groupby([conf.return_area(), "month_name", "week"])["count"].sum().reset_index(name = "count")
+
+map_month = {"Jan": "Jan", "Feb": "Fev", "Mar": "Mar", "Apr": "Abr", "May": "Maio", "Jun": "Jun",
+             "Jul": "Jul", "Aug": "Ago", "Sep": "Set", "Oct": "Out", "Nov": "Nov", "Dec": "Dez"}
+
+monthly_heat_map["week"] = monthly_heat_map["week"].dt.week
+
+monthly_heat_map["month_name"] = monthly_heat_map["month_name"].map(map_month)
+daily_heat_map
+monthly_heat_map["month_name"] = pd.Categorical(values = monthly_heat_map["month_name"],
+                                                categories = ["Jan", "Fev", "Mar", "Abr", "Maio", "Jun", "Jul",
+                                                              "Ago", "Set", "Out", "Nov", "Dez"])
+
+
+
+
 cities_code = set(ts[conf.return_area()])
 
 def plotTs(df, Title):
@@ -103,16 +121,16 @@ def plotTs(df, Title):
     return {"data": data,"layout": layout}
 
 
-def plotHetmap(df, Title):
+def plotHeatmap(df, x, y, z, Title):
     my_hovertemplate = (
         "<i>Semana</i>: %{y}<br>" +
         "<i>Dia da Semana</i>: %{x}<br>" +
         "<i>Incidencia</i>: %{z}" +
         "<extra></extra>") # Remove trace info
     trace = go.Heatmap(
-        x = df["weekday"],
-        y = df["week"],
-        z = df["count"],
+        x = df[x],
+        y = df[y],
+        z = df[z],
         hovertemplate = my_hovertemplate,
         colorscale = "Picnic",
         hoverongaps = False,
@@ -224,7 +242,7 @@ app.layout = html.Div(
                             className = "heat-series"
                         ),
                         html.Div(
-                            [dcc.Graph(id = "monthly_grouped")],
+                            [dcc.Graph(id = "monthly_heat_map")],
                             className = "monthly-grouped"
                         )
                         
@@ -278,13 +296,23 @@ def update_Graph(city):
     if city == "all":
         new_ts = daily_heat_map.groupby(["weekday", "week"])["count"].mean().reset_index(name = "count")
     else:
-        
         new_ts = daily_heat_map[daily_heat_map[conf.return_area()] == int(city)]
         new_ts = new_ts.groupby(["weekday", "week"])["count"].mean().reset_index(name = "count")
+    return plotHeatmap(new_ts, x = "weekday", y = "week", z = "count", Title = "Incidência Média de Notificações Diária")
 
-    return plotHetmap(new_ts, Title = "Incidência Média de Notificações Diária")
+
+
+#Change this for trend plot based on stl
+@app.callback(Output(component_id = "monthly_heat_map", component_property = "figure"),
+              [Input(component_id = "city_picker", component_property = "value")])
+def update_Graph(city):
+    if city == "all":
+        new_ts = monthly_heat_map.groupby(["month_name", "week"])["count"].mean().reset_index(name = "count")
+    else:
+        new_ts = monthly_heat_map[monthly_heat_map[conf.return_area()] == int(city)]
+        new_ts = new_ts.groupby(["month_name", "week"])["count"].mean().reset_index(name = "count")
+    return plotHeatmap(new_ts, x = "month_name", y = "week", z = "count", Title = "Incidência Média de Notificações Mensal")
               
-
 
 if __name__ == '__main__':
     app.run_server(debug=True)
