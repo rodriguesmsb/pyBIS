@@ -156,8 +156,9 @@ class PyDatasus(QObject):
     def __write(self, base):
         self.__file_base.write(base)
         self.__pbar += len(base)
-        ratio = round((float(self.__pbar / self.__file_base_size)
-                       * 100 - 6), 1)
+        ratio = round(
+            (float(self.__pbar / self.__file_base_size) * 100 - 6), 1
+        )
         percentage = round(100 * ratio / (100 - 6), 1)
         self.download_signal.emit(int(percentage))
 
@@ -171,26 +172,19 @@ class PyDatasus(QObject):
             for line in lines[1:]:
                 count += 1
                 self.__page.cwd(line.split(',')[0])
+                ratio = round((float(count / len(lines)) * 100 - 6), 1)
+                percentage = int(round(100 * ratio / (100 - 6), 1))
                 if not path.isfile(path.expanduser(
                     self.__path_dbc + database + '/'
                     + line.split(',')[1].split('.')[0] + '.csv')):
 
-                    self.__pbar = 0
-                    self.download_signal.emit(self.__pbar)
-                    self.__create_file_write(
-                        database, line.split(',')[1]
-                    )
+                    with open(self.__path_dbc + database + '/'
+                              + line.split(',')[1], "wb") as fp:
+                        self.__page.retrbinary("RETR " + line.split(',')[1], fp.write)
 
-                    self.label_signal.emit(
-                        "Baixando {}".format(line.split(',')[1])
-                    )
-                    self.lcd_signal.emit(count)
-                    self.__page.retrbinary('RETR ' + line.split(',')[1],
-                                           self.__write)
+                        self.download_signal.emit(percentage)
 
-                    self.label_signal.emit(
-                        "Convertendo: {}".format(line.split(',')[1])
-                    )
+
                     self.__convert_dbc(
                         path.expanduser(
                             self.__path_dbc + database + '/'
@@ -201,11 +195,12 @@ class PyDatasus(QObject):
                             line.split(',')[1]
                         )
                     )
+                    # self.download_signal.emit(100)
+                    # self.finished.emit(1)
                 else:
                     pass
 
             self.label_signal.emit("Concluido com sucesso")
-            self.download_signal.emit(100)
             self.finished.emit(1)
 
 

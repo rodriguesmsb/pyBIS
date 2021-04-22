@@ -3,6 +3,7 @@
 from sys import argv
 from os import path, system
 from dbfread import DBF
+import struct
 import pandas as pd
 import csv
 
@@ -56,7 +57,7 @@ class ReadDbf:
         arquivo dbf diretamente no arquivo csv.
         """
 
-        dbf = DBF(file_dbf, encoding='iso-8859-1')
+        dbf = DBF(file_dbf)#, encoding='iso-8859-1')
 
         with open('{}.csv'.format(file_dbf.split(".")[0]), 'w+') as csvfile:
             data = csv.writer(csvfile)
