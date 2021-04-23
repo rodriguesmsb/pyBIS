@@ -7,6 +7,7 @@ import os
 import multiprocessing
 import psutil
 import re
+from operator import add
 from functools import reduce
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QMessageBox,
     QPushButton, QTableWidgetItem, QTabBar, QTabWidget, QStyle,
@@ -286,9 +287,10 @@ class DownloadUi(QMainWindow):
 
                 elif (limit in stts_json.keys()
                         and limit not in ['Norte', 'Nordeste',
-                                          'Centro-Oeste', 'Sul', 'Suldeste']
+                                          'Centro-Oeste', 'Sul', 'Sudeste']
                         ):
                     ufs.add(stts_json[limit])
+
                 else:
                     for uf in stts_json[limit]:
                         ufs.add(uf)
@@ -1192,13 +1194,6 @@ class AnalysisUi(QMainWindow):
             )
             time.sleep(2)
             webbrowser.open('127.0.0.1:8050')
-
-        # try:
-        #     if self.server_spatio_temporal or self.server_temporal:
-        # except AttributeError:
-        #     # time.sleep(2)
-        #     # webbrowser.open('127.0.0.1:8050')
-        #     pass
 
     def terminate(self):
         os.system("kill -9 $(netstat -tulpn | grep 8050 | awk '{print $7}' | egrep ^[0-9]{1\,6}) 2>/dev/null")
