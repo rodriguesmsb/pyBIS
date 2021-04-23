@@ -1201,15 +1201,21 @@ class AnalysisUi(QMainWindow):
         #     pass
 
     def terminate(self):
-        os.system("kill -9 $(netstat -tulpn | grep 8050 | awk '{print $7}' | egrep ^[0-9]{1\,6})")
+        os.system("kill -9 $(netstat -tulpn | grep 8050 | awk '{print $7}' | egrep ^[0-9]{1\,6}) 2>/dev/null")
         try:
             self.server_temporal.terminate()
         except AttributeError:
-            self.server_spatio_temporal.terminate()
+            try:
+                self.server_spatio_temporal.terminate()
+            except AttributeError:
+                pass
         try:
             self.server_spatio_temporal.terminate()
         except AttributeError:
-            self.server_temporal.terminate()
+            try:
+                self.server_temporal.terminate()
+            except AttributeError:
+                pass
 
     def clear_items(self, val):
         self.comboBox_4.clear()

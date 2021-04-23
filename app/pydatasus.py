@@ -70,7 +70,6 @@ class PyDatasus(QObject):
 
 
     def __convert_dbc(self, db):
-        self.label_signal.emit("Convertendo banco")
         if db.endswith('.csv'):
             pass
 
@@ -153,36 +152,36 @@ class PyDatasus(QObject):
         )
         self.__file_base_size = self.__page.size(select)
 
-    def __write(self, base):
-        self.__file_base.write(base)
-        self.__pbar += len(base)
-        ratio = round(
-            (float(self.__pbar / self.__file_base_size) * 100 - 6), 1
-        )
-        percentage = round(100 * ratio / (100 - 6), 1)
-        self.download_signal.emit(int(percentage))
-
     def __get_data_dbc(self, database):
-        count = 0 
+        # count = 0 
         if path.isfile(path.expanduser(
             self.__path_table + database + '.csv')):
             with open(path.expanduser(
                 self.__path_table + database + '.csv')) as table:
                 lines = table.readlines()
-            for line in lines[1:]:
+
+            for count, line in enumerate(lines[1:]):
                 count += 1
-                self.__page.cwd(line.split(',')[0])
-                ratio = round((float(count / len(lines)) * 100 - 6), 1)
-                percentage = int(round(100 * ratio / (100 - 6), 1))
+                try:
+                    self.__page.cwd(line.split(',')[0])
+                except AttributeError:
+                    break
+
                 if not path.isfile(path.expanduser(
                     self.__path_dbc + database + '/'
                     + line.split(',')[1].split('.')[0] + '.csv')):
 
+                    ratio = round((float(count / len(lines)) * 100 - 6), 1)
+                    percentage = int(round(100 * ratio / (100 - 6), 1))
+
                     with open(self.__path_dbc + database + '/'
                               + line.split(',')[1], "wb") as fp:
-                        self.__page.retrbinary("RETR " + line.split(',')[1], fp.write)
+                        self.__page.retrbinary(
+                            "RETR " + line.split(',')[1], fp.write
+                        )
 
                         self.download_signal.emit(percentage)
+                        self.lcd_signal.emit(count)
 
 
                     self.__convert_dbc(
@@ -190,18 +189,15 @@ class PyDatasus(QObject):
                             self.__path_dbc + database + '/'
                             + line.split(',')[1])
                     )
-                    self.label_signal.emit(
-                        "{} convertido com sucesso!".format(
-                            line.split(',')[1]
-                        )
-                    )
+                    self.label_signal.emit("{}".format(line.split(',')[1]))
                     # self.download_signal.emit(100)
-                    # self.finished.emit(1)
                 else:
                     pass
 
-            self.label_signal.emit("Concluido com sucesso")
             self.finished.emit(1)
+            self.label_signal.emit("Concluido com sucesso")
+            self.download_signal.emit(100)
+            self.__page.close()
 
 
 if __name__ == '__main__':
