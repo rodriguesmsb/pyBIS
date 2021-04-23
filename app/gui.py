@@ -567,10 +567,10 @@ class DownloadUi(QMainWindow):
             )
             self.spark = start_spark(conf)
             try:
-                self.lista_spark = [
-                    self.spark.read.csv(csv, header=True)
-                    for csv in self.files
-                ]
+                self.lista_spark = list(
+                    map(lambda x: self.spark.read.csv(x, header=True),
+                        self.files)
+                )
                 self.df = unionAll(self.lista_spark)
                 self.write_table()
             except:
@@ -609,28 +609,28 @@ class DownloadUi(QMainWindow):
 
     def write_body(self):
         self.tableWidget.setRowCount(20)
-        col_n = 0
-        row_n = 0
         val = 0
 
         self.percentage = 0
         self.signal_txt.connect(self.label_5.setText)
         self.signal_txt.emit("Escrevendo seus dados")
+
+        df = self.df.head(20)
         try:
-            for col in self.cols:
+            for id_col, columns in enumerate(self.cols):
                 val += 1
-                for r in range(1, 21):
-                    ratio = round((float(val / len(self.cols)) * 100 - 6), 1)
-                    percentage = int(round(100 * ratio / (100 - 6), 1))
-                    self.signal_pbar.connect(self.progressBar.setValue)
-                    self.signal_pbar.emit(percentage)
+                for n in range(20):
                     self.tableWidget.setItem(
-                        row_n, col_n, QTableWidgetItem(
-                            str(self.df.select(
-                                self.df[col]).take(r)[r - 1][0])))
-                    row_n += 1
-                row_n = 0
-                col_n += 1
+                        n, id_col, QTableWidgetItem(df[n].asDict()[columns])
+                    )
+
+                self.signal_pbar.connect(self.progressBar.setValue)
+                self.signal_pbar.emit(int(round(
+                    100 * round((float(val / len(list(df[0].asDict().keys())))
+                        * 100 - 6), 1) / (100 - 6), 1
+                    ))
+                )
+
             self.signal_txt.emit("Os dados foram escritos com sucesso")
             self.signal_finished.emit(1)
         except IndexError:
