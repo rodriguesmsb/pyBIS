@@ -24,13 +24,29 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../assets/download.png</normaloff>../assets/download.png</iconset>
+    <normaloff>../assets/load.png</normaloff>../assets/load.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">font: 12pt &quot;Noto Sans&quot;;</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_5">
+    <item row="2" column="4">
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Preferred</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
     <item row="4" column="1" colspan="3">
      <widget class="QGroupBox" name="groupBox_4">
       <property name="title">
@@ -83,60 +99,6 @@
       </property>
      </spacer>
     </item>
-    <item row="3" column="1">
-     <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="0">
-       <widget class="QProgressBar" name="progressBar">
-        <property name="value">
-         <number>0</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="2" column="4">
-     <spacer name="horizontalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Preferred</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="0" column="1">
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Preferred</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
     <item row="2" column="2">
      <spacer name="horizontalSpacer_3">
       <property name="orientation">
@@ -153,10 +115,22 @@
       </property>
      </spacer>
     </item>
+    <item row="1" column="3" rowspan="3">
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="title">
+       <string>Bancos carregados</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_8">
+       <item row="0" column="0">
+        <widget class="QListWidget" name="listWidget"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
     <item row="1" column="1">
      <widget class="QGroupBox" name="groupBox_3">
       <property name="title">
-       <string>Carregar arquivo</string>
+       <string>Carregar banco</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_9">
        <item row="0" column="0">
@@ -164,7 +138,7 @@
          <item row="0" column="2">
           <widget class="QPushButton" name="pushButton_3">
            <property name="text">
-            <string>Limpar lista</string>
+            <string>Resetar</string>
            </property>
           </widget>
          </item>
@@ -187,70 +161,21 @@
       </layout>
      </widget>
     </item>
-    <item row="1" column="3" rowspan="3">
-     <widget class="QGroupBox" name="groupBox_2">
-      <property name="title">
-       <string>Configuração de processamento</string>
+    <item row="0" column="1">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
       </property>
-      <layout class="QGridLayout" name="gridLayout_8">
-       <item row="0" column="0">
-        <layout class="QGridLayout" name="gridLayout_6">
-         <property name="sizeConstraint">
-          <enum>QLayout::SetMinAndMaxSize</enum>
-         </property>
-         <property name="spacing">
-          <number>12</number>
-         </property>
-         <item row="0" column="1">
-          <widget class="QSpinBox" name="spinBox">
-           <property name="maximumSize">
-            <size>
-             <width>400</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>memória destinada ao processo de leitura dos dados</string>
-           </property>
-           <property name="minimum">
-            <number>2</number>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>Memória:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QSpinBox" name="spinBox_2">
-           <property name="maximumSize">
-            <size>
-             <width>400</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>cores destinados a leitura dos dados</string>
-           </property>
-           <property name="minimum">
-            <number>2</number>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_4">
-           <property name="text">
-            <string>CPU:</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
+      <property name="sizeType">
+       <enum>QSizePolicy::Preferred</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
     </item>
    </layout>
   </widget>

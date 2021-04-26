@@ -35,6 +35,7 @@ dir_sus_conf = os.path.join(os.path.dirname(__file__),
                             "../scripts/SpatialSUSapp/conf/")
 blast_ = os.path.join(os.path.dirname(__file__), './blast-dbf')
 
+
 class Error(QMessageBox):
     def __init__(self):
         super().__init__()
@@ -93,7 +94,7 @@ class Manager(QMainWindow):
         self.setWindowTitle("pyBiss")
         # self.setFont(QFont("Arial", 12))
 
-        self.resized.connect(self.set_font_size)
+        # self.resized.connect(self.set_font_size)
 
         self.tab_manager = TabWidget()
 
@@ -1236,6 +1237,7 @@ class LoadFile(QMainWindow):
         self.pushButton.clicked.connect(self.loadFile)
         self.pushButton_2.clicked.connect(self.readList)
         self.pushButton_3.clicked.connect(self.clear)
+        self.listWidget.itemDoubleClicked.connect(self.remove_db)
 
     def loadFile(self):
         def convert(df):
@@ -1256,6 +1258,8 @@ class LoadFile(QMainWindow):
             elif df[-4:] == ".xlsx" or df[-4:] == ".xls":
                 self.files.append(pd.read_excel(df))
 
+            self.listWidget.addItem(df)
+
         file_ = QFileDialog.getOpenFileNames(self, "Carregar arquivo",
             os.path.expanduser('~/'),
             ("Arquivo csv (*.csv);;Arquivo Excel (*.xlsx *.xls);;\
@@ -1263,41 +1267,43 @@ class LoadFile(QMainWindow):
         )
 
         list(map(convert, file_[0]))
-        # print(file_[0])
-        # if file_[1] == "Arquivo csv (*.csv)":
-        #     self.files.append(pd.read_csv(file_[0]))
-
-        # elif file_[1] == "Arquivo dbf (*.DBF)":
-        #     csv = file_[0][:-3] + "csv"
-        #     ReadDbf({file_[0]}, convert='convert')
-        #     self.files.append(pd.read_csv(csv))
-
-        # elif file_[1] == "Arquivo dbc (*.dbc)":
-        #     dbf = file_[0][:-3] + "dbf"
-        #     os.system(f"{blast_} {file_[0]} {dbf}")
-        #     ReadDbf({dbf}, convert=True)
-        #     self.files.append(pd.read_csv(dbf[:-3] + "csv"))
-
-        # elif file_[1] == "Arquivo Excel":
-        #     self.files.append(pd.read_excel(file_[0]))
 
     def readList(self):
-        all_files = pd.concat(self.files)
-        self.tableWidget.setRowCount(all_files.shape[0])
-        self.tableWidget.setColumnCount(all_files.shape[1])
+        try:
+            self.all_files = pd.concat(self.files)
+            self.write_table(self.all_files)
+        except ValueError:
+            msg_error = "Nenhum arquivo foi carregado como banco de dados"
+            self.error = Error()
+            self.error.setWindowIcon(QIcon(dir_ico + "cat_sad_3"))
+            self.error.setIconPixmap(QPixmap(dir_ico + "cat_sad_3"))
+            self.error.setText(msg_error)
+            self.error.show()
 
-        for e, column in enumerate(all_files.columns.to_list()):
+    def write_table(self, data):
+        self.tableWidget.setRowCount(data.shape[0])
+        self.tableWidget.setColumnCount(data.shape[1])
+
+        for e, column in enumerate(data.columns.to_list()):
             self.tableWidget.setHorizontalHeaderItem(
                 e, QTableWidgetItem(column))
+            self.comboBox.addItem(column)
 
-            for row, ele in enumerate(all_files[column]):
+            for row, ele in enumerate(data[column]):
                 self.tableWidget.setItem(
                     row, e, QTableWidgetItem(str(ele))
                 )
 
+    def remove_db(self):
+        coluna = self.listWidget.selectedItems()
+        self.files.pop(self.listWidget.currentRow())
+        for col in coluna:
+            self.listWidget.takeItem(self.listWidget.row(col))
+
     def clear(self):
         self.files.clear()
         self.tableWidget.clear()
+        self.listWidget.clear()
         self.tableWidget.setRowCount(0)
         self.tableWidget.setColumnCount(0)
 
@@ -1332,6 +1338,7 @@ def main():
     etl.signal_save.connect(download.save_file)
     manager = Manager(loadfile, download, etl, merge, analysis, help)
     manager.setWindowIcon(QIcon(dir_ico + "favicon.ico"))
+    manager.resized.connect(manager.set_font_size)
     try:
         app.aboutToQuit.connect(lambda: analysis.terminate())
     except AttributeError:
