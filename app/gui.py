@@ -7,7 +7,6 @@ import os
 import multiprocessing
 import psutil
 import re
-from operator import add
 from functools import reduce
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QMessageBox,
     QPushButton, QTableWidgetItem, QTabBar, QTabWidget, QStyle,
@@ -23,6 +22,7 @@ import webbrowser
 
 from pydatasus import PyDatasus
 from f_spark import spark_conf, start_spark
+from convert_dbf_to_csv import ReadDbf
 
 sys.path.append(os.path.join(os.path.dirname(__file__),
                 "../scripts/SpatialSUSapp/"))
@@ -33,7 +33,7 @@ conf = os.path.join(os.path.dirname(__file__), "../conf/")
 dir_dbc = os.path.expanduser("~/datasus_dbc/")
 dir_sus_conf = os.path.join(os.path.dirname(__file__),
                             "../scripts/SpatialSUSapp/conf/")
-
+blast_ = os.path.join(os.path.dirname(__file__), './blast-dbf')
 
 class Error(QMessageBox):
     def __init__(self):
@@ -1226,6 +1226,82 @@ class AnalysisUi(QMainWindow):
         self.comboBox_2.addItem(cols)
 
 
+class LoadFile(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        uic.loadUi(dir_ui + "load.ui", self)
+        self.files = []
+
+        self.pushButton.clicked.connect(self.loadFile)
+        self.pushButton_2.clicked.connect(self.readList)
+        self.pushButton_3.clicked.connect(self.clear)
+
+    def loadFile(self):
+        def convert(df):
+            if df[-4:] == ".dbf":
+                csv = df[:-3] + "csv"
+                ReadDbf({df}, convert='convert')
+                self.files.append(pd.read_csv(csv))
+
+            elif df[-4:] == ".csv":
+                self.files.append(pd.read_csv(df))
+
+            elif df[-4:] == ".dbc":
+                dbf = df[:-3] + "dbf"
+                os.system(f"{blast_} {df} {dbf}")
+                ReadDbf({dbf}, convert=True)
+                self.files.append(pd.read_csv(dbf[:-3] + "csv"))
+
+            elif df[-4:] == ".xlsx" or df[-4:] == ".xls":
+                self.files.append(pd.read_excel(df))
+
+        file_ = QFileDialog.getOpenFileNames(self, "Carregar arquivo",
+            os.path.expanduser('~/'),
+            ("Arquivo csv (*.csv);;Arquivo Excel (*.xlsx *.xls);;\
+              Arquivo dbf (*.DBF);;Arquivo dbc (*.dbc)")
+        )
+
+        list(map(convert, file_[0]))
+        # print(file_[0])
+        # if file_[1] == "Arquivo csv (*.csv)":
+        #     self.files.append(pd.read_csv(file_[0]))
+
+        # elif file_[1] == "Arquivo dbf (*.DBF)":
+        #     csv = file_[0][:-3] + "csv"
+        #     ReadDbf({file_[0]}, convert='convert')
+        #     self.files.append(pd.read_csv(csv))
+
+        # elif file_[1] == "Arquivo dbc (*.dbc)":
+        #     dbf = file_[0][:-3] + "dbf"
+        #     os.system(f"{blast_} {file_[0]} {dbf}")
+        #     ReadDbf({dbf}, convert=True)
+        #     self.files.append(pd.read_csv(dbf[:-3] + "csv"))
+
+        # elif file_[1] == "Arquivo Excel":
+        #     self.files.append(pd.read_excel(file_[0]))
+
+    def readList(self):
+        all_files = pd.concat(self.files)
+        self.tableWidget.setRowCount(all_files.shape[0])
+        self.tableWidget.setColumnCount(all_files.shape[1])
+
+        for e, column in enumerate(all_files.columns.to_list()):
+            self.tableWidget.setHorizontalHeaderItem(
+                e, QTableWidgetItem(column))
+
+            for row, ele in enumerate(all_files[column]):
+                self.tableWidget.setItem(
+                    row, e, QTableWidgetItem(str(ele))
+                )
+
+    def clear(self):
+        self.files.clear()
+        self.tableWidget.clear()
+        self.tableWidget.setRowCount(0)
+        self.tableWidget.setColumnCount(0)
+
+
 class Help(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -1240,6 +1316,7 @@ def main():
     download = DownloadUi()
     etl = EtlUi()
     merge = MergeUi()
+    loadfile = LoadFile()
     help = Help()
     analysis = AnalysisUi()
     download.signal_col_etl.connect(etl.convert_model)
@@ -1253,7 +1330,7 @@ def main():
     download.signal_clear_items.connect(analysis.clear_items)
     etl.signal_trim_data.connect(download.trim_data)
     etl.signal_save.connect(download.save_file)
-    manager = Manager(download, etl, merge, analysis, help)
+    manager = Manager(loadfile, download, etl, merge, analysis, help)
     manager.setWindowIcon(QIcon(dir_ico + "favicon.ico"))
     try:
         app.aboutToQuit.connect(lambda: analysis.terminate())
