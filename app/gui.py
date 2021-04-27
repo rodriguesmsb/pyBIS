@@ -490,6 +490,8 @@ class DownloadUi(QMainWindow):
             )
         else:
             self.database, self.base, self.limit, self.date = self.load_conf()
+            # print(list(map(lambda y: [x + y for x in list(map(lambda x: self.base + x, self.limit))], self.date)))
+
 
             if self.database == 'SINAN':
                 if isinstance(self.date, list):
@@ -528,9 +530,10 @@ class DownloadUi(QMainWindow):
             files = []
             if self.database.lower() == "sih":
                 self.database = "SIHSUS"
-            dir_database = os.path.expanduser("~/datasus_dbc/"
-                                          + self.database
-                                          + "/")
+            dir_database = os.path.expanduser(
+                "~/datasus_dbc/" + self.database + "/"
+            )
+            # print(bases)
             try:
                 folder_csv = os.listdir(dir_database)
                 for file_csv in folder_csv:
@@ -538,6 +541,7 @@ class DownloadUi(QMainWindow):
                         files.append(os.path.expanduser(
                             "~/datasus_dbc/" + self.database + "/" + file_csv)
                         )
+                # print(files)
 
                 self.files = files
 
@@ -569,21 +573,24 @@ class DownloadUi(QMainWindow):
             )
             self.spark = start_spark(conf)
             try:
-                self.lista_spark = list(
-                    map(lambda x: self.spark.read.csv(x, header=True),
-                        self.files)
-                )
-                self.df = unionAll(self.lista_spark)
+                # self.lista_spark = list(
+                #     map(lambda x: self.spark.read.csv(x, header=True),
+                #         self.files)
+                # )
+                # self.df = unionAll(self.lista_spark)
+                self.df = self.spark.read.csv(self.files, header=True)
                 self.write_table()
             except:
-                self.signal_error.emit(
-                    [
-                        1, 'O arquivo solicitado não foi encontrado', dir_ico
-                        + 'cat_sad_3.png'
-                    ]
-                )
-                self.stop_thread()
+              self.signal_error.emit(
+                  [
+                      1, 'O arquivo solicitado não foi encontrado', dir_ico
+                      + 'cat_sad_3.png'
+                  ]
+              )
+              self.stop_thread()
 
+    def receive_data(self, dataframe):
+        self.df = dataframe
 
     def ant_bug_column(self, col):
         self.tableWidget.setHorizontalHeaderItem(col[0], col[1])
@@ -653,8 +660,8 @@ class DownloadUi(QMainWindow):
 
             if params[1] != None:
                 try:
-                    self.data_filtered = self.data_drop.filter(' and '.join(
-                                                               params[1])
+                    self.data_filtered = self.data_drop.filter(
+                        ' and '.join(params[1])
                     )
                 except:
                     pass
@@ -1228,6 +1235,10 @@ class AnalysisUi(QMainWindow):
 
 
 class LoadFile(QMainWindow):
+
+    column_data = pyqtSignal()
+    dataframe = pyqtSignal()
+
     def __init__(self):
         super().__init__()
 
@@ -1272,6 +1283,8 @@ class LoadFile(QMainWindow):
         try:
             self.all_files = pd.concat(self.files)
             self.write_table(self.all_files)
+
+            self.dataframe.emit(self.all_files)
         except ValueError:
             msg_error = "Nenhum arquivo foi carregado como banco de dados"
             self.error = Error()
@@ -1288,6 +1301,8 @@ class LoadFile(QMainWindow):
             self.tableWidget.setHorizontalHeaderItem(
                 e, QTableWidgetItem(column))
             self.comboBox.addItem(column)
+
+            self.column_data.emit(column)
 
             for row, ele in enumerate(data[column]):
                 self.tableWidget.setItem(
@@ -1325,6 +1340,9 @@ def main():
     loadfile = LoadFile()
     help = Help()
     analysis = AnalysisUi()
+    loadfile.column_data.connect(etl.convert_model)
+    loadfile.column_data.connect(etl.line_select.addItem)
+    loadfile.dataframe.connect(download.receive_data)
     download.signal_col_etl.connect(etl.convert_model)
     download.signal_col_etl.connect(etl.line_select.addItem)
     download.signal_clear_add.connect(etl.clear_models)

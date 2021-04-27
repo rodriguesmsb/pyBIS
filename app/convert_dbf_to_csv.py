@@ -57,11 +57,14 @@ class ReadDbf:
         arquivo dbf diretamente no arquivo csv.
         """
 
-        dbf = DBF(file_dbf)#, encoding='iso-8859-1')
+        dbf = DBF(file_dbf)
+        dbf.fields_names = list(
+            map(lambda x: x.replace(" ", ""), dbf.field_names)
+        )
 
         with open('{}.csv'.format(file_dbf.split(".")[0]), 'w+') as csvfile:
             data = csv.writer(csvfile)
-            data.writerow(dbf.field_names)
+            data.writerow(dbf.fields_names)
             try:
                 for record in dbf:
                     data.writerow(list(record.values()))

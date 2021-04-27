@@ -59,6 +59,7 @@ def start_spark(conf):
    try:
        sc = SparkContext(conf=conf_file)
        spark = SparkSession(sc)
+       # spark.debug.maxToStringFields(100)
    except ValueError:
        sc = SparkContext.getOrCreate()
    spark = SparkSession(sc)
