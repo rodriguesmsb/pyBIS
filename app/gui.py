@@ -23,6 +23,7 @@ import webbrowser
 from pydatasus import PyDatasus
 from f_spark import spark_conf, start_spark
 from convert_dbf_to_csv import ReadDbf
+from pyspark.sql.functions import lit
 
 sys.path.append(os.path.join(os.path.dirname(__file__),
                 "../scripts/SpatialSUSapp/"))
@@ -562,9 +563,31 @@ class DownloadUi(QMainWindow):
 
     def read_file(self):
         def unionAll(dfs):
-            return reduce(lambda df1, df2: df1.union(
-                df2.select(df1.columns)), dfs
-            )
+            cols = set()
+            for df in dfs:
+                for col in df.columns:
+                    cols.add(col)
+            cols = sorted(cols)
+
+            new_dfs = {}
+            
+            for i, d in enumerate(dfs):
+                new_name = 'df' + str(i)
+                new_dfs[new_name] = d
+
+                for col in cols:
+                    if col not in d.columns:
+                        new_dfs[new_name] = new_dfs[new_name].withColumn(col,
+                                                                    lit(0))
+                new_dfs[new_name] = new_dfs[new_name].select(cols)
+            result = new_dfs['df0']
+            dfs_to_add = new_dfs.keys()
+            keys = list(dfs_to_add)
+            keys.remove('df0')
+
+            for x in dfs_to_add:
+                result = result.union(new_dfs[x])
+            return result
 
         with open(conf + "config.json", "r", encoding='utf8') as f:
             data = json.load(f)
@@ -573,21 +596,24 @@ class DownloadUi(QMainWindow):
             )
             self.spark = start_spark(conf)
             try:
-                # self.lista_spark = list(
-                #     map(lambda x: self.spark.read.csv(x, header=True),
-                #         self.files)
-                # )
-                # self.df = unionAll(self.lista_spark)
-                self.df = self.spark.read.csv(self.files, header=True)
+
+                self.lista_spark = list(
+                    map(lambda x: self.spark.read.csv(x, header=True),
+                        self.files
+                    )
+                )
+
+
+                self.df = unionAll(self.lista_spark)
                 self.write_table()
             except:
-              self.signal_error.emit(
-                  [
-                      1, 'O arquivo solicitado não foi encontrado', dir_ico
-                      + 'cat_sad_3.png'
-                  ]
-              )
-              self.stop_thread()
+                self.signal_error.emit(
+                    [
+                        1, 'O arquivo solicitado não foi encontrado', dir_ico
+                        + 'cat_sad_3.png'
+                    ]
+                )
+                self.stop_thread()
 
     def receive_data(self, dataframe):
         self.df = dataframe
