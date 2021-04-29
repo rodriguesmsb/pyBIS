@@ -682,7 +682,10 @@ class DownloadUi(QMainWindow):
             for itm in self.df.columns:
                 if itm not in params[0]:
                     drop_list.append(itm)
-            self.data_drop = self.df.drop(*drop_list)
+            try:
+                self.data_drop = self.df.drop(*drop_list)
+            except TypeError:
+                self.data_drop = self.df.drop(drop_list, axis=1)
 
             if params[1] != None:
                 try:
@@ -691,6 +694,9 @@ class DownloadUi(QMainWindow):
                     )
                 except:
                     pass
+                    # self.data_filtered = self.data_drop.query(
+                    #     ' and '.join(params[1])
+                    # )
             elif params[1] == None:
                 self.data_filtered = self.data_drop
 
@@ -698,8 +704,8 @@ class DownloadUi(QMainWindow):
             self.data_drop = self.df
             if params[1] != None:
                 try:
-                    self.data_filtered = self.data_drop.filter(' and '.join(
-                                                               params[1])
+                    self.data_filtered = self.data_drop.filter(
+                        ' and '.join(params[1])
                     )
                 except:
                     pass
@@ -717,24 +723,48 @@ class DownloadUi(QMainWindow):
             self.signal_column_export.emit([i, column])
             i += 1
 
+
         col_n = 0
         row_n = 0
 
-        for col in self.data_filtered.columns:
-            for r in range(1, 21):
-                self.signal_etl_el.emit(
-                    [row_n, col_n, QTableWidgetItem(str(
-                        self.data_filtered.select(
-                    self.data_filtered[col]).take(r)[r - 1][0]))])
-                row_n += 1
-            row_n = 0
-            col_n += 1
+        try:
+            for col in self.data_filtered.columns:
+                for r in range(1, 21):
+                    self.signal_etl_el.emit(
+                        [row_n, col_n, QTableWidgetItem(str(
+                            self.data_filtered.select(
+                        self.data_filtered[col]).take(r)[r - 1][0]))])
+                    row_n += 1
+                row_n = 0
+                col_n += 1
+        except AttributeError:
+            for e, col in enumerate(self.data_filtered.columns):
+                for r in range(20):
+                    print(
+                        'coluna {}, linha {}, nome_col {}'.format(e, r, col)
+                    )
+                    try:
+                        self.signal_etl_el.emit(
+                            [
+                                r, e, QTableWidgetItem(
+                                    str(self.data_filtered[col][r]))
+                            ]
+                        )
+                    except KeyError:
+                        pass
 
     def save_file(self, params):
-        self.data_filtered.coalesce(1).write.option(params[0],
-                                                    params[1]).csv(
-                                                        params[2]
-                                                    )
+        try:
+            self.data_filtered.coalesce(1).write.option(params[0],
+                                                        params[1]).csv(
+                                                            params[2]
+                                                        )
+        except AttributeError:
+            os.system("mkdir {}".format(
+                os.path.join(os.path.dirname(__file__),
+                    "../scripts/SpatialSUSapp/data/"))
+            )
+            self.data_filtered.to_csv(params[2] + 'new.csv')
 
 
 class EtlUi(QMainWindow):
@@ -839,8 +869,7 @@ class EtlUi(QMainWindow):
            for idx in range(self.model_col_ext.rowCount()):
                self.filter_list.append(self.model_col_ext.item(idx).text())
 
-        self.signal_trim_data.emit([self.drop_list,
-                                            self.filter_list])
+        self.signal_trim_data.emit([self.drop_list, self.filter_list])
 
         try:
             os.system("rm -r {}".format(
@@ -1262,8 +1291,9 @@ class AnalysisUi(QMainWindow):
 
 class LoadFile(QMainWindow):
 
-    column_data = pyqtSignal()
-    dataframe = pyqtSignal()
+    column_data = pyqtSignal(str)
+    dataframe = pyqtSignal(pd.DataFrame)
+    clear_dataframe = pyqtSignal(int)
 
     def __init__(self):
         super().__init__()
@@ -1323,10 +1353,9 @@ class LoadFile(QMainWindow):
         self.tableWidget.setRowCount(data.shape[0])
         self.tableWidget.setColumnCount(data.shape[1])
 
-        for e, column in enumerate(data.columns.to_list()):
+        for e, column in enumerate(sorted(data.columns.to_list())):
             self.tableWidget.setHorizontalHeaderItem(
                 e, QTableWidgetItem(column))
-            self.comboBox.addItem(column)
 
             self.column_data.emit(column)
 
@@ -1375,6 +1404,7 @@ def main():
     download.signal_export_count.connect(etl.header_etl_count)
     download.signal_column_export.connect(etl.header_etl)
     download.signal_etl_el.connect(etl.build_table)
+    loadfile.column_data.connect(analysis.update_items)
     download.signal_col_etl.connect(analysis.update_items)
     download.signal_cols_analysis.connect(analysis.update_items)
     download.signal_clear_items.connect(analysis.clear_items)
