@@ -491,8 +491,6 @@ class DownloadUi(QMainWindow):
             )
         else:
             self.database, self.base, self.limit, self.date = self.load_conf()
-            # print(list(map(lambda y: [x + y for x in list(map(lambda x: self.base + x, self.limit))], self.date)))
-
 
             if self.database == 'SINAN':
                 if isinstance(self.date, list):
@@ -534,7 +532,6 @@ class DownloadUi(QMainWindow):
             dir_database = os.path.expanduser(
                 "~/datasus_dbc/" + self.database + "/"
             )
-            # print(bases)
             try:
                 folder_csv = os.listdir(dir_database)
                 for file_csv in folder_csv:
@@ -542,7 +539,6 @@ class DownloadUi(QMainWindow):
                         files.append(os.path.expanduser(
                             "~/datasus_dbc/" + self.database + "/" + file_csv)
                         )
-                # print(files)
 
                 self.files = files
 
@@ -688,27 +684,24 @@ class DownloadUi(QMainWindow):
                 self.data_drop = self.df.drop(drop_list, axis=1)
 
             if params[1] != None:
-                try:
-                    self.data_filtered = self.data_drop.filter(
-                        ' and '.join(params[1])
-                    )
-                except:
-                    pass
-                    # self.data_filtered = self.data_drop.query(
-                    #     ' and '.join(params[1])
-                    # )
+                self.data_filtered = self.data_drop.filter(
+                    ' and '.join(params[1])
+                )
+                self.data_filtered = self.data_drop.query(
+                    ' and '.join(params[1])
+                )
             elif params[1] == None:
                 self.data_filtered = self.data_drop
 
         elif params[0] == None:
             self.data_drop = self.df
             if params[1] != None:
-                try:
-                    self.data_filtered = self.data_drop.filter(
-                        ' and '.join(params[1])
-                    )
-                except:
-                    pass
+                self.data_filtered = self.data_drop.filter(
+                    ' and '.join(params[1])
+                )
+                self.data_filtered = self.data_drop.query(
+                    ' and '.join(params[1])
+                )
             elif params[1] == None:
                 self.data_filtered = self.data_drop
 
@@ -740,9 +733,6 @@ class DownloadUi(QMainWindow):
         except AttributeError:
             for e, col in enumerate(self.data_filtered.columns):
                 for r in range(20):
-                    print(
-                        'coluna {}, linha {}, nome_col {}'.format(e, r, col)
-                    )
                     try:
                         self.signal_etl_el.emit(
                             [
@@ -1408,6 +1398,7 @@ def main():
     download.signal_col_etl.connect(analysis.update_items)
     download.signal_cols_analysis.connect(analysis.update_items)
     download.signal_clear_items.connect(analysis.clear_items)
+    download.signal_clear_items.connect(etl.table_export.clear)
     etl.signal_trim_data.connect(download.trim_data)
     etl.signal_save.connect(download.save_file)
     manager = Manager(loadfile, download, etl, merge, analysis, help)
