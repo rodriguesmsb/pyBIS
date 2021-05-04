@@ -4,13 +4,13 @@ import sys
 import time
 import subprocess
 import os
+import shutil
 import multiprocessing
 import psutil
 import re
-from functools import reduce
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QMessageBox,
     QPushButton, QTableWidgetItem, QTabBar, QTabWidget, QStyle,
-    QStyleOptionTab, QStylePainter, QFileDialog, QHeaderView)
+    QStyleOptionTab, QStylePainter, QFileDialog, QHeaderView, QStyleFactory)
 from PyQt5.QtGui import (QFont, QIcon, QStandardItemModel, QStandardItem,
         QPixmap)
 from PyQt5.QtCore import (QThread, pyqtSignal, QObject, QRect, QPoint,
@@ -19,11 +19,11 @@ from PyQt5 import uic
 import json
 import pandas as pd
 import webbrowser
+import findspark
 
 from pydatasus import PyDatasus
 from f_spark import spark_conf, start_spark
 from convert_dbf_to_csv import ReadDbf
-from pyspark.sql.functions import lit
 
 sys.path.append(os.path.join(os.path.dirname(__file__),
                 "../scripts/SpatialSUSapp/"))
@@ -93,9 +93,6 @@ class Manager(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("pyBiss")
-        # self.setFont(QFont("Arial", 12))
-
-        # self.resized.connect(self.set_font_size)
 
         self.tab_manager = TabWidget()
 
@@ -112,7 +109,10 @@ class Manager(QMainWindow):
         curr_geo = self.geometry().width()
         new_pixel_size = curr_geo//90
 
-        self.setFont(QFont("Areial", new_pixel_size))
+        self.setFont(QFont("Arial", new_pixel_size))
+
+    def set_font(self, font):
+        self.setFont(QFont(font))
 
 
 class Thread(QThread):
@@ -558,6 +558,40 @@ class DownloadUi(QMainWindow):
                 )
 
     def read_file(self):
+        def test_java_oracle(oracle_java):
+            if oracle_java is not None:
+                os.environ['JAVA_HOME'] = oracle_java
+                return True
+            else:
+                if os.getenv('JAVA_HOME') is not None:
+                    return True
+
+                else:
+                    try:
+                        os.environ['JAVA_HOME'] = os.path.join(
+                            os.path.dirname(__file__), '../java/')
+                        return True
+                    except:
+                        print("deu erro java")
+                        # self.showError()
+
+        def test_hadoop_spark(hadoop_spark):
+            if hadoop_spark is not None:
+                os.environ['SPARK_HOME'] = hadoop_spark
+                return True
+            else:
+                if os.getenv('SPARK_HOME') is not None:
+                    return True
+
+                else:
+                    try:
+                        os.environ['SPARK_HOME'] = os.path.join(
+                            os.path.dirname(__file__), '../spark/')
+                        return True
+                    except:
+                        print("deu erro spark")
+                        # self.showError()
+
         def unionAll(dfs):
             cols = set()
             for df in dfs:
@@ -587,28 +621,43 @@ class DownloadUi(QMainWindow):
 
         with open(conf + "config.json", "r", encoding='utf8') as f:
             data = json.load(f)
-            self.conf = spark_conf("pyBIS", data["cpu"], data["mem"],
-                driver_memory=20
-            )
-            self.spark = start_spark(conf)
-            try:
 
-                self.lista_spark = list(
-                    map(lambda x: self.spark.read.csv(x, header=True),
-                        self.files
+            if all([test_java_oracle(oracle_java=data["java"]),
+                    test_hadoop_spark(hadoop_spark=data["spark"])]):
+
+                findspark.init(os.getenv('SPARK_HOME'))
+
+                from pyspark import SparkConf, SparkContext
+                from pyspark.sql import SparkSession
+                from pyspark.sql.types import DateType, StringType
+                from pyspark.sql.functions import (year, month, col, sum,
+                    udf, substring, split, regexp_replace, lit)
+
+                self.conf = spark_conf("pyBIS", data["cpu"], data["mem"],
+                    driver_memory=20
+                )
+                self.spark = start_spark(conf)
+                try:
+
+                    self.lista_spark = list(
+                        map(lambda x: self.spark.read.csv(x, header=True),
+                            self.files
+                        )
                     )
-                )
 
 
-                self.df = unionAll(self.lista_spark)
-                self.write_table()
-            except:
-                self.signal_error.emit(
-                    [
-                        1, 'O arquivo solicitado não foi encontrado', dir_ico
-                        + 'cat_sad_3.png'
-                    ]
-                )
+                    self.df = unionAll(self.lista_spark)
+                    self.write_table()
+                except:
+                    self.signal_error.emit(
+                        [
+                            1, 'O arquivo solicitado não foi encontrado',
+                            dir_ico
+                            + 'cat_sad_3.png'
+                        ]
+                    )
+                    self.stop_thread()
+            else:
                 self.stop_thread()
 
     def receive_data(self, dataframe):
@@ -687,9 +736,12 @@ class DownloadUi(QMainWindow):
                 self.data_filtered = self.data_drop.filter(
                     ' and '.join(params[1])
                 )
-                self.data_filtered = self.data_drop.query(
-                    ' and '.join(params[1])
-                )
+                try:
+                    self.data_filtered = self.data_drop.query(
+                        ' and '.join(params[1])
+                    )
+                except AttributeError:
+                    pass
             elif params[1] == None:
                 self.data_filtered = self.data_drop
 
@@ -699,9 +751,12 @@ class DownloadUi(QMainWindow):
                 self.data_filtered = self.data_drop.filter(
                     ' and '.join(params[1])
                 )
-                self.data_filtered = self.data_drop.query(
-                    ' and '.join(params[1])
-                )
+                try:
+                    self.data_filtered = self.data_drop.query(
+                        ' and '.join(params[1])
+                    )
+                except AttributeError:
+                    pass
             elif params[1] == None:
                 self.data_filtered = self.data_drop
 
@@ -745,14 +800,12 @@ class DownloadUi(QMainWindow):
 
     def save_file(self, params):
         try:
-            self.data_filtered.coalesce(1).write.option(params[0],
-                                                        params[1]).csv(
-                                                            params[2]
-                                                        )
+            self.data_filtered.coalesce(1).write.format(
+                "csv").options(header=True).mode("overwrite").save(params[2])
+
         except AttributeError:
-            os.system("mkdir {}".format(
-                os.path.join(os.path.dirname(__file__),
-                    "../scripts/SpatialSUSapp/data/"))
+            os.mkdir(os.path.join(os.path.dirname(__file__),
+                "../scripts/SpatialSUSapp/data/")
             )
             self.data_filtered.to_csv(params[2] + 'new.csv')
 
@@ -862,9 +915,8 @@ class EtlUi(QMainWindow):
         self.signal_trim_data.emit([self.drop_list, self.filter_list])
 
         try:
-            os.system("rm -r {}".format(
-                os.path.join(os.path.dirname(__file__),
-                "../scripts/SpatialSUSapp/data/"))
+            shutil.rmtree(os.path.join(os.path.dirname(__file__),
+                '../scripts/SpatialSUSapp/data/')
             )
         except:
             pass
@@ -1250,7 +1302,9 @@ class AnalysisUi(QMainWindow):
             webbrowser.open('127.0.0.1:8050')
 
     def terminate(self):
-        os.system("kill -9 $(netstat -tulpn | grep 8050 | awk '{print $7}' | egrep ^[0-9]{1\,6}) 2>/dev/null")
+        os.system(
+            "kill -9 $(netstat -tulpn | grep 8050 | awk '{print $7}'\
+                    | egrep ^[0-9]{1\,6}) 2>/dev/null")
         try:
             self.server_temporal.terminate()
         except AttributeError:
@@ -1368,6 +1422,61 @@ class LoadFile(QMainWindow):
         self.tableWidget.setColumnCount(0)
 
 
+class Config(QMainWindow):
+
+    send_font = pyqtSignal(str)
+
+    def __init__(self):
+        super().__init__()
+        uic.loadUi(dir_ui + "config.ui", self)
+
+        self.pushButton_3.clicked.connect(self.write_conf_spark)
+        self.pushButton_4.clicked.connect(self.write_conf_java)
+        self.fontComboBox.currentTextChanged.connect(self.send_font_text)
+        self.comboBox.addItems(QStyleFactory.keys())
+        self.pushButton.clicked.connect(self.clear_config)
+
+    def clear_config(self):
+        with open(conf + "config.json", "r", encoding='utf8') as f:
+            data = json.load(f)
+        with open(conf + "config.json", "w", encoding='utf8') as f:
+            data["java"] = ""
+            json.dump(data, f, indent=4)
+        self.pushButton_3.setText("...")
+
+        with open(conf + "config.json", "r", encoding='utf8') as f:
+            data = json.load(f)
+        with open(conf + "config.json", "w", encoding='utf8') as f:
+            data["spark"] = ""
+            json.dump(data, f, indent=4)
+        self.pushButton_4.setText("...")
+
+    def send_font_text(self, font):
+        self.send_font.emit(font)
+
+    def write_conf_java(self):
+        java = QFileDialog.getExistingDirectory(self, 
+            "Selecione o caminho da aplicação Java"
+        )
+        with open(conf + "config.json", "r", encoding='utf8') as f:
+            data = json.load(f)
+        with open(conf + "config.json", "w", encoding='utf8') as f:
+            data["java"] = java
+            json.dump(data, f, indent=4)
+        self.pushButton_4.setText(java)
+
+    def write_conf_spark(self):
+        spark = QFileDialog.getExistingDirectory(self, 
+            "Selecione o caminho da aplicação Hadoop Spark"
+        )
+        with open(conf + "config.json", "r", encoding='utf8') as f:
+            data = json.load(f)
+        with open(conf + "config.json", "w", encoding='utf8') as f:
+            data["spark"] = spark
+            json.dump(data, f, indent=4)
+        self.pushButton_3.setText(spark)
+
+
 class Help(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -1383,6 +1492,7 @@ def main():
     etl = EtlUi()
     merge = MergeUi()
     loadfile = LoadFile()
+    config = Config()
     help = Help()
     analysis = AnalysisUi()
     loadfile.column_data.connect(etl.convert_model)
@@ -1401,7 +1511,9 @@ def main():
     download.signal_clear_items.connect(etl.table_export.clear)
     etl.signal_trim_data.connect(download.trim_data)
     etl.signal_save.connect(download.save_file)
-    manager = Manager(loadfile, download, etl, merge, analysis, help)
+    manager = Manager(loadfile, download, etl, merge, analysis, config, help)
+    config.send_font.connect(manager.set_font)
+    config.comboBox.currentTextChanged.connect(app.setStyle)
     manager.setWindowIcon(QIcon(dir_ico + "favicon.ico"))
     manager.resized.connect(manager.set_font_size)
     try:

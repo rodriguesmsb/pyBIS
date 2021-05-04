@@ -35,7 +35,6 @@ class PyDatasus(QObject):
         self.__path_dbc = path.expanduser('~/datasus_dbc/')
         self.label_signal.emit("Iniciando conexão")
 
-
     def get_table_csv(self, database: str, base: [str, list],
             state: [str, list], date: [str, list]):
 
@@ -47,7 +46,6 @@ class PyDatasus(QObject):
         self.__table.write('Endereço,Nome,Tamanho,Data\n')
         self.__get_data_table(database, pattern)
         self.__table.close()
-
 
     def get_file_dbc(self, database, base, state, date):
         date = self.__adjust_date(database, date)
@@ -63,11 +61,9 @@ class PyDatasus(QObject):
             self.__create_folder(database, patterns, table_or_dbc='dbc')
             self.__get_data_dbc(patterns)
 
-
     def get_data(self, database, base, state, date):
         self.get_table_csv(database, base, state, date)
         self.get_file_dbc(database, base, state, date)
-
 
     def __convert_dbc(self, db):
         if db.endswith('.csv'):
@@ -99,7 +95,6 @@ class PyDatasus(QObject):
         else:
             return dates
 
-
     def __generate_pattern(self, database, base, states, dates):
         if isinstance(states, list) and isinstance(dates, list):
             return [ base + state + date + r'\.[dDc][bBs][cCv]'
@@ -120,7 +115,6 @@ class PyDatasus(QObject):
             mkdir(path.expanduser(self.__path_dbc + database + '/'))
         except FileExistsError:
             pass
-
 
     def __get_data_table(self, database, pattern):
         self.label_signal.emit("Buscando em {}".format(database))
@@ -190,7 +184,6 @@ class PyDatasus(QObject):
                             + line.split(',')[1])
                     )
                     self.label_signal.emit("{}".format(line.split(',')[1]))
-                    # self.download_signal.emit(100)
                 else:
                     pass
 

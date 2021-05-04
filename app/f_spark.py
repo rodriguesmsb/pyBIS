@@ -1,20 +1,23 @@
 #!/usr/bin/env python3
+# -*- coding:utf-8 -*-
 
-from os import system, path
+from os import system, path, environ
 import platform
 import findspark
-spark_home = path.join(path.dirname(__file__), 'spark-3.0.0-bin-hadoop3.2')
-findspark.init(spark_home)
+spark = path.join(path.dirname(__file__), 'spark-3.0.0-bin-hadoop3.2')
+findspark.init(spark)
 if platform.system().lower() == 'linux':
-    system(f'export SPARK_HOME="{spark_home}/spark-3.0.0-bin-hadoop3.2/"')
-    system('export PATH="$spark_home/bin"')
-    system('export PYSPARK_PYTHON=python3')
-    system('export PATH="$PATH:{spark_home}/spark-3.0.0-bin-hadoop3.2/"')
+    jdk = path.join(path.dirname(__file__), 'java-15-linux')
+    environ['JAVA_HOME'] = jdk
+    environ['SPARK_HOME'] = spark
+    environ['PYSPARK_PYTHON'] = 'python3'
 elif platform.system().lower() == 'windows':
-    system(f'setx SPARK_HOME "{spark_home}/spark-3.0.0-bin-hadoop3.2/"')
-    system('setx PATH "$spark_home/bin"')
-    system('setx PYSPARK_PYTHON python3')
-    system('setx PATH "$PATH:{spark_home}/spark-3.0.0-bin-hadoop3.2/"')
+    jdk = path.join(path.dirname(__file__), 'java-15-windows')
+    environ['JAVA_HOME'] = jdk
+    environ['SPARK_HOME'] = spark
+    environ['HADOOP_HOME'] = spark
+    environ['PYSPARK_PYTHON'] = 'py'
+
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SparkSession
 from pyspark.sql.types import DateType, StringType
