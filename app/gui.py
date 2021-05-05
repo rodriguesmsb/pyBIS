@@ -22,7 +22,6 @@ import webbrowser
 import findspark
 
 from pydatasus import PyDatasus
-from f_spark import spark_conf, start_spark
 from convert_dbf_to_csv import ReadDbf
 
 sys.path.append(os.path.join(os.path.dirname(__file__),
@@ -558,12 +557,36 @@ class DownloadUi(QMainWindow):
                 )
 
     def read_file(self):
+        def spark_conf(app_name, n_cores="*", executor_memory=2,
+                       driver_memory=20):
+
+            n_cores = "local[cores]".replace("cores", str(n_cores))
+            executor_memory = "numg".replace("num", str(executor_memory))
+            driver_memory = "numg".replace("num", str(driver_memory))
+            conf_file = SparkConf().setAppName('pyBIS')
+            conf_file = (conf_file.setMaster(n_cores)
+                         .set("spark.executor.memory", executor_memory)
+                         .set("spark.driver.memory", driver_memory))
+
+            return conf_file
+
+        def start_spark(conf):
+           try:
+               sc = SparkContext(conf=conf)
+               spark = SparkSession(sc)
+           except ValueError:
+               sc = SparkContext.getOrCreate()
+           spark = SparkSession(sc)
+           return spark
+
         def test_java_oracle(oracle_java):
-            if oracle_java is not None:
+            if oracle_java != "":
                 os.environ['JAVA_HOME'] = oracle_java
                 return True
             else:
                 if os.getenv('JAVA_HOME') is not None:
+                    return True
+                elif os.getenv('JAVA_HOME') != "":
                     return True
 
                 else:
@@ -576,11 +599,23 @@ class DownloadUi(QMainWindow):
                         # self.showError()
 
         def test_hadoop_spark(hadoop_spark):
-            if hadoop_spark is not None:
-                os.environ['SPARK_HOME'] = hadoop_spark
+            if hadoop_spark != "":
+                if platform.system().lower() == "windows":
+                    os.environ['SPARK_HOME'] = os.path.join(
+                        hadoop_spark, 'spark-3.0.0-bin-hadoop3.2')
+                    os.environ['HADOOP_HOME'] = os.path.join(
+                        hadoop_spark, 'hadoop')
+                    os.environ['SCALA'] = os.path.join(
+                        hadoop_spark, 'scala')
+                else:
+                    os.environ['SPARK_HOME'] = os.path.jon(
+                        hadoop_spark, 'spark-3.0.0-bin-hadoop3.2')
+
                 return True
             else:
                 if os.getenv('SPARK_HOME') is not None:
+                    return True
+                elif os.getenv('SPARK_HOME') != "":
                     return True
 
                 else:
@@ -633,10 +668,9 @@ class DownloadUi(QMainWindow):
                 from pyspark.sql.functions import (year, month, col, sum,
                     udf, substring, split, regexp_replace, lit)
 
-                self.conf = spark_conf("pyBIS", data["cpu"], data["mem"],
-                    driver_memory=20
-                )
-                self.spark = start_spark(conf)
+                self.conf = spark_conf("pyBIS", data["cpu"],
+                                            data["mem"], driver_memory=20)
+                self.spark = start_spark(self.conf)
                 try:
 
                     self.lista_spark = list(
