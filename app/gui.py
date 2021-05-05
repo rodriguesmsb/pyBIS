@@ -3,6 +3,7 @@
 import sys
 import time
 import subprocess
+import pathlib
 import os
 import shutil
 import platform
@@ -581,26 +582,15 @@ class DownloadUi(QMainWindow):
            return spark
 
         def test_java_oracle(oracle_java):
-            if oracle_java != "":
+            if oracle_java is not None:
                 os.environ['JAVA_HOME'] = oracle_java
                 return True
             else:
-                if os.getenv('JAVA_HOME') is not None:
+                if isinstance(os.getenv('JAVA_HOME'), str):
                     return True
-                elif os.getenv('JAVA_HOME') != "":
-                    return True
-
-                else:
-                    try:
-                        os.environ['JAVA_HOME'] = os.path.join(
-                            os.path.dirname(__file__), '../java/')
-                        return True
-                    except:
-                        print("deu erro java")
-                        # self.showError()
 
         def test_hadoop_spark(hadoop_spark):
-            if hadoop_spark != "":
+            if hadoop_spark is not None:
                 if platform.system().lower() == "windows":
                     os.environ['SPARK_HOME'] = os.path.join(
                         hadoop_spark, 'spark-3.0.0-bin-hadoop3.2')
@@ -608,25 +598,14 @@ class DownloadUi(QMainWindow):
                         hadoop_spark, 'hadoop')
                     os.environ['SCALA'] = os.path.join(
                         hadoop_spark, 'scala')
-                else:
-                    os.environ['SPARK_HOME'] = os.path.jon(
+                    return True
+                elif platform.system().lower() == 'linux':
+                    os.environ['SPARK_HOME'] = os.path.join(
                         hadoop_spark, 'spark-3.0.0-bin-hadoop3.2')
-
-                return True
+                    return True
             else:
-                if os.getenv('SPARK_HOME') is not None:
+                if isinstance(os.getenv('SPARK_HOME'), str):
                     return True
-                elif os.getenv('SPARK_HOME') != "":
-                    return True
-
-                else:
-                    try:
-                        os.environ['SPARK_HOME'] = os.path.join(
-                            os.path.dirname(__file__), '../spark/')
-                        return True
-                    except:
-                        print("deu erro spark")
-                        # self.showError()
 
         def unionAll(dfs):
             cols = set()
@@ -659,7 +638,7 @@ class DownloadUi(QMainWindow):
             data = json.load(f)
 
             if all([test_java_oracle(oracle_java=data["java"]),
-                    test_hadoop_spark(hadoop_spark=data["spark"])]):
+                test_hadoop_spark(hadoop_spark=data["spark"])]):
 
                 findspark.init(os.getenv('SPARK_HOME'))
 
@@ -694,6 +673,7 @@ class DownloadUi(QMainWindow):
                     self.stop_thread()
             else:
                 self.stop_thread()
+                self.showError()
 
     def receive_data(self, dataframe):
         self.df = dataframe
@@ -842,9 +822,10 @@ class DownloadUi(QMainWindow):
                 "csv").options(header=True).mode("overwrite").save(params[2])
 
         except AttributeError:
-            os.mkdir(os.path.join(os.path.dirname(__file__),
+            pathlib.Path(os.path.join(os.path.dirname(__file__),
                 "../scripts/SpatialSUSapp/data/")
-            )
+            ).mkdir(parents=True, exist_ok=True)
+
             self.data_filtered.to_csv(params[2] + 'new.csv')
 
 
@@ -966,7 +947,7 @@ class EtlUi(QMainWindow):
         )
 
         try:
-            os.system("mv {} {}".format(
+            os.rename("mv {} {}".format(
                 os.path.join(os.path.dirname(__file__),
                     "../scripts/SpatialSUSapp/data/*.csv"),
                 os.path.join(os.path.dirname(__file__),
@@ -1478,14 +1459,14 @@ class Config(QMainWindow):
         with open(conf + "config.json", "r", encoding='utf8') as f:
             data = json.load(f)
         with open(conf + "config.json", "w", encoding='utf8') as f:
-            data["java"] = ""
+            data["java"] = None
             json.dump(data, f, indent=4)
         self.pushButton_3.setText("...")
 
         with open(conf + "config.json", "r", encoding='utf8') as f:
             data = json.load(f)
         with open(conf + "config.json", "w", encoding='utf8') as f:
-            data["spark"] = ""
+            data["spark"] = None
             json.dump(data, f, indent=4)
         self.pushButton_4.setText("...")
 
