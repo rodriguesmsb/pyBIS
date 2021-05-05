@@ -798,6 +798,9 @@ class DownloadUi(QMainWindow):
                     except KeyError:
                         pass
 
+        except IndexError:
+            print("Argumento incorreto para a coluna")
+
     def save_file(self, params):
         try:
             self.data_filtered.coalesce(1).write.format(
