@@ -20,6 +20,7 @@ from PyQt5.QtCore import (QThread, pyqtSignal, QObject, QRect, QPoint,
 from PyQt5 import uic
 import json
 import pandas as pd
+from glob import glob
 import webbrowser
 import findspark
 
@@ -593,15 +594,16 @@ class DownloadUi(QMainWindow):
             if hadoop_spark is not None:
                 if platform.system().lower() == "windows":
                     os.environ['SPARK_HOME'] = os.path.join(
-                        hadoop_spark, 'spark-3.0.0-bin-hadoop3.2')
-                    os.environ['HADOOP_HOME'] = os.path.join(
-                        hadoop_spark, 'hadoop')
-                    os.environ['SCALA'] = os.path.join(
-                        hadoop_spark, 'scala')
+                        "".join(glob(hadoop_spark + '/spark*')))
+                    os.environ['HADOOP_HOME'] = os.getenv("SPARK_HOME") + "/hadoop"
+                    # os.environ['PYTHONPATH'] = os.getenv("SPARK_HOME") + "/python"
+                        # "".join(glob(hadoop_spark + 'hadoop')))
+                    # os.environ['SCALA'] = os.path.join(
+                    #     hadoop_spark, 'scala')
                     return True
                 elif platform.system().lower() == 'linux':
                     os.environ['SPARK_HOME'] = os.path.join(
-                        hadoop_spark, 'spark-3.0.0-bin-hadoop3.2')
+                        "".join(glob(hadoop_spark + "/spark*")))#"-3.1.1-bin-hadoop2.7')
                     return True
             else:
                 if isinstance(os.getenv('SPARK_HOME'), str):
