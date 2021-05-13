@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QMessageBox,
     QPushButton, QTableWidgetItem, QTabBar, QTabWidget, QStyle,
     QStyleOptionTab, QStylePainter, QFileDialog, QHeaderView, QStyleFactory)
 from PyQt5.QtGui import (QFont, QIcon, QStandardItemModel, QStandardItem,
-        QPixmap)
+        QPixmap, QColor)
 from PyQt5.QtCore import (QThread, pyqtSignal, QObject, QRect, QPoint,
     pyqtSlot, Qt, QTimer)
 from PyQt5 import uic
@@ -263,7 +263,7 @@ class DownloadUi(QMainWindow):
     def return_code_base(self, choice: str) -> str:
             if self.comboBox.currentText().lower() == "sihsus":
                 self.write_base("RD")
-            elif (self.comboBox.currentText().lower() 
+            elif (self.comboBox.currentText().lower()
                     != "selecionar sistema de dados"):
                 with open(conf + "database.json", "r", encoding='utf8') as f:
                     database_json = json.load(f)
@@ -593,17 +593,13 @@ class DownloadUi(QMainWindow):
         def test_hadoop_spark(hadoop_spark):
             if hadoop_spark is not None:
                 if platform.system().lower() == "windows":
-                    os.environ['SPARK_HOME'] = os.path.join(
-                        "".join(glob(hadoop_spark + '/spark*')))
-                    os.environ['HADOOP_HOME'] = os.getenv("SPARK_HOME") + "/hadoop"
-                    # os.environ['PYTHONPATH'] = os.getenv("SPARK_HOME") + "/python"
-                        # "".join(glob(hadoop_spark + 'hadoop')))
-                    # os.environ['SCALA'] = os.path.join(
-                    #     hadoop_spark, 'scala')
+                    os.environ['SPARK_HOME'] = hadoop_spark
+                    os.environ['HADOOP_HOME'] = os.getenv("SPARK_HOME")\
+                        + "/hadoop"
                     return True
+
                 elif platform.system().lower() == 'linux':
-                    os.environ['SPARK_HOME'] = os.path.join(
-                        "".join(glob(hadoop_spark + "/spark*")))#"-3.1.1-bin-hadoop2.7')
+                    os.environ['SPARK_HOME'] = hadoop_spark
                     return True
             else:
                 if isinstance(os.getenv('SPARK_HOME'), str):
@@ -611,13 +607,14 @@ class DownloadUi(QMainWindow):
 
         def unionAll(dfs):
             cols = set()
+
             for df in dfs:
                 for col in df.columns:
                     cols.add(col)
             cols = sorted(cols)
 
             new_dfs = {}
-            
+
             for i, d in enumerate(dfs):
                 new_name = 'df' + str(i)
                 new_dfs[new_name] = d
@@ -1451,11 +1448,18 @@ class Config(QMainWindow):
         super().__init__()
         uic.loadUi(dir_ui + "config.ui", self)
 
+        self.load_conf()
         self.pushButton_3.clicked.connect(self.write_conf_spark)
         self.pushButton_4.clicked.connect(self.write_conf_java)
         self.fontComboBox.currentTextChanged.connect(self.send_font_text)
         self.comboBox.addItems(QStyleFactory.keys())
         self.pushButton.clicked.connect(self.clear_config)
+
+    def load_conf(self):
+        with open(conf + "config.json", "r", encoding="utf8") as f:
+            data = json.load(f)
+            self.pushButton_3.setText(data["spark"])
+            self.pushButton_4.setText(data["java"])
 
     def clear_config(self):
         with open(conf + "config.json", "r", encoding='utf8') as f:
@@ -1476,7 +1480,7 @@ class Config(QMainWindow):
         self.send_font.emit(font)
 
     def write_conf_java(self):
-        java = QFileDialog.getExistingDirectory(self, 
+        java = QFileDialog.getExistingDirectory(self,
             "Selecione o caminho da aplicação Java"
         )
         with open(conf + "config.json", "r", encoding='utf8') as f:
@@ -1487,7 +1491,7 @@ class Config(QMainWindow):
         self.pushButton_4.setText(java)
 
     def write_conf_spark(self):
-        spark = QFileDialog.getExistingDirectory(self, 
+        spark = QFileDialog.getExistingDirectory(self,
             "Selecione o caminho da aplicação Hadoop Spark"
         )
         with open(conf + "config.json", "r", encoding='utf8') as f:
