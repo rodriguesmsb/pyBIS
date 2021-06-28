@@ -1509,10 +1509,24 @@ class Help(QMainWindow):
         self.setWindowIcon(QIcon(dir_ico + "help.png"))
 
 
+class Home(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        uic.loadUi(dir_ui + "home.ui", self)
+
+        self.pushButton.clicked.connect(self.open_link_github)
+        self.pushButton_2.clicked.connect(self.open_link_github)
+
+    def open_link_github(self):
+        webbrowser.open(self.sender().text())
+
+
 def main():
     app = QApplication(sys.argv)
     app.setApplicationName("pyBIS")
     app.setWindowIcon(QIcon(dir_ico + "favicon.ico"))
+    home = Home()
     download = DownloadUi()
     etl = EtlUi()
     merge = MergeUi()
@@ -1536,7 +1550,7 @@ def main():
     download.signal_clear_items.connect(etl.table_export.clear)
     etl.signal_trim_data.connect(download.trim_data)
     etl.signal_save.connect(download.save_file)
-    manager = Manager(loadfile, download, etl, merge, analysis, config, help)
+    manager = Manager(home,loadfile, download, etl, merge, analysis, config, help)
     config.send_font.connect(manager.set_font)
     config.comboBox.currentTextChanged.connect(app.setStyle)
     manager.setWindowIcon(QIcon(dir_ico + "favicon.ico"))
