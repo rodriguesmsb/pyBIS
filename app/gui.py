@@ -827,6 +827,16 @@ class DownloadUi(QMainWindow):
 
             self.data_filtered.to_csv(params[2] + 'new.csv')
 
+        for file in os.listdir(os.path.join(os.path.dirname(__file__),
+                                            "../scripts/SpatialSUSapp/data/")):
+            if file.endswith(".csv"):
+                os.rename(
+                    os.path.join(os.path.dirname(__file__),
+                                 f"../scripts/SpatialSUSapp/data/{file}"),
+                    os.path.join(os.path.dirname(__file__),
+                                 f"../scripts/SpatialSUSapp/data/data.csv")
+                )
+
 
 class EtlUi(QMainWindow):
 
