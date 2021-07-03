@@ -16,7 +16,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QMessageBox,
 from PyQt5.QtGui import (QFont, QIcon, QStandardItemModel, QStandardItem,
         QPixmap, QColor)
 from PyQt5.QtCore import (QThread, pyqtSignal, QObject, QRect, QPoint,
-    pyqtSlot, Qt, QTimer)
+    pyqtSlot, Qt, QTimer, QSize)
 from PyQt5 import uic
 import json
 import pandas as pd
@@ -100,6 +100,7 @@ class Manager(QMainWindow):
 
         for tab in tabs:
             self.tab_manager.addTab(tab, QIcon(tab.windowIcon()), '')
+            self.tab_manager.setIconSize(QSize(50, 100))
 
         self.setCentralWidget(self.tab_manager)
         self.show()
