@@ -1380,7 +1380,7 @@ class LoadFile(QMainWindow):
 
     def loadFile(self):
         def convert(df):
-            if df[-4:] == ".dbf":
+            if df[-4:] == ".dbf" or df[-4:] == ".DBF":
                 csv = df[:-3] + "csv"
                 ReadDbf({df}, convert='convert')
                 self.files.append(pd.read_csv(csv))
@@ -1402,7 +1402,7 @@ class LoadFile(QMainWindow):
         file_ = QFileDialog.getOpenFileNames(self, "Carregar arquivo",
             os.path.expanduser('~/'),
             ("Arquivo csv (*.csv);;Arquivo Excel (*.xlsx *.xls);;\
-              Arquivo dbf (*.DBF);;Arquivo dbc (*.dbc)")
+              Arquivo dbf (*.DBF *.dbf);;Arquivo dbc (*.dbc)")
         )
 
         list(map(convert, file_[0]))
