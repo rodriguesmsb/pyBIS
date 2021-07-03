@@ -2,8 +2,8 @@
 
 from sys import argv
 from os import path, system
+import tempfile
 from dbfread import DBF
-import struct
 import pandas as pd
 import csv
 
@@ -16,11 +16,12 @@ class ReadDbf:
     fluxograma  [+] dbc -> dbf -> csv [+]
     """
 
-    def __init__(self, file_dbf, convert='convert'):
+    def __init__(self, file_dbf, convert='convert', tmp='None'):
         """A instancia recebe um parametro o nome do arquivo dbf
         e abre uma lista para os itens que serão iterados no dbf
         """
         self.file_dbf = list(file_dbf)[0]
+        self.tmp = tmp
 
         if convert == 'convert':
             if path.isfile(self.file_dbf):
@@ -57,19 +58,41 @@ class ReadDbf:
         arquivo dbf diretamente no arquivo csv.
         """
 
-        dbf = DBF(file_dbf)
-        dbf.fields_names = list(
-            map(lambda x: x.replace(" ", ""), dbf.field_names)
-        )
+        if self.tmp:
+            dbf = DBF(file_dbf)
+            dbf.fields_names = list(
+                map(lambda x: x.replace(" ", ""), dbf.field_names)
+            )
 
-        with open('{}.csv'.format(file_dbf.split(".")[0]), 'w+') as csvfile:
-            data = csv.writer(csvfile)
-            data.writerow(dbf.fields_names)
-            try:
-                for record in dbf:
-                    data.writerow(list(record.values()))
-            except ValueError:
-                pass
+            tmp_dir = tempfile.gettempdir()
+            self.tmp_file = tmp_dir + '/' + file_dbf.split("/")[-1].split(".")[0] + ".csv"
+
+            with open(self.tmp_file, 'w+') as csvfl:
+
+                data = csv.writer(csvfl)
+                data.writerow(dbf.fields_names)
+                try:
+                    for record in dbf:
+                        data.writerow(list(record.values()))
+                except ValueError:
+                    pass
+
+            # return str(self.tmp_file)
+
+        else:
+            dbf = DBF(file_dbf)
+            dbf.fields_names = list(
+                map(lambda x: x.replace(" ", ""), dbf.field_names)
+            )
+
+            with open('{}.csv'.format(file_dbf.split(".")[0]), 'w+') as csvfl:
+                data = csv.writer(csvfl)
+                data.writerow(dbf.fields_names)
+                try:
+                    for record in dbf:
+                        data.writerow(list(record.values()))
+                except ValueError:
+                    pass
 
 
 if __name__ == '__main__':

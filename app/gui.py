@@ -1383,8 +1383,9 @@ class LoadFile(QMainWindow):
         def convert(df):
             if df[-4:] == ".dbf" or df[-4:] == ".DBF":
                 csv = df[:-3] + "csv"
-                ReadDbf({df}, convert='convert')
-                self.files.append(pd.read_csv(csv))
+
+                string = ReadDbf({df}, convert='convert', tmp=True)
+                self.files.append(pd.read_csv(string.tmp_file))
 
             elif df[-4:] == ".csv":
                 self.files.append(pd.read_csv(df))
@@ -1392,8 +1393,10 @@ class LoadFile(QMainWindow):
             elif df[-4:] == ".dbc":
                 dbf = df[:-3] + "dbf"
                 os.system(f"{blast_} {df} {dbf}")
-                ReadDbf({dbf}, convert=True)
-                self.files.append(pd.read_csv(dbf[:-3] + "csv"))
+
+                string = ReadDbf({dbf}, convert=True, tmp=True)
+
+                self.files.append(pd.read_csv( string.tmp_file))
 
             elif df[-4:] == ".xlsx" or df[-4:] == ".xls":
                 self.files.append(pd.read_excel(df))
