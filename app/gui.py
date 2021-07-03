@@ -806,7 +806,7 @@ class DownloadUi(QMainWindow):
                         self.signal_etl_el.emit(
                             [
                                 r, e, QTableWidgetItem(
-                                    str(self.data_filtered[col][r]))
+                                    str(self.data_filtered[col].iloc[r]))
                             ]
                         )
                     except KeyError:
