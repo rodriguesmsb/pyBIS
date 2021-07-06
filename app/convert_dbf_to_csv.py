@@ -26,7 +26,7 @@ class ReadDbf:
         if convert == 'convert':
             if path.isfile(self.file_dbf):
                 self.read_dbf_to_csv(
-                    self.__check_file_dbf())
+                    self.__check_file_dbf(), self.tmp)
 
         else:
             ...
@@ -49,7 +49,7 @@ class ReadDbf:
         else:
             print(f'O arquivo {self.file_dbf} não é válido')
 
-    def read_dbf_to_csv(self, file_dbf):
+    def read_dbf_to_csv(self, file_dbf, tmp):
         """Abre um arquivo com o nome do dbf splitado e substituindo a
         extensão .dbf por .csv. Depois é escrito o cabeçalho utilizando
         os campos tidos como fields_names pelo dbf, para posteriormente
@@ -58,7 +58,7 @@ class ReadDbf:
         arquivo dbf diretamente no arquivo csv.
         """
 
-        if self.tmp:
+        if tmp == True:
             dbf = DBF(file_dbf)
             dbf.fields_names = list(
                 map(lambda x: x.replace(" ", ""), dbf.field_names)
@@ -77,9 +77,8 @@ class ReadDbf:
                 except ValueError:
                     pass
 
-            # return str(self.tmp_file)
 
-        else:
+        elif tmp == None:
             dbf = DBF(file_dbf)
             dbf.fields_names = list(
                 map(lambda x: x.replace(" ", ""), dbf.field_names)

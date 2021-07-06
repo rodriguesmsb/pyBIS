@@ -76,7 +76,7 @@ class PyDatasus(QObject):
             after_ = db[:-3] + 'dbf'
             system(f'{self.__blast} {db} {after_}')
             remove(path.expanduser(db))
-            ReadDbf({after_}, convert='convert')
+            ReadDbf({after_}, convert='convert', tmp=None)
             remove(after_)
             after_ = None
             db = None
