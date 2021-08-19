@@ -346,9 +346,11 @@ class DownloadUi(QMainWindow):
             with open(conf + "search.json", "w", encoding='utf8') as f:
                     data["database"] = ""
                     json.dump(data, f, indent=4)
-            with open(dir_sus_conf + "conf.json", "r", encoding='utf8') as f:
+            with open(dir_sus_conf + "conf.json",
+                      "r", encoding='utf8') as f:
                 data = json.load(f)
-            with open(dir_sus_conf + "conf.json", "w", encoding='utf8') as f:
+            with open(dir_sus_conf + "conf.json",
+                      "w", encoding='utf8') as f:
                 data["sistema"] = ""
                 json.dump(data, f, indent=4)
         else:
@@ -528,7 +530,7 @@ class DownloadUi(QMainWindow):
                     self.date = [x[2:4] for x in self.date]
                 elif isinstance(self.date, str):
                     self.date = self.date[2:4]
-            elif self.database == 'SIH':
+            elif self.database == 'SIHSUS':
                 if isinstance(self.date, list):
                     self.date = [x[2:4] + r'\d{2}' for x in self.date]
                 elif isinstance(self.date, str):
