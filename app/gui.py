@@ -161,6 +161,7 @@ class DownloadUi(QMainWindow):
         self.comboBox_2.currentTextChanged.connect(self.return_code_base)
         self.comboBox_3.currentTextChanged.connect(self.load_limit)
         self.comboBox_4.currentTextChanged.connect(self.return_uf)
+        self.comboBox_5.currentTextChanged.connect(self.select_system_download)
         self.pushButton.clicked.connect(self.process_download)
         self.pushButton_2.clicked.connect(self.load_data_table)
         self.pushButton_3.clicked.connect(self.stop_thread)
@@ -200,6 +201,25 @@ class DownloadUi(QMainWindow):
         mem = str(swap.total // 1024)
         mem = mem[0:2]
         return int(mem)
+
+    def select_system_download(self):
+        if self.comboBox_5.currentText() == 'FTP Datasus':
+            self.comboBox.clear()
+            self.comboBox_2.clear()
+            self.comboBox.addItems(['SELECIONAR SISTEMA DE DADOS',
+                                    'SIHSUS',
+                                    'SIM',
+                                    'SINAN',
+                                    'SINASC'])
+
+        elif self.comboBox_5.currentText() == 'OpenDatasus':
+            self.comboBox.clear()
+            self.comboBox_2.clear()
+            self.comboBox.addItems(['SELECIONAR SISTEMA DE DADOS',
+                                    'SRAG',
+                                    'SÍNDROME GRIPAL',
+                                    'OCUPAÇÃO HOSPITALAR COVID-19',
+                                    ])
 
     def reset(self):
         try:
@@ -379,11 +399,14 @@ class DownloadUi(QMainWindow):
                 self.comboBox_2.setEnabled(True)
                 bases = []
                 data = json.load(f)
-                data = data[database]
-                for base in data:
-                    bases.append(base)
-                bases.sort()
-                self.comboBox_2.addItems(bases)
+                try:
+                    data = data[database]
+                    for base in data:
+                        bases.append(base)
+                    bases.sort()
+                    self.comboBox_2.addItems(bases)
+                except KeyError:
+                    pass
 
         if database.lower() != 'selecionar sistema de dados':
             if database.lower() == 'sihsus':
@@ -402,7 +425,7 @@ class DownloadUi(QMainWindow):
                 states = json.load(f)
                 states_list = []
                 for keys in states.keys():
-                    if keys not in ['Norte', 'Nordeste', 
+                    if keys not in ['Norte', 'Nordeste',
                             'Sudeste', 'Sul', 'Centro-Oeste']:
                         states_list.append(keys)
                         states_list.sort()
@@ -427,7 +450,7 @@ class DownloadUi(QMainWindow):
             self.comboBox_4.setEnabled(False)
 
     def return_date(self, date: int) -> list:
-        self.return_list_date(date, self.horizontalSlider_2.value())
+        self.return_list_date(date, self.horizontalSlider_2.value() + 1)
 
     def return_date_(self, date_: int) -> list:
         self.return_list_date(date_, self.horizontalSlider.value())
@@ -442,26 +465,31 @@ class DownloadUi(QMainWindow):
             return database, base, state, date
 
     def process_download(self):
-        if not all(self.load_conf()):
-            self.signal_error.emit(
-                [
-                    1, 'Precisa selecionar todos os parametros de download',
-                    dir_ico + 'cat_sad_2.png']
-            )
-        else:
-            pydatasus = PyDatasus()
-            pydatasus.download_signal.connect(self.progressBar.setValue)
-            pydatasus.label_signal.connect(self.label_5.setText)
-            pydatasus.lcd_signal.connect(self.lcdNumber_3.display)
-            pydatasus.finished.connect(self.finished)
-            [btn.setEnabled(False)
-                    for btn in self.all_buttons
-                    if btn.text().lower() != "encerrar"
-            ]
-            self.thread_download = Thread(pydatasus.get_data,
-                                          *self.load_conf()
-            )
-            self.thread_download.start()
+
+        if self.comboBox_5.currentText() == 'FTP Datasus':
+            if not all(self.load_conf()):
+                self.signal_error.emit(
+                    [
+                        1, 'Precisa selecionar todos os parametros de download',
+                        dir_ico + 'cat_sad_2.png']
+                )
+            else:
+                pydatasus = PyDatasus()
+                pydatasus.download_signal.connect(self.progressBar.setValue)
+                pydatasus.label_signal.connect(self.label_5.setText)
+                pydatasus.lcd_signal.connect(self.lcdNumber_3.display)
+                pydatasus.finished.connect(self.finished)
+                [btn.setEnabled(False)
+                        for btn in self.all_buttons
+                        if btn.text().lower() != "encerrar"
+                ]
+                self.thread_download = Thread(pydatasus.get_data,
+                                              *self.load_conf()
+                )
+                self.thread_download.start()
+
+        elif self.comboBox_5.currentText() == 'OpenDatasus':
+            pass
 
     def finished(self, val):
         [btn.setEnabled(True) for btn in self.all_buttons]

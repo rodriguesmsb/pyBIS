@@ -39,7 +39,7 @@ class PyDatasus(QObject):
             state: [str, list], date: [str, list]):
 
         self.label_signal.emit("Criando tabela")
-        date = self.__adjust_date(database, date)
+        date = self.__adjust_date(database, base, date)
         pattern = self.__generate_pattern(database, base, state, date)
         self.__create_folder(database, base, table_or_dbc='table')
         self.__table = open(f'{self.__path_table}{database}.csv', 'w+')
@@ -48,7 +48,7 @@ class PyDatasus(QObject):
         self.__table.close()
 
     def get_file_dbc(self, database, base, state, date):
-        date = self.__adjust_date(database, date)
+        date = self.__adjust_date(database, base, date)
         patterns = self.__generate_pattern(database, base, state, date)
 
         if isinstance(patterns, list):
@@ -81,7 +81,7 @@ class PyDatasus(QObject):
             after_ = None
             db = None
 
-    def __adjust_date(self, database, dates):
+    def __adjust_date(self, database, base, dates):
         if database == 'SINAN':
             if isinstance(dates, str):
                 return dates[2:4]
@@ -96,17 +96,25 @@ class PyDatasus(QObject):
             return dates
 
     def __generate_pattern(self, database, base, states, dates):
-        if isinstance(states, list) and isinstance(dates, list):
-            return [ base + state + date + r'\.[dDc][bBs][cCv]'
-                    for state in states for date in dates ]
-        elif isinstance(states, list) and isinstance(dates, str):
-            return [ base + state + dates + r'\.[dDc][bBs][cCv]'
-                     for state in states ]
-        elif isinstance(states, str) and isinstance(dates, str):
-            return [ base + states + dates + r'\.[dDc][bBs][cCv]' ]
-        elif isinstance(states, str) and isinstance(dates, list):
-            return [ base + states + date + r'\.[dDc][bBs][cCv]'
-                     for date in dates ]
+        if base == 'DOFET':
+            if isinstance(dates, list):
+                return [ base +  date[2:4] + r'\.[dDc][bBs][cCv]'
+                        for date in dates ]
+            elif isinstance(dates, str):
+                return [ base + dates[2:4] + r'\.[dDc][bBs][cCv]' ]
+
+        else:
+            if isinstance(states, list) and isinstance(dates, list):
+                return [ base + state + date + r'\.[dDc][bBs][cCv]'
+                        for state in states for date in dates ]
+            elif isinstance(states, list) and isinstance(dates, str):
+                return [ base + state + dates + r'\.[dDc][bBs][cCv]'
+                         for state in states ]
+            elif isinstance(states, str) and isinstance(dates, str):
+                return [ base + states + dates + r'\.[dDc][bBs][cCv]' ]
+            elif isinstance(states, str) and isinstance(dates, list):
+                return [ base + states + date + r'\.[dDc][bBs][cCv]'
+                         for date in dates ]
 
     def __create_folder(self, database, pattern, table_or_dbc):
         pathlib.Path(self.__path_table).mkdir(parents=True, exist_ok=True)
@@ -147,7 +155,6 @@ class PyDatasus(QObject):
         self.__file_base_size = self.__page.size(select)
 
     def __get_data_dbc(self, database):
-        # count = 0 
         if path.isfile(path.expanduser(
             self.__path_table + database + '.csv')):
             with open(path.expanduser(
