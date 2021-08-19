@@ -71,7 +71,7 @@
        <string>Sistemas</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_7">
-       <item row="0" column="0">
+       <item row="2" column="0">
         <layout class="QGridLayout" name="gridLayout">
          <item row="1" column="0">
           <widget class="QComboBox" name="comboBox_2">
@@ -184,6 +184,20 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item row="1" column="0">
+        <widget class="QComboBox" name="comboBox_5">
+         <item>
+          <property name="text">
+           <string>FTP Datasus</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>OpenDatasus</string>
+          </property>
+         </item>
+        </widget>
        </item>
       </layout>
      </widget>
