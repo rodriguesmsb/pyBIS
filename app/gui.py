@@ -216,7 +216,7 @@ class DownloadUi(QMainWindow):
             self.comboBox.clear()
             self.comboBox_2.clear()
             self.comboBox.addItems(['SELECIONAR SISTEMA DE DADOS',
-                                    'SRAG',
+                                    'REGISTROS DE VACINAÇÃO COVID-19',
                                     'SÍNDROME GRIPAL',
                                     'OCUPAÇÃO HOSPITALAR COVID-19',
                                     ])
@@ -452,7 +452,7 @@ class DownloadUi(QMainWindow):
             self.comboBox_4.setEnabled(False)
 
     def return_date(self, date: int) -> list:
-        self.return_list_date(date, self.horizontalSlider_2.value() + 1)
+        self.return_list_date(date, self.horizontalSlider_2.value())
 
     def return_date_(self, date_: int) -> list:
         self.return_list_date(date_, self.horizontalSlider.value())
@@ -467,6 +467,152 @@ class DownloadUi(QMainWindow):
             return database, base, state, date
 
     def process_download(self):
+        def write_download_elastic_sad(db, url, index, state,
+                                       dates, user, passwd, body):
+            import csv
+            from elasticsearch import Elasticsearch
+            from elasticsearch_dsl import Search
+
+            client = Elasticsearch(url,
+                                   index=index,
+                                   http_auth=(
+                                       user,
+                                       passwd
+                                   ),
+                                   body=body
+            )
+
+            s = Search(using=client, index=index)
+
+            s.execute()
+
+            header = list(next(s.scan()).to_dict().keys())
+            try:
+                pathlib.Path(
+                    os.path.expanduser('~/OpenDatasus/')
+                ).mkdir(parents=True, exist_ok=True)
+            except FileExistsError:
+                pass
+
+            d = min(dates)
+            d1 = max(dates)
+            directory = os.path.expanduser('~/OpenDatasus/')
+            with open(
+                f'{os.path.join(directory, db)}-{state}-{d}-{d1}.csv',
+                'w+') as f:
+                filecsv = csv.DictWriter(f, fieldnames=header)
+                filecsv.writeheader()
+
+                for hit in s.scan():
+                   filecsv.writerow(hit.to_dict())
+
+        def elastic_download():
+            database, base, states, dates = self.load_conf()
+
+            db = ''
+            if database == 'REGISTROS DE VACINAÇÃO COVID-19':
+                db = 'imunizacao'
+            elif database == 'SÍNDROME GRIPAL':
+                db = 'notificacao'
+            elif database == 'OCUPAÇÃO HOSPITALAR COVID-19':
+                db = 'leitos'
+
+            system = {
+                'leitos': {
+                    'url': 'https://elastic-leitos.saude.gov.br/',
+                    'index': 'leito_ocupacao',
+                    'user': 'user-api-leitos',
+                    'pass': 'aQbLL3ZStaTr38tj',
+                    'mun': 'estadoSigla',
+                    'date': 'dataNotificacaoOcupacao'
+                },
+                'notificacao': {
+                    'url': 'https://elasticsearch-saps.saude.gov.br/',
+                    'index': 'desc-notificacoes-esusve-*',
+                    'user': 'user-public-notificacoes',
+                    'pass': 'Za4qNXdyQNSa9YaA',
+                    'mun': '',
+                    'date': 'dataNotificacao'
+                },
+                'imunizacao': {
+                    'url': 'https://imunizacao-es.saude.gov.br/',
+                    'index': '',
+                    'user': 'imunizacao_public',
+                    'pass': 'qlto5t&7r_@+#Tlstigi',
+                    'mun': 'estabelecimento_uf',
+                    'date':'vacina_dataAplicacao',
+                },
+            }
+
+            my_query = {
+               'query': {
+                   'bool': {
+                       'filter': [
+                           {
+                               'range': {
+                                   system[db]['date']: {
+                                       'gte': max(dates),
+                                       'lte': min(dates)
+                                   }
+                               },
+                           }
+                       ]
+                   }
+               }
+            }
+            if db != 'notificacao':
+                for state in states:
+                    my_query = {
+                       'query': {
+                           'bool': {
+                               'filter': [
+                                   {
+                                       'range': {
+                                           system[db]['date']: {
+                                               'gte': max(dates),
+                                               'lte': min(dates)
+                                           }
+                                       },
+                                       'match': {
+                                           system[db]['mun']: state,
+                                       }
+                                   }
+                               ]
+                           }
+                       }
+                    }
+                    write_download_elastic_sad(db,
+                                               system[db]['url'],
+                                               system[db]['index'],
+                                               state,
+                                               dates,
+                                               system[db]['user'],
+                                               system[db]['pass'],
+                                               my_query)
+            else:
+                if len(states) == 27:
+                    write_download_elastic_sad(db,
+                                               system[db]['url'],
+                                               system[db]['index'],
+                                               'brasil',
+                                               dates,
+                                               system[db]['user'],
+                                               system[db]['pass'],
+                                               my_query)
+                else:
+                    for state in states:
+                        write_download_elastic_sad(
+                            db,
+                            system[db]['url'].replace('*', state.lower()),
+                            system[db]['index'],
+                            state,
+                            dates,
+                            system[db]['user'],
+                            system[db]['pass'],
+                            my_query
+                        )
+
+
 
         if self.comboBox_5.currentText() == 'FTP Datasus':
             if not all(self.load_conf()):
@@ -491,7 +637,7 @@ class DownloadUi(QMainWindow):
                 self.thread_download.start()
 
         elif self.comboBox_5.currentText() == 'OpenDatasus':
-            pass
+            elastic_download()
 
     def finished(self, val):
         [btn.setEnabled(True) for btn in self.all_buttons]
