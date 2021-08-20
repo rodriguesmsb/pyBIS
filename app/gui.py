@@ -536,7 +536,7 @@ class DownloadUi(QMainWindow):
                 },
                 'imunizacao': {
                     'url': 'https://imunizacao-es.saude.gov.br/',
-                    'index': '',
+                    'index': 'desc-imunizacao',
                     'user': 'imunizacao_public',
                     'pass': 'qlto5t&7r_@+#Tlstigi',
                     'mun': 'estabelecimento_uf',
