@@ -603,8 +603,8 @@ class DownloadUi(QMainWindow):
                     for state in states:
                         write_download_elastic_sad(
                             db,
-                            system[db]['url'].replace('*', state.lower()),
-                            system[db]['index'],
+                            system[db]['url'],
+                            system[db]['index'].replace('*', state.lower()),
                             state,
                             dates,
                             system[db]['user'],
