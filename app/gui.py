@@ -317,8 +317,11 @@ class DownloadUi(QMainWindow):
                     ufs.add(stts_json[limit])
 
                 else:
-                    for uf in stts_json[limit]:
-                        ufs.add(uf)
+                    try:
+                        for uf in stts_json[limit]:
+                            ufs.add(uf)
+                    except KeyError:
+                        pass
 
             with open(conf + "search.json", "r", encoding='utf8') as f:
                 data = json.load(f)
@@ -467,26 +470,7 @@ class DownloadUi(QMainWindow):
             return database, base, state, date
 
     def process_download(self):
-        def write_download_elastic_sad(db, url, index, state,
-                                       dates, user, passwd, body):
-            import csv
-            from elasticsearch import Elasticsearch
-            from elasticsearch_dsl import Search
-
-            client = Elasticsearch(url,
-                                   index=index,
-                                   http_auth=(
-                                       user,
-                                       passwd
-                                   ),
-                                   body=body
-            )
-
-            s = Search(using=client, index=index)
-
-            s.execute()
-
-            header = list(next(s.scan()).to_dict().keys())
+        def elastic_download():
             try:
                 pathlib.Path(
                     os.path.expanduser('~/OpenDatasus/')
@@ -494,124 +478,30 @@ class DownloadUi(QMainWindow):
             except FileExistsError:
                 pass
 
-            d = min(dates)
-            d1 = max(dates)
             directory = os.path.expanduser('~/OpenDatasus/')
-            with open(
-                f'{os.path.join(directory, db)}-{state}-{d}-{d1}.csv',
-                'w+') as f:
-                filecsv = csv.DictWriter(f, fieldnames=header)
-                filecsv.writeheader()
-
-                for hit in s.scan():
-                   filecsv.writerow(hit.to_dict())
-
-        def elastic_download():
             database, base, states, dates = self.load_conf()
 
             db = ''
+            from datetime import date
             if database == 'REGISTROS DE VACINAÇÃO COVID-19':
-                db = 'imunizacao'
+                db = 'vacinacao'
             elif database == 'SÍNDROME GRIPAL':
-                db = 'notificacao'
+                db = 'notificacao_sg'
             elif database == 'OCUPAÇÃO HOSPITALAR COVID-19':
-                db = 'leitos'
+                db = 'leitos_covid19'
 
-            system = {
-                'leitos': {
-                    'url': 'https://elastic-leitos.saude.gov.br/',
-                    'index': 'leito_ocupacao',
-                    'user': 'user-api-leitos',
-                    'pass': 'aQbLL3ZStaTr38tj',
-                    'mun': 'estadoSigla',
-                    'date': 'dataNotificacaoOcupacao'
-                },
-                'notificacao': {
-                    'url': 'https://elasticsearch-saps.saude.gov.br/',
-                    'index': 'desc-notificacoes-esusve-*',
-                    'user': 'user-public-notificacoes',
-                    'pass': 'Za4qNXdyQNSa9YaA',
-                    'mun': '',
-                    'date': 'dataNotificacao'
-                },
-                'imunizacao': {
-                    'url': 'https://imunizacao-es.saude.gov.br/',
-                    'index': 'desc-imunizacao',
-                    'user': 'imunizacao_public',
-                    'pass': 'qlto5t&7r_@+#Tlstigi',
-                    'mun': 'estabelecimento_uf',
-                    'date':'vacina_dataAplicacao',
-                },
-            }
+            filename = db + date.today().strftime('%d-%m-%y')
+            from pyOpenDatasus import PyOpenDatasus
 
-            my_query = {
-               'query': {
-                   'bool': {
-                       'filter': [
-                           {
-                               'range': {
-                                   system[db]['date']: {
-                                       'gte': max(dates),
-                                       'lte': min(dates)
-                                   }
-                               },
-                           }
-                       ]
-                   }
-               }
-            }
-            if db != 'notificacao':
-                for state in states:
-                    my_query = {
-                       'query': {
-                           'bool': {
-                               'filter': [
-                                   {
-                                       'range': {
-                                           system[db]['date']: {
-                                               'gte': max(dates),
-                                               'lte': min(dates)
-                                           }
-                                       },
-                                       'match': {
-                                           system[db]['mun']: state,
-                                       }
-                                   }
-                               ]
-                           }
-                       }
-                    }
-                    write_download_elastic_sad(db,
-                                               system[db]['url'],
-                                               system[db]['index'],
-                                               state,
-                                               dates,
-                                               system[db]['user'],
-                                               system[db]['pass'],
-                                               my_query)
-            else:
-                if len(states) == 27:
-                    write_download_elastic_sad(db,
-                                               system[db]['url'],
-                                               system[db]['index'],
-                                               'brasil',
-                                               dates,
-                                               system[db]['user'],
-                                               system[db]['pass'],
-                                               my_query)
-                else:
-                    for state in states:
-                        write_download_elastic_sad(
-                            db,
-                            system[db]['url'],
-                            system[db]['index'].replace('*', state.lower()),
-                            state,
-                            dates,
-                            system[db]['user'],
-                            system[db]['pass'],
-                            my_query
-                        )
+            date_min = min(dates) + '-01-01'
+            date_max = max(dates) + '-12-31'
 
+            for state in states:
+                self.api = PyOpenDatasus(db, state, date_min, date_max)
+                self.api.download(
+                    os.path.join(directory, filename + '.csv')
+                )
+            print('acabou')
 
 
         if self.comboBox_5.currentText() == 'FTP Datasus':
@@ -637,7 +527,8 @@ class DownloadUi(QMainWindow):
                 self.thread_download.start()
 
         elif self.comboBox_5.currentText() == 'OpenDatasus':
-            elastic_download()
+            self.thread_elastic = Thread(elastic_download)
+            self.thread_elastic.start()
 
     def finished(self, val):
         [btn.setEnabled(True) for btn in self.all_buttons]
