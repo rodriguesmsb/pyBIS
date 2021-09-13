@@ -1,0 +1,18 @@
+{
+    "apis": {
+        "notificacao_sg": {
+            "url": "https://elasticsearch-saps.saude.gov.br/",
+            "idx": "desc-notificacoes-esusve-*/_search"
+        },
+
+        "vacinacao": {
+            "url": "https://imunizacao-es.saude.gov.br/",
+            "idx": "desc-imunizacao/_search"
+        },
+
+        "leitos_covid19": {
+            "url": "https://elastic-leitos.saude.gov.br/",
+            "idx": "leito_ocupacao/_search"
+        }
+    }
+}
