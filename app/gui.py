@@ -489,10 +489,10 @@ class DownloadUi(QMainWindow):
             self.comboBox_4.clear()
             self.comboBox_4.setEnabled(False)
 
-    def return_date(self, date: int) -> list:
+    def return_date(self, date):
         self.return_list_date(date, self.horizontalSlider_2.value())
 
-    def return_date_(self, date_: int) -> list:
+    def return_date_(self, date_):
         self.return_list_date(date_, self.horizontalSlider.value())
 
     def load_conf(self):
@@ -528,15 +528,16 @@ class DownloadUi(QMainWindow):
             filename = db + date.today().strftime('%d-%m-%y')
             from pyOpenDatasus import PyOpenDatasus
 
-            date_min = min(dates) + '-01-01'
-            date_max = max(dates) + '-12-31'
+            date_min = str(self.dt_min.date().toPyDate())
+            date_max = str(self.dt_max.date().toPyDate())
 
             for state in states:
                 api = PyOpenDatasus(db, state, date_min, date_max)
                 api.sig.connect(self.progressBar.setValue)
                 api.download(
-                    os.path.join(directory, filename + '.csv')
+                    os.path.join(directory, filename + '_' + state + '.csv')
                 )
+            print('concluido')
 
 
         if self.comboBox_5.currentText() == 'FTP Datasus':

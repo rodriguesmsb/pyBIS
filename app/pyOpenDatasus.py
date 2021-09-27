@@ -34,7 +34,7 @@ class PyOpenDatasus(QObject):
     def __create_form(self):
         auth = None
         body = None
-
+        fields = self.__read_json()['fields']
         if self.api == 'notificacao_sg':
             auth = HTTPBasicAuth(
                 'user-public-notificacoes', 'Za4qNXdyQNSa9YaA'
@@ -55,7 +55,8 @@ class PyOpenDatasus(QObject):
                                 'lte': self.date_max
                             }
                         }
-                    }
+                    },
+                    '_source': fields
                 }
 
 
@@ -66,8 +67,8 @@ class PyOpenDatasus(QObject):
             )
             if self.__check_if_date_isNone():
                     body = {
-                        'query': {
-                            'match_all': {}
+                            'query': {
+                                'match_all': {},
                         }
                     }
             else:
@@ -90,7 +91,8 @@ class PyOpenDatasus(QObject):
                                 }
                                      ]
                         }
-                    }
+                    },
+                    '_source': fields
                 }
 
         elif self.api == 'leitos_covid19':
@@ -123,7 +125,8 @@ class PyOpenDatasus(QObject):
                                 }
                                      ]
                         }
-                    }
+                    },
+                    '_source': fields
                 }
 
         return auth, body
@@ -160,7 +163,7 @@ class PyOpenDatasus(QObject):
         header = list(data[0]['_source'].keys())
 
         count = len(data)
-        ratio = round((float(total / count) * 100 - 6), 1)
+        ratio = round((count * 100 / total), 1)
 
         with open(filename, 'w') as f:
             filecsv = csv.DictWriter(f, fieldnames=header,
@@ -170,7 +173,7 @@ class PyOpenDatasus(QObject):
             while scroll_size > 0:
 
                 count += len(data)
-                ratio = round((float(count / total) * 100 - 6), 1)
+                ratio = round((float(count * 100 / total)), 1)
                 percent = int(round(100 * ratio / (100 - 6), 1))
                 self.sig.emit(percent)
 
