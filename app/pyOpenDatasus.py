@@ -19,7 +19,7 @@ class PyOpenDatasus(QObject):
         self.date_max = date_max
 
     def __read_json(self):
-        local = os.path.dirname(__name__)
+        local = os.path.dirname(__file__)
         api = os.path.join(local, '../conf/api.json')
         with open(api, 'r') as filejson:
             df = json.load(filejson)['apis'][self.api]
