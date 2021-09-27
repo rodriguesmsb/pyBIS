@@ -11,6 +11,8 @@ class PyOpenDatasus(QObject):
     sig = pyqtSignal(int)
 
     def __init__(self, api, state, date_min=None, date_max=None):
+        super().__init__()
+
         self.api = api
         self.state = state.lower()
         self.date_min = date_min
@@ -22,14 +24,6 @@ class PyOpenDatasus(QObject):
         with open(api, 'r') as filejson:
             df = json.load(filejson)['apis'][self.api]
             return df
-
-    def search(self):
-        if self.api == 'notificacao_sg':
-            self.download_sg()
-        elif self.api == 'vacinacao':
-            pass
-        elif self.api == 'leitos_covid19':
-            pass
 
     def __check_if_date_isNone(self):
         if self.date_min is None or self.date_max is None:
@@ -159,10 +153,14 @@ class PyOpenDatasus(QObject):
 
         sid = r.json()['_scroll_id']
         scroll_size = r.json()['hits']['total']['value']
+        total = scroll_size
 
         data = r.json()['hits']['hits']
 
         header = list(data[0]['_source'].keys())
+
+        count = len(data)
+        ratio = round((float(total / count) * 100 - 6), 1)
 
         with open(filename, 'w') as f:
             filecsv = csv.DictWriter(f, fieldnames=header,
@@ -170,6 +168,11 @@ class PyOpenDatasus(QObject):
             filecsv.writeheader()
 
             while scroll_size > 0:
+
+                count += len(data)
+                ratio = round((float(count / total) * 100 - 6), 1)
+                percent = int(round(100 * ratio / (100 - 6), 1))
+                self.sig.emit(percent)
 
                 for hits in data:
                     filecsv.writerow(hits['_source'])

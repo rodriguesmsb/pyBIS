@@ -202,4 +202,38 @@ class PyDatasus(QObject):
 
 if __name__ == '__main__':
     datasus = PyDatasus()
-    datasus.get_data('SIM', 'DO', 'AC', ['2010', '2011', '2012'])
+    # datasus.get_data('SIM', 'DO', 'AC', ['2008', '2009', '2010'])
+    datasus.get_data(
+        'SIM',
+        'DOFET',
+        [
+            "AC",
+            "AP",
+            "AM",
+            "PA",
+            "RO",
+            "RR",
+            "TO",
+            "AL",
+            "BA",
+            "CE",
+            "MA",
+            "PB",
+            "PE",
+            "PI",
+            "RN",
+            "SE",
+            "DF",
+            "GO",
+            "MT",
+            "MS",
+            "ES",
+            "MG",
+            "RJ",
+            "SP",
+            "PR",
+            "RS",
+            "SC",
+        ],
+        ['2008', '2009', '2010']
+    )

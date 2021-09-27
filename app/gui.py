@@ -3,6 +3,7 @@
 import sys
 import time
 import subprocess
+from datetime import date
 import pathlib
 import os
 import shutil
@@ -10,13 +11,14 @@ import platform
 import multiprocessing
 import psutil
 import re
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QMessageBox,
-    QPushButton, QTableWidgetItem, QTabBar, QTabWidget, QStyle,
-    QStyleOptionTab, QStylePainter, QFileDialog, QHeaderView, QStyleFactory)
+from PyQt5.QtWidgets import (
+    QApplication, QMainWindow, QMessageBox, QPushButton, QTableWidgetItem,
+    QTabBar, QTabWidget, QStyle, QStyleOptionTab, QStylePainter, QFileDialog,
+    QHeaderView, QStyleFactory, QDateEdit)
 from PyQt5.QtGui import (QFont, QIcon, QStandardItemModel, QStandardItem,
         QPixmap, QColor)
 from PyQt5.QtCore import (QThread, pyqtSignal, QObject, QRect, QPoint,
-    pyqtSlot, Qt, QTimer, QSize)
+    pyqtSlot, Qt, QTimer, QSize, QDate)
 from PyQt5 import uic
 import json
 import pandas as pd
@@ -212,6 +214,15 @@ class DownloadUi(QMainWindow):
                                     'SINAN',
                                     'SINASC'])
 
+            self.label.setText('Ano inicial:')
+            self.label_2.setText('Ano final:')
+            self.horizontalSlider.show()
+            self.horizontalSlider_2.show()
+            self.lcdNumber.show()
+            self.lcdNumber_2.show()
+            self.dt_min.hide()
+            self.dt_max.hide()
+
         elif self.comboBox_5.currentText() == 'OpenDatasus':
             self.comboBox.clear()
             self.comboBox_2.clear()
@@ -220,6 +231,30 @@ class DownloadUi(QMainWindow):
                                     'SÍNDROME GRIPAL',
                                     'OCUPAÇÃO HOSPITALAR COVID-19',
                                     ])
+
+            self.label.setText('Período inicial:')
+            self.label_2.setText('Período final:')
+
+            self.lcdNumber.hide()
+            self.lcdNumber_2.hide()
+
+            self.horizontalSlider.hide()
+            self.horizontalSlider_2.hide()
+            dt_min = QDate(2020, 1, 1)
+            dt_max = QDate(date.today())
+
+            self.dt_min = QDateEdit()
+            self.dt_min.setMinimumDate(dt_min)
+            self.dt_min.setMaximumDate(dt_max)
+            self.dt_max = QDateEdit()
+            self.dt_max.setMinimumDate(dt_min)
+            self.dt_max.setDate(QDate(date.today()))
+            self.dt_max.setMaximumDate(dt_max)
+
+            self.gridLayout_6.addWidget(self.dt_min, 0, 2, 1, 4)
+            self.gridLayout_6.addWidget(self.dt_max, 1, 2, 1, 4)
+            self.gridLayout_6.addWidget(self.spinBox, 2, 3, 1, 3)
+            self.gridLayout_6.addWidget(self.spinBox_2, 3, 3, 1, 3)
 
     def reset(self):
         try:
@@ -497,11 +532,11 @@ class DownloadUi(QMainWindow):
             date_max = max(dates) + '-12-31'
 
             for state in states:
-                self.api = PyOpenDatasus(db, state, date_min, date_max)
-                self.api.download(
+                api = PyOpenDatasus(db, state, date_min, date_max)
+                api.sig.connect(self.progressBar.setValue)
+                api.download(
                     os.path.join(directory, filename + '.csv')
                 )
-            print('acabou')
 
 
         if self.comboBox_5.currentText() == 'FTP Datasus':
@@ -527,8 +562,8 @@ class DownloadUi(QMainWindow):
                 self.thread_download.start()
 
         elif self.comboBox_5.currentText() == 'OpenDatasus':
-            self.thread_elastic = Thread(elastic_download)
-            self.thread_elastic.start()
+            self.thread_thread = Thread(elastic_download)
+            self.thread_thread.start()
 
     def finished(self, val):
         [btn.setEnabled(True) for btn in self.all_buttons]
