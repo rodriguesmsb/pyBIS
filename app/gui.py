@@ -11,6 +11,7 @@ import platform
 import multiprocessing
 import psutil
 import re
+import requests
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QMessageBox, QPushButton, QTableWidgetItem,
     QTabBar, QTabWidget, QStyle, QStyleOptionTab, QStylePainter, QFileDialog,
@@ -89,6 +90,59 @@ class TabWidget(QTabWidget):
         self.setTabPosition(QTabWidget.West)
 
 
+class TestConnection(QObject):
+
+    status = pyqtSignal(str)
+
+    def __init__(self):
+        super().__init__()
+
+    def check(self):
+        self.activate = True
+        while self.activate:
+            time.sleep(5)
+            if requests.get('https://www.google.com').status_code:
+                self.status.emit('Conectado a internet')
+            else:
+                self.status.emit('Sem internet')
+
+
+class AttSizeBase(QObject):
+    ftpdatasus_signal = pyqtSignal(int)
+    opendatasus_signal = pyqtSignal(int)
+
+    def __init__(self):
+        super().__init__()
+
+    def opendatasus(self):
+        self.datasus_activate = True
+
+        while self.datasus_activate:
+            time.sleep(5)
+            size = 0
+            opendatasus = os.path.expanduser('~/OpenDatasus/')
+            for path, dirs, files in os.walk(opendatasus):
+                for f in files:
+                    fp = os.path.join(path, f)
+                    size += os.path.getsize(fp)
+
+            self.opendatasus_signal.emit(int(size / (1024**3)))
+
+    def ftpdatasus(self):
+        self.ftp_activate = True
+
+        while self.ftp_activate:
+            size = 0
+            time.sleep(5)
+            opendatasus = os.path.expanduser('~/datasus_dbc/')
+            for path, dirs, files in os.walk(opendatasus):
+                for f in files:
+                    fp = os.path.join(path, f)
+                    size += os.path.getsize(fp)
+
+            self.ftpdatasus_signal.emit(int(size / (1024**3)))
+
+
 class Manager(QMainWindow):
 
     resized = pyqtSignal()
@@ -97,6 +151,12 @@ class Manager(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("pyBiss")
+
+        self.internet = TestConnection()
+        self.internet.status.connect(self.statusBar().showMessage)
+
+        self.thread = Thread(self.internet.check)
+        self.thread.start()
 
         self.tab_manager = TabWidget()
 
@@ -118,6 +178,10 @@ class Manager(QMainWindow):
 
     def set_font(self, font):
         self.setFont(QFont(font))
+
+    def closeEvent(self, event):
+        self.internet.activate = False
+        self.thread.terminate()
 
 
 class Thread(QThread):
@@ -1572,6 +1636,14 @@ class Config(QMainWindow):
         self.comboBox.addItems(QStyleFactory.keys())
         self.pushButton.clicked.connect(self.clear_config)
 
+        self.attsize = AttSizeBase()
+        self.attsize.ftpdatasus_signal.connect(self.lcdNumber.display)
+        self.attsize.opendatasus_signal.connect(self.lcdNumber_2.display)
+        self.thread_ftp = Thread(self.attsize.ftpdatasus)
+        self.thread_open = Thread(self.attsize.opendatasus)
+        self.thread_ftp.start()
+        self.thread_open.start()
+
     def load_conf(self):
         with open(conf + "config.json", "r", encoding="utf8") as f:
             data = json.load(f)
@@ -1617,6 +1689,11 @@ class Config(QMainWindow):
             data["spark"] = spark
             json.dump(data, f, indent=4)
         self.pushButton_3.setText(spark)
+
+    def closeEvent(self, event):
+        self.attsize.ftp_activate = False
+        self.attsize.datasus_activate = False
+        self.thread.terminate()
 
 
 class Help(QMainWindow):
