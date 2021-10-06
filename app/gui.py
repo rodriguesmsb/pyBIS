@@ -1672,9 +1672,6 @@ class Config(QMainWindow):
             )
             count = self.lcdNumber.value() + self.lcdNumber_2.value()
             self.cbar.setValue((count * 100) / (total // (2 ** 30)))
-            print(total // (2 ** 30))
-            print((count * 100) / (total // (2 ** 30)))
-
 
     def load_conf(self):
         with open(conf + "config.json", "r", encoding="utf8") as f:
