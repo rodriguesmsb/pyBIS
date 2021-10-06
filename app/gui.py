@@ -29,6 +29,8 @@ import findspark
 
 from pydatasus import PyDatasus
 from convert_dbf_to_csv import ReadDbf
+from circularprogressbar import QRoundProgressBar
+
 
 sys.path.append(os.path.join(os.path.dirname(__file__),
                 "../scripts/SpatialSUSapp/"))
@@ -121,10 +123,13 @@ class AttSizeBase(QObject):
             time.sleep(5)
             size = 0
             opendatasus = os.path.expanduser('~/OpenDatasus/')
-            for path, dirs, files in os.walk(opendatasus):
-                for f in files:
-                    fp = os.path.join(path, f)
-                    size += os.path.getsize(fp)
+            try:
+                for path, dirs, files in os.walk(opendatasus):
+                    for f in files:
+                        fp = os.path.join(path, f)
+                        size += os.path.getsize(fp)
+            except FileNotFoundError:
+                pass
 
             self.opendatasus_signal.emit(int(size / (1024**3)))
 
@@ -135,10 +140,13 @@ class AttSizeBase(QObject):
             size = 0
             time.sleep(5)
             opendatasus = os.path.expanduser('~/datasus_dbc/')
-            for path, dirs, files in os.walk(opendatasus):
-                for f in files:
-                    fp = os.path.join(path, f)
-                    size += os.path.getsize(fp)
+            try:
+                for path, dirs, files in os.walk(opendatasus):
+                    for f in files:
+                        fp = os.path.join(path, f)
+                        size += os.path.getsize(fp)
+            except FileNotFoundError:
+                pass
 
             self.ftpdatasus_signal.emit(int(size / (1024**3)))
 
@@ -1636,6 +1644,15 @@ class Config(QMainWindow):
         self.comboBox.addItems(QStyleFactory.keys())
         self.pushButton.clicked.connect(self.clear_config)
 
+        self.cbar = QRoundProgressBar()
+        colors = [
+            (0., QColor.fromRgb(0,255,0)),
+            (0.5, QColor.fromRgb(255,255,0)),
+            (1., QColor.fromRgb(255,0,0)),
+        ]
+        self.cbar.setValue(0)
+        self.cbar.setDataColors(colors)
+        self.verticalLayout_7.addWidget(self.cbar)
         self.attsize = AttSizeBase()
         self.attsize.ftpdatasus_signal.connect(self.lcdNumber.display)
         self.attsize.opendatasus_signal.connect(self.lcdNumber_2.display)
@@ -1643,6 +1660,21 @@ class Config(QMainWindow):
         self.thread_open = Thread(self.attsize.opendatasus)
         self.thread_ftp.start()
         self.thread_open.start()
+        self.thread_cbar = Thread(self.update_cbar)
+        self.thread_cbar.start()
+
+    def update_cbar(self):
+        self.cbar_running = True
+        while self.cbar_running:
+            time.sleep(2)
+            total, used, free = shutil.disk_usage(
+                os.path.expanduser('~/datasus_dbc')
+            )
+            count = self.lcdNumber.value() + self.lcdNumber_2.value()
+            self.cbar.setValue((count * 100) / (total // (2 ** 30)))
+            print(total // (2 ** 30))
+            print((count * 100) / (total // (2 ** 30)))
+
 
     def load_conf(self):
         with open(conf + "config.json", "r", encoding="utf8") as f:
@@ -1693,6 +1725,7 @@ class Config(QMainWindow):
     def closeEvent(self, event):
         self.attsize.ftp_activate = False
         self.attsize.datasus_activate = False
+        self.cbar_running = False
         self.thread.terminate()
 
 
