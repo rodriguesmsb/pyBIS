@@ -776,6 +776,7 @@ class DownloadUi(QMainWindow):
                     ("spark.executor.memory", "ng".replace("n",
                                                            str(data["mem"]))),
                     ("spark.driver.memory", "20g"),
+                    ("spark.driver.bindAddres", "127.0.0.1"),
                     ]).setAppName('pyBis')
 
             self.spark = SparkSession.builder.config(conf=conf_file) \
