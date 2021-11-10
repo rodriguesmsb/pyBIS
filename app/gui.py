@@ -1702,6 +1702,9 @@ class Home(QMainWindow):
 
 
 def main():
+    os.system("pip install -r {}".format(
+              os.path.join(os.path.dirname(__file__), '../requirements.txt')))
+
     app = QApplication(sys.argv)
     app.setApplicationName("pyBIS")
     app.setWindowIcon(QIcon(dir_ico + "favicon.ico"))
