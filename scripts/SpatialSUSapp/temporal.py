@@ -18,7 +18,7 @@ from dash.dependencies import Input, Output, State
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
-from aux.functions import functions
+from nonaux.functions import functions
 import json
 import numpy as np
 from datetime import date
