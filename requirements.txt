@@ -1,3 +1,4 @@
+pyspark
 dbfread
 findspark
 numpy
