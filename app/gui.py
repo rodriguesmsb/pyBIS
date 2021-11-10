@@ -7,7 +7,6 @@ from datetime import date
 import pathlib
 import os
 import shutil
-import platform
 import multiprocessing
 import psutil
 import re
@@ -18,14 +17,12 @@ from PyQt5.QtWidgets import (
     QHeaderView, QStyleFactory, QDateEdit)
 from PyQt5.QtGui import (QFont, QIcon, QStandardItemModel, QStandardItem,
         QPixmap, QColor)
-from PyQt5.QtCore import (QThread, pyqtSignal, QObject, QRect, QPoint,
-    pyqtSlot, Qt, QTimer, QSize, QDate)
+from PyQt5.QtCore import (QThread, pyqtSignal, QObject, QRect, QPoint, QSize,
+                          QDate)
 from PyQt5 import uic
 import json
 import pandas as pd
-from glob import glob
 import webbrowser
-import findspark
 
 from pydatasus import PyDatasus
 from convert_dbf_to_csv import ReadDbf
