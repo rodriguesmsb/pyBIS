@@ -21,7 +21,7 @@ from dash_extensions.javascript import Namespace, arrow_function
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
-from aux.functions import functions
+from nonaux.functions import functions
 import json
 import numpy as np
 
