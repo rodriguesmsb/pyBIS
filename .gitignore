@@ -19,8 +19,8 @@ __pycache__/
 
 
 
-
-*/_SUCCESS
+*.crc
+*_SUCCESS
 scripts/SpatialSUSapp/data/data.csv
 */config.json
 */database.json
