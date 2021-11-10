@@ -736,50 +736,6 @@ class DownloadUi(QMainWindow):
                 )
 
     def read_file(self):
-        def spark_conf(app_name, n_cores="*", executor_memory=2,
-                       driver_memory=20):
-
-            n_cores = "local[cores]".replace("cores", str(n_cores))
-            executor_memory = "numg".replace("num", str(executor_memory))
-            driver_memory = "numg".replace("num", str(driver_memory))
-            conf_file = SparkConf().setAppName('pyBIS')
-            conf_file = (conf_file.setMaster(n_cores)
-                         .set("spark.executor.memory", executor_memory)
-                         .set("spark.driver.memory", driver_memory))
-
-            return conf_file
-
-        def start_spark(conf):
-           try:
-               sc = SparkContext(conf=conf)
-               spark = SparkSession(sc)
-           except ValueError:
-               sc = SparkContext.getOrCreate()
-           spark = SparkSession(sc)
-           return spark
-
-        def test_java_oracle(oracle_java):
-            if oracle_java is not None:
-                os.environ['JAVA_HOME'] = oracle_java
-                return True
-            else:
-                if isinstance(os.getenv('JAVA_HOME'), str):
-                    return True
-
-        def test_hadoop_spark(hadoop_spark):
-            if hadoop_spark is not None:
-                if platform.system().lower() == "windows":
-                    os.environ['SPARK_HOME'] = hadoop_spark
-                    os.environ['HADOOP_HOME'] = os.getenv("SPARK_HOME")\
-                        + "/hadoop"
-                    return True
-
-                elif platform.system().lower() == 'linux':
-                    os.environ['SPARK_HOME'] = hadoop_spark
-                    return True
-            else:
-                if isinstance(os.getenv('SPARK_HOME'), str):
-                    return True
 
         def unionAll(dfs):
             cols = set()
@@ -798,7 +754,7 @@ class DownloadUi(QMainWindow):
                 for col in cols:
                     if col not in d.columns:
                         new_dfs[new_name] = new_dfs[new_name].withColumn(col,
-                                                                    lit(0))
+                                                                    F.lit(0))
                 new_dfs[new_name] = new_dfs[new_name].select(cols)
             result = new_dfs['df0']
             dfs_to_add = new_dfs.keys()
@@ -812,43 +768,41 @@ class DownloadUi(QMainWindow):
         with open(conf + "config.json", "r", encoding='utf8') as f:
             data = json.load(f)
 
-            if all([test_java_oracle(oracle_java=data["java"]),
-                test_hadoop_spark(hadoop_spark=data["spark"])]):
+            from pyspark import SparkConf, SparkConf
+            from pyspark.sql import SparkSession
+            # import pyspark.sql.types as T
+            import pyspark.sql.functions as F
 
-                findspark.init(os.getenv('SPARK_HOME'))
+            conf_file = SparkConf().setMaster(
+                'local[*]'.replace('*', data['cpu'])) \
+                .setAll([
+                    ("spark.executor.memory", "ng".replace("n", data["mem"])),
+                    ("spark.driver.memory", "20g"),
+                    ]).setAppName('pyBis')
 
-                from pyspark import SparkConf, SparkContext
-                from pyspark.sql import SparkSession
-                from pyspark.sql.types import DateType, StringType
-                from pyspark.sql.functions import (year, month, col, sum,
-                    udf, substring, split, regexp_replace, lit)
+            self.spark = SparkSession.builder.config(conf=conf_file) \
+                .getOrCreate()
 
-                self.conf = spark_conf("pyBIS", data["cpu"],
-                                            data["mem"], driver_memory=20)
-                self.spark = start_spark(self.conf)
-                try:
+            try:
 
-                    self.lista_spark = list(
-                        map(lambda x: self.spark.read.csv(x, header=True),
-                            self.files
-                        )
-                    )
+                self.lista_spark = list(
+                    map(lambda x: self.spark.read.csv(x, header=True),
+                        self.files)
+                )
 
 
-                    self.df = unionAll(self.lista_spark)
-                    self.write_table()
-                except:
-                    self.signal_error.emit(
-                        [
-                            1, 'O arquivo solicitado não foi encontrado',
-                            dir_ico
-                            + 'cat_sad_3.png'
-                        ]
-                    )
-                    self.stop_thread()
-            else:
+                self.df = unionAll(self.lista_spark)
+                self.write_table()
+            except:
+                self.signal_error.emit(
+                    [
+                        1, 'O arquivo solicitado não foi encontrado',
+                        dir_ico
+                        + 'cat_sad_3.png'
+                   ]
+                )
                 self.stop_thread()
-                self.showError()
+
 
     def receive_data(self, dataframe):
         self.df = dataframe
@@ -1557,7 +1511,8 @@ class LoadFile(QMainWindow):
     def loadFile(self):
         def convert(df):
             if df[-4:] == ".dbf" or df[-4:] == ".DBF":
-                csv = df[:-3] + "csv"
+                # nem lembro pq eu usava isso
+                csv = df.replace('.dbf', '.csv').replace('.DBF', '.csv')
 
                 string = ReadDbf({df}, convert='convert', tmp=True)
                 self.files.append(pd.read_csv(string.tmp_file))
