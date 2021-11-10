@@ -771,9 +771,10 @@ class DownloadUi(QMainWindow):
             import pyspark.sql.functions as F
 
             conf_file = SparkConf().setMaster(
-                'local[*]'.replace('*', data['cpu'])) \
+                'local[*]'.replace('*', str(data['cpu']))) \
                 .setAll([
-                    ("spark.executor.memory", "ng".replace("n", data["mem"])),
+                    ("spark.executor.memory", "ng".replace("n",
+                                                           str(data["mem"]))),
                     ("spark.driver.memory", "20g"),
                     ]).setAppName('pyBis')
 
