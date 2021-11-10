@@ -20,7 +20,7 @@ __pycache__/
 
 
 *.crc
-*_SUCCESS
+*/*SUCCESS
 scripts/SpatialSUSapp/data/data.csv
 */config.json
 */database.json
