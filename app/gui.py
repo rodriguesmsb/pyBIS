@@ -2,15 +2,24 @@
 
 import sys
 import time
+import os
+
+try:
+    os.system("pip install -r {}".format(
+              os.path.join(os.path.dirname(__file__),
+                           '../requirements.txt')))
+except:
+    pass
+
 import subprocess
 from datetime import date
 import pathlib
-import os
 import shutil
 import multiprocessing
 import psutil
 import re
 import requests
+from requests.exceptions import ConnectionError
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QMessageBox, QPushButton, QTableWidgetItem,
     QTabBar, QTabWidget, QStyle, QStyleOptionTab, QStylePainter, QFileDialog,
@@ -100,10 +109,13 @@ class TestConnection(QObject):
         self.activate = True
         while self.activate:
             time.sleep(5)
-            if requests.get('https://www.google.com').status_code:
-                self.status.emit('Conectado a internet')
-            else:
-                self.status.emit('Sem internet')
+            try:
+                if requests.get('https://www.google.com').status_code:
+                    self.status.emit('Conectado a internet')
+                else:
+                    self.status.emit('Sem internet')
+            except ConnectionError:
+                pass
 
 
 class AttSizeBase(QObject):
@@ -1701,9 +1713,6 @@ class Home(QMainWindow):
 
 
 def main():
-    os.system("pip install -r {}".format(
-              os.path.join(os.path.dirname(__file__), '../requirements.txt')))
-
     app = QApplication(sys.argv)
     app.setApplicationName("pyBIS")
     app.setWindowIcon(QIcon(dir_ico + "favicon.ico"))
