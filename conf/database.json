@@ -1,0 +1,17 @@
+{
+    "SIH": {"Internações Hospitalares": "RD"},
+
+    "SIM": {"Óbito": "DO", "Óbito Fetal": "DOFET"},
+
+    "SINAN": {"Animais Peçonhentos": "ANIM", "Botulismo": "BOTU",
+        "Chagas": "CHAG", "Cólera": "COLE",
+        "Coqueluche": "COQU", "Difteria": "DIFT",
+        "Esquistossomose": "ESQU", "Febre Maculosa": "FMAC",
+        "Febre Tifóide": "FTIF", "Hanseníase": "HANS",
+        "Leptospirose": "LEPT", "Meningite": "MENI",
+        "Raiva": "RAIV", "Tétano": "TETA",
+        "Tuberculose": "TUBE", "Zika-V": "ZIKA",
+        "Dengue": "DENG", "Chickungunya": "CHIK"},
+
+    "SINASC": {"Nascidos Vivos": "DN"}
+}
