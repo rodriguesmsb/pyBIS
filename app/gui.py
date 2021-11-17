@@ -1640,10 +1640,11 @@ class Config(QMainWindow):
             self.cbar.setValue((count * 100) / (total // (2 ** 30)))
 
     def load_conf(self):
-        with open(conf + "config.json", "r", encoding="utf8") as f:
-            data = json.load(f)
-            self.pushButton_3.setText(data["spark"])
-            self.pushButton_4.setText(data["java"])
+        pass
+        # with open(conf + "config.json", "r", encoding="utf8") as f:
+        #     data = json.load(f)
+        #     self.pushButton_3.setText(data["spark"])
+        #     self.pushButton_4.setText(data["java"])
 
     def clear_config(self):
         with open(conf + "config.json", "r", encoding='utf8') as f:
