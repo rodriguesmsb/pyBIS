@@ -23,8 +23,8 @@ __pycache__/
 */*SUCCESS
 scripts/SpatialSUSapp/data/data.csv
 */config.json
-*/database.json
-*/locales.json
+# database.json
+# locales.json
 */search.json
 scripts/SpatialSUSapp/conf/conf.json
 */.csv.crc
