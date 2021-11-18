@@ -1,8 +1,17 @@
 # pyBIS: Uma interface gráfica para trabalhar com dados dos Sistemas de informação Brasileiros
 
+
+## Sobre
+
+O pyBIS é uma unidade de interface gráfica (GUI) cosntruída em pyhton para trabalhar com dados contidos nos sistemas de informação brasileiros.
+
+
 ## Instalação
 
-Atualmente a forma mais fácil de utilizar a interface é clonando o repositório. Abra um terminal dentro do diretório main e rode o seguinte comando:
+### Linux
+
+Atualmente a forma mais fácil de utilizar o piBIS em um sistema linux é clonando o repositório. 
+Abra um terminal dentro do diretório main e rode o seguinte comando:
 
 
 ```shell
@@ -11,7 +20,7 @@ python3 app/gui.py
 
 # Recursos implantados
 
-- Download via <i>FIle Transfer Protocol</i> (FTP) das seguintes bases:
+- Download via <i>File Transfer Protocol</i> (FTP) das seguintes bases:
   - SINASC
   - SIM
   - SISPRENATAL
