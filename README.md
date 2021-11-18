@@ -6,9 +6,9 @@
 O pyBIS é uma unidade de interface gráfica (GUI) cosntruída em pyhton para trabalhar com dados contidos nos sistemas de informação brasileiros.
 
 
-## Instalação
+# Instalação
 
-### Linux
+## Linux
 
 Atualmente a forma mais fácil de utilizar o piBIS em um sistema linux é clonando o repositório. 
 Abra um terminal dentro do diretório main e rode o seguinte comando:
@@ -17,6 +17,12 @@ Abra um terminal dentro do diretório main e rode o seguinte comando:
 ```shell
 python3 app/gui.py
 ```
+
+## Windows
+
+Para instalar o pyBIS no windows siga o tutorial abaixo
+
+!Instalação pyBIS Windows[https://www.youtube.com/watch?v=Tp5sk6aR9yc]
 
 # Recursos implantados
 
