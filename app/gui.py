@@ -777,7 +777,11 @@ class DownloadUi(QMainWindow):
         with open(conf + "config.json", "r", encoding='utf8') as f:
             data = json.load(f)
 
-            from pyspark import SparkConf, SparkConf
+            if sys.platform == "win32":
+                os.environ['HADOOP_HOME'] = os.path.join(os.path.dirname(__file__), '../hadoop-3.2.2/')
+            import findspark
+            findspark.init(os.path.join(os.path.dirname(__file__), '../spark-3.2.0-bin-hadoop2.7/'))
+            from pyspark import SparkConf
             from pyspark.sql import SparkSession
             # import pyspark.sql.types as T
             import pyspark.sql.functions as F
@@ -791,8 +795,7 @@ class DownloadUi(QMainWindow):
                     ("spark.driver.bindAddres", "127.0.0.1"),
                     ]).setAppName('pyBis')
 
-            self.spark = SparkSession.builder.config(conf=conf_file) \
-                .getOrCreate()
+            self.spark = SparkSession.builder.config(conf=conf_file).getOrCreate()
 
             try:
 
@@ -958,8 +961,7 @@ class DownloadUi(QMainWindow):
 
     def save_file(self, params):
         try:
-            self.data_filtered.coalesce(1).write.format(
-                "csv").options(header=True).mode("overwrite").save(params[2])
+            self.data_filtered.coalesce(1).write.mode('overwrite').csv(params[2], header=True)
 
         except AttributeError:
             pathlib.Path(os.path.join(os.path.dirname(__file__),
