@@ -1635,11 +1635,14 @@ class Config(QMainWindow):
         self.cbar_running = True
         while self.cbar_running:
             time.sleep(2)
-            total, used, free = shutil.disk_usage(
-                os.path.expanduser('~/datasus_dbc')
-            )
             count = self.lcdNumber.value() + self.lcdNumber_2.value()
-            self.cbar.setValue((count * 100) / (total // (2 ** 30)))
+            try:
+                total, used, free = shutil.disk_usage(
+                    os.path.expanduser('~/datasus_dbc')
+                )
+                self.cbar.setValue((count * 100) / (total // (2 ** 30)))
+            except FileNotFoundError:
+                self.cbar.setValue(count)
 
     def load_conf(self):
         pass

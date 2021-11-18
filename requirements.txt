@@ -1,4 +1,3 @@
-pyspark==2.4.3
 dbfread
 findspark
 numpy
