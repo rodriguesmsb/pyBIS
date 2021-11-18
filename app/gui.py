@@ -779,8 +779,8 @@ class DownloadUi(QMainWindow):
 
             if sys.platform == "win32":
                 os.environ['HADOOP_HOME'] = os.path.join(os.path.dirname(__file__), '../hadoop-3.2.2/')
-            import findspark
-            findspark.init(os.path.join(os.path.dirname(__file__), '../spark-3.2.0-bin-hadoop2.7/'))
+                import findspark
+                findspark.init(os.path.join(os.path.dirname(__file__), '../spark-3.2.0-bin-hadoop2.7/'))
             from pyspark import SparkConf
             from pyspark.sql import SparkSession
             # import pyspark.sql.types as T
