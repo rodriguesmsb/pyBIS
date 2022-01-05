@@ -425,6 +425,7 @@ class DownloadUi(QMainWindow):
                     for reg in regiao:
                         for uf in stts_json[reg]:
                             ufs.add(uf)
+                            ufs.add("BR")
 
                 elif (limit in stts_json.keys()
                         and limit not in ['Norte', 'Nordeste',
@@ -1231,7 +1232,7 @@ class MergeUi(QMainWindow):
             if len(x) < 8:
                 x = "0" + x
             return x
-        
+
         date = date.apply(lambda x: correct_state(x))
         date = pd.to_datetime(date.astype(str), format="%d%m%Y")
         year, month = date.dt.year, date.dt.month
