@@ -1,4 +1,5 @@
 requests
+simpledbf
 dbfread
 findspark
 numpy

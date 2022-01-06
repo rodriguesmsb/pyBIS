@@ -9,6 +9,7 @@ import time
 from os import path, mkdir, remove, system
 import ftplib as ftp
 from PyQt5.QtCore import QObject, pyqtSignal
+from simpledbf import Dbf5
 
 from convert_dbf_to_csv import ReadDbf
 
@@ -76,7 +77,14 @@ class PyDatasus(QObject):
             after_ = db[:-3] + 'dbf'
             system(f'{self.__blast} {db} {after_}')
             remove(path.expanduser(db))
-            ReadDbf({after_}, convert='convert', tmp=None)
+            # ReadDbf({after_}, convert='convert', tmp=None)
+            try:
+                dbf = Dbf5(after_, codec="iso-8859-1")
+                dbf.to_csv(after_.replace(".dbf", ".csv"))
+            except UnicodeDecodeError:
+                dbf = Dbf5(after_, codec="utf-8")
+                dbf.to_csv(after_.replace(".dbf", ".csv"))
+
             remove(after_)
             after_ = None
             db = None
