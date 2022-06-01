@@ -15,3 +15,5 @@ dash
 dash_bootstrap_components
 dash_extensions
 jsbeautifier
+dash_leaflet
+protobuf==3.19.
