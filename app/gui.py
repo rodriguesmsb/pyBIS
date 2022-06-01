@@ -34,7 +34,7 @@ import pandas as pd
 import webbrowser
 
 from pydatasus import PyDatasus
-from convert_dbf_to_csv import ReadDbf
+# from convert_dbf_to_csv import ReadDbf
 from circularprogressbar import QRoundProgressBar
 
 

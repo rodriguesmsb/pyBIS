@@ -11,7 +11,7 @@ import ftplib as ftp
 from PyQt5.QtCore import QObject, pyqtSignal
 from simpledbf import Dbf5
 
-from convert_dbf_to_csv import ReadDbf
+# from convert_dbf_to_csv import ReadDbf
 
 
 class PyDatasus(QObject):
