@@ -1,7 +1,7 @@
 requests
 simpledbf
 dbfread
-findspark
+pyspark
 numpy
 pandas
 PyQt5
