@@ -6,37 +6,31 @@ Created on Tue Mar 01 2021
 @author: Moreno rodrigues rodriguesmsb@gmail.com
 """
 
+from pathlib import Path
 import dash
-import os
 import dash_core_components as dcc
-import dash_table as dt
-import dash_bootstrap_components as dbc
 import dash_html_components as html
-import dash_leaflet as dl
-from dash_leaflet import express as dlx
-from dash.dependencies import Input, Output, State
-import plotly.express as px
+from dash.dependencies import Input, Output
 import plotly.graph_objects as go
 import pandas as pd
 from nonaux.functions import functions
-import json
-import numpy as np
 from datetime import date
 from statsmodels.tsa.seasonal import seasonal_decompose
 
 
 
 ### Indicates path
+scripts = Path(__file__).absolute().parent
 try:
-    path_to_data = "scripts/SpatialSUSapp/data/data.csv"
-    path_to_json = "scripts/SpatialSUSapp/conf/conf.json"
-    path_to_images = "scripts/SpatialSUSapp/assets/"
-    conf = functions(conf_file = path_to_json, data = path_to_data)
+    path_to_data = (scripts / "/data/data.csv").as_posix()
+    path_to_json = (scripts / "conf/conf.json").as_posix()
+    path_to_images = (scripts / "assets").as_posix()
+    conf = functions(conf_file=path_to_json, data=path_to_data)
 except:
     path_to_data = "data/data.csv"
     path_to_json = "conf/conf.json"
     path_to_images = "assets/"
-    conf = functions(conf_file = path_to_json, data = path_to_data)
+    conf = functions(conf_file=path_to_json, data=path_to_data)
 
 
 ### Reading data

@@ -8,10 +8,11 @@ Created on Tue Jan 26 2021
 
 
 
+from pathlib import Path
 import dash
 import os
-import dash_core_components as dcc
-import dash_table as dt
+from dash import dcc
+from dash import dash_table as dt
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_leaflet as dl
@@ -28,14 +29,15 @@ import numpy as np
 
 
 ### Indicates patch
-path_to_data = "scripts/SpatialSUSapp/data/data.csv"
-path_to_json = "scripts/SpatialSUSapp/conf/conf.json"
-path_to_images = "scripts/SpatialSUSapp/assets/"
+scripts = Path(__file__).absolute().parent
+path_to_data = (scripts / "data.csv").as_posix()
+path_to_json = (scripts / "conf/conf.json").as_posix()
+path_to_images = (scripts / "assets").as_posix()
 
 
 
 ### Manipulate data
-conf = functions(conf_file = path_to_json, data = path_to_data)
+conf = functions(conf_file=path_to_json, data=path_to_data)
 json_map = path_to_images + "maps/geojs-" + conf.set_json_map() + "-mun.json"
 
 min_time = int(conf.return_time_range()[0])
