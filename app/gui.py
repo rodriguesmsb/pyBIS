@@ -4,12 +4,14 @@ import sys
 import time
 import os
 
+"""
 try:
     os.system("pip install -r {}".format(
               os.path.join(os.path.dirname(__file__),
                            '../requirements.txt')))
 except:
     pass
+"""
 
 import subprocess
 from datetime import date
