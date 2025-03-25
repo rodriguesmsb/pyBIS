@@ -14,6 +14,10 @@ psutil
 dash
 dash_bootstrap_components
 dash_extensions
+dash_core_components
+dash_table
+dash_html_components
+statsmodels
 jsbeautifier
 dash_leaflet
 protobuf==3.19.
