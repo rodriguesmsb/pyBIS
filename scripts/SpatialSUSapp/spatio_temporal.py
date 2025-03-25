@@ -30,15 +30,15 @@ import numpy as np
 
 ### Indicates patch
 scripts = Path(__file__).absolute().parent
-path_to_data = (scripts / "data.csv").as_posix()
+path_to_data = (scripts / "data/data.csv").as_posix()
 path_to_json = (scripts / "conf/conf.json").as_posix()
-path_to_images = (scripts / "assets").as_posix()
+path_to_images = scripts / "assets/"# ).as_posix()
 
 
 
 ### Manipulate data
 conf = functions(conf_file=path_to_json, data=path_to_data)
-json_map = path_to_images + "maps/geojs-" + conf.set_json_map() + "-mun.json"
+json_map = (path_to_images / "maps/geojs-").as_posix() + conf.set_json_map() + "-mun.json"
 
 min_time = int(conf.return_time_range()[0])
 max_time = int(conf.return_time_range()[-1])
@@ -191,13 +191,13 @@ app.layout = html.Div(
                 html.Div(
                     children = [
                         html.Img(
-                            src = functions.encode_image(path_to_images + "brazil.png"), className = "header-img"),
+                            src = functions.encode_image(path_to_images / "brazil.png"), className = "header-img"),
                         html.H1(
                             conf.return_title(),
                             className = "header-title"
                         ),
                         html.A(html.Img(
-                            src = functions.encode_image(path_to_images + "cidacs.jpg"), className = "header-logo"),
+                            src = functions.encode_image(path_to_images / "cidacs.jpg"), className = "header-logo"),
                             href = "https://cidacs.bahia.fiocruz.br/",
                             style ={"grid-column":"12 / span 1", "display":"grid"}
                         )
@@ -466,4 +466,4 @@ def update_donut(feature, selected_var):
 
 
 if __name__ == '__main__':
-    app.run_server()
+    app.run()
