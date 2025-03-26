@@ -27,6 +27,7 @@ class PyDatasus(QObject):
         self.__page = ftp.FTP('ftp.datasus.gov.br')
         self.__page.login()
         self.__page.cwd('/dissemin/publicos/')
+        self.__page.set_pasv(False)
         if platform.system().lower() == "linux":
             self.__blast = path.join(path.dirname(__file__), './blast-dbf')
         elif platform.system().lower() == "windows":
@@ -137,7 +138,10 @@ class PyDatasus(QObject):
         branch = []
 
         self.__page.cwd(database)
-        self.__page.dir(branch.append)
+        try:
+            self.__page.dir(branch.append)
+        except UnicodeDecodeError:
+            pass
 
         r = re.compile('|'.join(pattern), re.IGNORECASE)
 
